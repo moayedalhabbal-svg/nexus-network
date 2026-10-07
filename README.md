@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NEXUS - Professional Collaboration Network
+
+NEXUS is a next-generation professional collaboration network built for builders. It moves beyond static resumes and noisy feeds to focus on what you can build, the skills you have, and the impact you want to make.
 
 ## Getting Started
 
-First, run the development server:
+To run the application locally in development mode:
 
 ```bash
+cd /Users/mouayad/.gemini/antigravity-ide/scratch/nexus
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Intelligent Discovery (`/discover`)**: A powerful search and discovery engine for projects and people.
+2. **AI Match Dashboard (`/matches`)**: View your personalized recommendations with transparent explanations of *why* you matched based on skills, intent, and complementarity.
+3. **Project Workspaces (`/projects/[id]`)**: Deep-dive into project needs, team, and milestones.
+4. **Seamless Onboarding (Phase 2)**: Progressive profiling to capture skills, intent, and availability.
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS 4.0
+- **UI Components**: custom Shadcn-inspired accessible components
+- **Database**: Supabase PostgreSQL (SQL migrations available in `supabase/migrations`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Demo Data
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app is seeded with a comprehensive set of highly realistic professional data to demonstrate the matching capabilities immediately without needing an external API key.
 
-## Deploy on Vercel
+## Next Steps
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Phase 2: Profiles & Onboarding**: Implement the 10-step progressive onboarding and full profile system.
+2. **Database Integration**: Apply the Supabase migrations and connect the Next.js app to the database.

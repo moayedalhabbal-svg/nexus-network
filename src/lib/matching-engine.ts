@@ -1,0 +1,540 @@
+// NEXUS - AI Matching Engine
+// Implements multi-dimensional matching with transparent scoring
+
+import type {
+  UserProfile, Project, MatchResult, MatchReason, MatchGap,
+  ResearchOpportunity, MentorProfile, Opportunity,
+} from './types';
+import { SEED_USERS, SEED_PROJECTS, SEED_RESEARCH, SEED_MENTORS, SEED_OPPORTUNITIES } from './seed-data';
+
+// ─── Matching Configuration ─────────────────────────────────────────
+
+interface MatchWeights {
+  skill: number;
+  interest: number;
+  intent: number;
+  domain: number;
+  availability: number;
+  experience: number;
+  location: number;
+  complementarity: number;
+}
+
+const DEFAULT_WEIGHTS: MatchWeights = {
+  skill: 0.30,
+  interest: 0.20,
+  intent: 0.15,
+  domain: 0.10,
+  availability: 0.10,
+  experience: 0.05,
+  location: 0.05,
+  complementarity: 0.05,
+};
+
+// ─── Skill Matching ─────────────────────────────────────────────────
+
+function calculateSkillOverlap(userSkills: string[], targetSkills: string[]): number {
+  if (targetSkills.length === 0) return 0.5; // neutral if no target skills
+  const normalizedUser = userSkills.map(s => s.toLowerCase());
+  const normalizedTarget = targetSkills.map(s => s.toLowerCase());
+  const matches = normalizedTarget.filter(s => normalizedUser.includes(s));
+  return matches.length / normalizedTarget.length;
+}
+
+function getMatchedSkills(userSkills: string[], targetSkills: string[]): string[] {
+  const normalizedUser = userSkills.map(s => s.toLowerCase());
+  return targetSkills.filter(s => normalizedUser.includes(s.toLowerCase()));
+}
+
+function getComplementarySkills(userSkills: string[], targetNeeds: string[]): string[] {
+  const normalizedUser = userSkills.map(s => s.toLowerCase());
+  return targetNeeds.filter(s => normalizedUser.includes(s.toLowerCase()));
+}
+
+function getMissingSkills(userSkills: string[], targetSkills: string[]): string[] {
+  const normalizedUser = userSkills.map(s => s.toLowerCase());
+  return targetSkills.filter(s => !normalizedUser.includes(s.toLowerCase()));
+}
+
+// ─── Interest Matching ──────────────────────────────────────────────
+
+function calculateInterestOverlap(userInterests: string[], targetInterests: string[]): number {
+  if (targetInterests.length === 0 || userInterests.length === 0) return 0.3;
+  const normalizedUser = userInterests.map(s => s.toLowerCase());
+  const normalizedTarget = targetInterests.map(s => s.toLowerCase());
+  const matches = normalizedTarget.filter(s => normalizedUser.includes(s));
+  return Math.min(matches.length / Math.min(normalizedTarget.length, 3), 1);
+}
+
+// ─── Intent Matching ────────────────────────────────────────────────
+
+function calculateIntentAlignment(userIntents: string[], targetType: string): number {
+  const intentMap: Record<string, string[]> = {
+    project: ['project', 'collaborator', 'cofounder', 'team'],
+    research: ['research', 'collaborator', 'academic'],
+    startup: ['cofounder', 'startup_job', 'team', 'project'],
+    mentor: ['mentee', 'project'],
+    investment: ['investment', 'business_partnership'],
+  };
+
+  const relevantIntents = intentMap[targetType] || ['project', 'collaborator'];
+  const matches = userIntents.filter(i => relevantIntents.includes(i));
+  return matches.length > 0 ? Math.min(matches.length / 2, 1) : 0.1;
+}
+
+// ─── Availability Matching ──────────────────────────────────────────
+
+function calculateAvailabilityMatch(userAvail: string, targetAvail: string): number {
+  const availOrder = ['not_available', '5hrs_week', '10hrs_week', '20hrs_week', 'weekends', 'flexible', 'full_time', 'open_now'];
+  const userIdx = availOrder.indexOf(userAvail);
+  const targetIdx = availOrder.indexOf(targetAvail);
+
+  if (userAvail === 'not_available') return 0;
+  if (userAvail === 'flexible' || userAvail === 'open_now') return 1;
+  if (userIdx === targetIdx) return 1;
+  if (Math.abs(userIdx - targetIdx) <= 1) return 0.8;
+  if (userIdx > targetIdx) return 0.7;
+  return 0.4;
+}
+
+// ─── Complementarity Score ──────────────────────────────────────────
+
+function calculateComplementarity(userSkills: string[], projectNeeds: string[]): number {
+  if (projectNeeds.length === 0) return 0.5;
+  const normalizedUser = userSkills.map(s => s.toLowerCase());
+  const fillableNeeds = projectNeeds.filter(n => normalizedUser.includes(n.toLowerCase()));
+  return fillableNeeds.length / projectNeeds.length;
+}
+
+// ─── Build Match Reasons ────────────────────────────────────────────
+
+function buildMatchReasons(
+  user: UserProfile,
+  matchedSkills: string[],
+  matchedInterests: string[],
+  intentScore: number,
+  availScore: number,
+  complementarySkills: string[],
+): MatchReason[] {
+  const reasons: MatchReason[] = [];
+
+  matchedSkills.forEach(skill => {
+    reasons.push({
+      type: 'skill',
+      label: skill,
+      strength: 'strong',
+    });
+  });
+
+  matchedInterests.forEach(interest => {
+    reasons.push({
+      type: 'interest',
+      label: interest,
+      strength: 'moderate',
+    });
+  });
+
+  if (intentScore > 0.5) {
+    reasons.push({
+      type: 'intent',
+      label: `Actively looking for ${user.intents.slice(0, 2).join(' and ')}`,
+      strength: intentScore > 0.8 ? 'strong' : 'moderate',
+    });
+  }
+
+  if (availScore > 0.7) {
+    reasons.push({
+      type: 'availability',
+      label: `Available ${user.availability.replace(/_/g, ' ')}`,
+      strength: 'moderate',
+    });
+  }
+
+  complementarySkills.forEach(skill => {
+    reasons.push({
+      type: 'complementary',
+      label: `Can fill need: ${skill}`,
+      strength: 'strong',
+    });
+  });
+
+  return reasons;
+}
+
+function buildMatchGaps(missingSkills: string[]): MatchGap[] {
+  return missingSkills.slice(0, 3).map(skill => ({
+    type: 'skill' as const,
+    label: `Also needs: ${skill}`,
+  }));
+}
+
+// ─── User → Project Matching ────────────────────────────────────────
+
+export function matchUserToProject(user: UserProfile, project: Project): MatchResult {
+  const userSkillNames = user.skills.map(s => s.name);
+  const userInterestNames = user.interests.map(i => i.name);
+
+  // Aggregate project skill requirements
+  const projectSkills = [
+    ...project.technologies,
+    ...project.needs.flatMap(n => [...n.requiredSkills, ...n.preferredSkills]),
+  ];
+  const uniqueProjectSkills = [...new Set(projectSkills)];
+
+  // Category to interest mapping
+  const categoryInterestMap: Record<string, string> = {
+    ai: 'Artificial Intelligence',
+    climate: 'Climate Change',
+    renewable_energy: 'Renewable Energy',
+    robotics: 'Robotics',
+    healthcare: 'Healthcare Innovation',
+    education: 'Education Technology',
+    fintech: 'Financial Technology',
+    social_impact: 'Social Impact',
+    mobility: 'Smart Mobility',
+    agriculture: 'AgriTech',
+    biotech: 'Biotechnology',
+  };
+  const projectInterests = project.categories
+    .map(c => categoryInterestMap[c])
+    .filter(Boolean);
+
+  // Calculate component scores
+  const skillScore = calculateSkillOverlap(userSkillNames, uniqueProjectSkills);
+  const interestScore = calculateInterestOverlap(userInterestNames, projectInterests);
+  const intentScore = calculateIntentAlignment(user.intents, 'project');
+  const domainScore = Math.max(skillScore, interestScore) * 0.8;
+
+  const projectCommitment = project.needs[0]?.commitment || '10hrs_week';
+  const availScore = calculateAvailabilityMatch(user.availability, projectCommitment);
+
+  const complementarySkillsNeeded = project.needs.flatMap(n => n.requiredSkills);
+  const complementarityScore = calculateComplementarity(userSkillNames, complementarySkillsNeeded);
+
+  // Experience score (simplified)
+  const experienceScore = user.experience.length > 0 ? 0.7 : 0.4;
+
+  // Location score
+  const locationScore = project.remote ? 0.9 : (user.location === project.location ? 1 : 0.3);
+
+  // Weighted final score
+  const rawScore =
+    skillScore * DEFAULT_WEIGHTS.skill +
+    interestScore * DEFAULT_WEIGHTS.interest +
+    intentScore * DEFAULT_WEIGHTS.intent +
+    domainScore * DEFAULT_WEIGHTS.domain +
+    availScore * DEFAULT_WEIGHTS.availability +
+    experienceScore * DEFAULT_WEIGHTS.experience +
+    locationScore * DEFAULT_WEIGHTS.location +
+    complementarityScore * DEFAULT_WEIGHTS.complementarity;
+
+  // Normalize to 0-100
+  const score = Math.min(Math.round(rawScore * 100), 99);
+
+  // Build reasons and gaps
+  const matchedSkills = getMatchedSkills(userSkillNames, uniqueProjectSkills);
+  const matchedInterests = getMatchedSkills(userInterestNames, projectInterests);
+  const complementarySkills = getComplementarySkills(userSkillNames, complementarySkillsNeeded);
+  const missingSkills = getMissingSkills(userSkillNames, uniqueProjectSkills);
+
+  return {
+    id: `match-${user.id}-${project.id}`,
+    targetType: 'project',
+    targetId: project.id,
+    score,
+    reasons: buildMatchReasons(user, matchedSkills, matchedInterests, intentScore, availScore, complementarySkills),
+    gaps: buildMatchGaps(missingSkills),
+    skillMatch: Math.round(skillScore * 100),
+    interestMatch: Math.round(interestScore * 100),
+    intentMatch: Math.round(intentScore * 100),
+    domainMatch: Math.round(domainScore * 100),
+    availabilityMatch: Math.round(availScore * 100),
+    experienceMatch: Math.round(experienceScore * 100),
+    locationMatch: Math.round(locationScore * 100),
+    complementarityScore: Math.round(complementarityScore * 100),
+    algorithmVersion: 'v1.0-demo',
+    createdAt: '2024-01-01T00:00:00.000Z',
+  };
+}
+
+// ─── User → User Matching ───────────────────────────────────────────
+
+export function matchUserToUser(user: UserProfile, target: UserProfile): MatchResult {
+  const userSkillNames = user.skills.map(s => s.name);
+  const targetSkillNames = target.skills.map(s => s.name);
+  const userInterestNames = user.interests.map(i => i.name);
+  const targetInterestNames = target.interests.map(i => i.name);
+
+  // For person-to-person, we want SIMILARITY of interests but COMPLEMENTARITY of skills
+  const interestSimilarity = calculateInterestOverlap(userInterestNames, targetInterestNames);
+
+  // Skill complementarity: do they have different but useful skills?
+  const differentSkills = targetSkillNames.filter(s => !userSkillNames.map(us => us.toLowerCase()).includes(s.toLowerCase()));
+  const skillComplementarity = differentSkills.length / Math.max(targetSkillNames.length, 1);
+
+  // Intent compatibility
+  const intentPairs: Record<string, string[]> = {
+    cofounder: ['cofounder', 'project', 'team'],
+    mentor: ['mentee'],
+    mentee: ['mentor'],
+    research: ['research', 'collaborator'],
+    investment: ['cofounder', 'project'],
+    project: ['project', 'collaborator', 'cofounder'],
+    collaborator: ['collaborator', 'project', 'research'],
+  };
+
+  let intentScore = 0;
+  for (const intent of user.intents) {
+    const compatibleIntents = intentPairs[intent] || [];
+    if (target.intents.some(ti => compatibleIntents.includes(ti))) {
+      intentScore = Math.max(intentScore, 0.9);
+    }
+  }
+
+  const availScore = calculateAvailabilityMatch(user.availability, target.availability);
+
+  // Weighted score
+  const rawScore =
+    skillComplementarity * 0.25 +
+    interestSimilarity * 0.30 +
+    intentScore * 0.25 +
+    availScore * 0.10 +
+    0.1; // base
+
+  const score = Math.min(Math.round(rawScore * 100), 99);
+
+  const sharedInterests = userInterestNames.filter(i =>
+    targetInterestNames.map(ti => ti.toLowerCase()).includes(i.toLowerCase())
+  );
+
+  const reasons: MatchReason[] = [];
+
+  sharedInterests.forEach(interest => {
+    reasons.push({ type: 'interest', label: interest, strength: 'strong' });
+  });
+
+  differentSkills.slice(0, 3).forEach(skill => {
+    reasons.push({ type: 'complementary', label: `Brings: ${skill}`, strength: 'moderate' });
+  });
+
+  if (intentScore > 0.5) {
+    reasons.push({ type: 'intent', label: `Both interested in ${user.intents[0]?.replace(/_/g, ' ')}`, strength: 'strong' });
+  }
+
+  return {
+    id: `match-${user.id}-${target.id}`,
+    targetType: 'user',
+    targetId: target.id,
+    score,
+    reasons,
+    gaps: [],
+    skillMatch: Math.round((1 - skillComplementarity) * 100),
+    interestMatch: Math.round(interestSimilarity * 100),
+    intentMatch: Math.round(intentScore * 100),
+    domainMatch: Math.round(interestSimilarity * 80),
+    availabilityMatch: Math.round(availScore * 100),
+    experienceMatch: 70,
+    locationMatch: 70,
+    complementarityScore: Math.round(skillComplementarity * 100),
+    algorithmVersion: 'v1.0-demo',
+    createdAt: '2024-01-01T00:00:00.000Z',
+  };
+}
+
+// ─── Get Recommendations ────────────────────────────────────────────
+
+export function getProjectRecommendations(user: UserProfile, limit = 10): (Project & { match: MatchResult })[] {
+  const matches = SEED_PROJECTS
+    .filter(p => p.ownerId !== user.id && p.collaborationStatus !== 'completed' && p.collaborationStatus !== 'paused')
+    .map(project => ({
+      ...project,
+      match: matchUserToProject(user, project),
+    }))
+    .sort((a, b) => b.match.score - a.match.score)
+    .slice(0, limit);
+
+  return matches;
+}
+
+export function getPeopleRecommendations(user: UserProfile, limit = 10): (UserProfile & { match: MatchResult })[] {
+  const matches = SEED_USERS
+    .filter(u => u.id !== user.id)
+    .map(target => ({
+      ...target,
+      match: matchUserToUser(user, target),
+    }))
+    .sort((a, b) => b.match.score - a.match.score)
+    .slice(0, limit);
+
+  return matches;
+}
+
+export function getResearchRecommendations(user: UserProfile, limit = 5): (ResearchOpportunity & { matchScore: number })[] {
+  const userSkillNames = user.skills.map(s => s.name);
+
+  return SEED_RESEARCH
+    .filter(r => r.status === 'open')
+    .map(research => {
+      const skillOverlap = calculateSkillOverlap(userSkillNames, research.skillsNeeded);
+      const intentBonus = user.intents.includes('research') ? 0.2 : 0;
+      const score = Math.min(Math.round((skillOverlap * 0.7 + intentBonus + 0.1) * 100), 99);
+      return { ...research, matchScore: score };
+    })
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, limit);
+}
+
+export function getMentorRecommendations(user: UserProfile, limit = 5): (MentorProfile & { matchScore: number })[] {
+  const userInterestNames = user.interests.map(i => i.name);
+
+  return SEED_MENTORS
+    .filter(m => m.userId !== user.id)
+    .map(mentor => {
+      const topicOverlap = calculateInterestOverlap(
+        userInterestNames,
+        mentor.topics.map(t => t.toLowerCase()),
+      );
+      const expertiseOverlap = calculateInterestOverlap(
+        user.skills.map(s => s.name),
+        mentor.expertise,
+      );
+      const intentBonus = user.intents.includes('mentee') ? 0.2 : 0;
+      const score = Math.min(Math.round((topicOverlap * 0.4 + expertiseOverlap * 0.3 + intentBonus + 0.1) * 100), 99);
+      return { ...mentor, matchScore: score };
+    })
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, limit);
+}
+
+export function getOpportunityRecommendations(user: UserProfile, limit = 5): (Opportunity & { matchScore: number })[] {
+  const userInterestNames = user.interests.map(i => i.name.toLowerCase());
+
+  const categoryInterestMap: Record<string, string> = {
+    ai: 'artificial intelligence',
+    climate: 'climate change',
+    renewable_energy: 'renewable energy',
+    robotics: 'robotics',
+    healthcare: 'healthcare innovation',
+    education: 'education technology',
+    fintech: 'financial technology',
+    social_impact: 'social impact',
+  };
+
+  return SEED_OPPORTUNITIES
+    .map(opp => {
+      const oppInterests = opp.categories.map(c => categoryInterestMap[c] || c);
+      const overlap = oppInterests.filter(oi => userInterestNames.includes(oi)).length;
+      const score = Math.min(Math.round((overlap / Math.max(oppInterests.length, 1)) * 80 + 20), 99);
+      return { ...opp, matchScore: score };
+    })
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, limit);
+}
+
+// ─── Find People for Project ────────────────────────────────────────
+
+export function findPeopleForProject(project: Project, limit = 10): (UserProfile & { match: MatchResult })[] {
+  const dummyUser: UserProfile = {
+    id: 'search-user',
+    email: '',
+    name: '',
+    headline: '',
+    bio: '',
+    avatar: '',
+    location: project.location,
+    timezone: '',
+    roles: [],
+    skills: [],
+    interests: [],
+    intents: ['project'],
+    availability: 'flexible',
+    collaborationPreferences: project.remote ? ['remote'] : ['hybrid'],
+    preferredTeamSize: '',
+    experience: [],
+    education: [],
+    proofOfWork: [],
+    verifications: [],
+    profileVisibility: 'public',
+    searchVisibility: true,
+    onlineStatus: 'online',
+    completionPercentage: 0,
+    joinedAt: '',
+    updatedAt: '',
+  };
+
+  return SEED_USERS
+    .filter(u => !project.team.some(t => t.userId === u.id))
+    .map(candidate => ({
+      ...candidate,
+      match: matchUserToProject(candidate, project),
+    }))
+    .sort((a, b) => b.match.score - a.match.score)
+    .slice(0, limit);
+}
+
+// ─── Natural Language Search (Demo) ─────────────────────────────────
+
+export function semanticSearch(query: string, type: 'people' | 'projects' | 'all' = 'all'): {
+  people: (UserProfile & { relevance: number })[];
+  projects: (Project & { relevance: number })[];
+} {
+  const queryLower = query.toLowerCase();
+  const queryTerms = queryLower.split(/\s+/).filter(t => t.length > 2);
+
+  const people = type === 'projects' ? [] : SEED_USERS
+    .map(user => {
+      let relevance = 0;
+      const searchableText = [
+        user.name, user.headline, user.bio,
+        ...user.skills.map(s => s.name),
+        ...user.interests.map(i => i.name),
+        user.location,
+        ...user.roles,
+        ...user.intents,
+      ].join(' ').toLowerCase();
+
+      queryTerms.forEach(term => {
+        if (searchableText.includes(term)) relevance += 10;
+      });
+
+      // Boost for exact skill matches
+      user.skills.forEach(skill => {
+        if (queryLower.includes(skill.name.toLowerCase())) relevance += 20;
+      });
+
+      // Boost for interest matches
+      user.interests.forEach(interest => {
+        if (queryLower.includes(interest.name.toLowerCase())) relevance += 15;
+      });
+
+      return { ...user, relevance };
+    })
+    .filter(u => u.relevance > 0)
+    .sort((a, b) => b.relevance - a.relevance);
+
+  const projects = type === 'people' ? [] : SEED_PROJECTS
+    .map(project => {
+      let relevance = 0;
+      const searchableText = [
+        project.title, project.pitch, project.problem, project.solution,
+        project.description, ...project.technologies,
+        ...project.categories, project.location,
+        ...project.needs.flatMap(n => [...n.requiredSkills, n.role]),
+      ].join(' ').toLowerCase();
+
+      queryTerms.forEach(term => {
+        if (searchableText.includes(term)) relevance += 10;
+      });
+
+      // Boost for technology matches
+      project.technologies.forEach(tech => {
+        if (queryLower.includes(tech.toLowerCase())) relevance += 20;
+      });
+
+      return { ...project, relevance };
+    })
+    .filter(p => p.relevance > 0)
+    .sort((a, b) => b.relevance - a.relevance);
+
+  return { people, projects };
+}
