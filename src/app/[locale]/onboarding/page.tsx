@@ -28,6 +28,10 @@ type OnboardingData = {
   interests: { id: string; name: string; category: string }[];
   intents: string[];
   availability: string;
+  commitmentHours: string;
+  workStyles: string[];
+  collaborationTypes: string[];
+  collaborationExpectations: string[];
   collaborationPreferences: string[];
   preferredTeamSize: string;
   experience: { title: string; company: string; current: boolean }[];
@@ -42,7 +46,7 @@ const STEPS = [
   { id: 5, title: "Your skills", icon: Zap, desc: "What you bring to the table" },
   { id: 6, title: "Your interests", icon: Heart, desc: "What excites you" },
   { id: 7, title: "Your intent", icon: Target, desc: "What are you here for?" },
-  { id: 8, title: "Availability", icon: Clock, desc: "How much time can you commit?" },
+  { id: 8, title: "Collaboration", icon: Clock, desc: "How do you like to collaborate?" },
   { id: 9, title: "Proof of work", icon: GraduationCap, desc: "Show what you've built" },
   { id: 10, title: "Welcome to NEXUS", icon: Sparkles, desc: "You're all set!" },
 ];
@@ -94,6 +98,41 @@ const TEAM_SIZE_OPTIONS = [
   { id: "any", label: "Any size" },
 ];
 
+const COMMITMENT_HOURS = [
+  { id: "2", label: "2 hrs/week" },
+  { id: "5", label: "5 hrs/week" },
+  { id: "10", label: "10 hrs/week" },
+  { id: "20", label: "20 hrs/week" },
+  { id: "40", label: "Full-time" },
+];
+
+const WORK_STYLES = [
+  { id: "async", label: "Async" },
+  { id: "evenings", label: "Evenings" },
+  { id: "weekends", label: "Weekends" },
+  { id: "flexible", label: "Flexible" },
+  { id: "fixed_schedule", label: "Fixed Schedule" },
+];
+
+const COLLAB_TYPES = [
+  { id: "paid", label: "Paid" },
+  { id: "equity", label: "Equity" },
+  { id: "sweat_equity", label: "Sweat Equity" },
+  { id: "research", label: "Research" },
+  { id: "academic_credit", label: "Academic Credit" },
+  { id: "open_source", label: "Open Source" },
+  { id: "volunteer", label: "Volunteer" },
+  { id: "cofounder", label: "Cofounder" },
+  { id: "mentorship", label: "Mentorship" },
+];
+
+const EXPECTATIONS = [
+  { id: "short_term", label: "Short-term" },
+  { id: "long_term", label: "Long-term" },
+  { id: "one_off", label: "One-off Contribution" },
+  { id: "ongoing", label: "Ongoing Collaboration" },
+];
+
 export default function OnboardingPage() {
   const { loginAsDemo } = useAuth();
   const router = useRouter();
@@ -102,7 +141,9 @@ export default function OnboardingPage() {
     name: "", email: "", headline: "", bio: "",
     location: "", timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     roles: [], skills: [], interests: [], intents: [],
-    availability: "", collaborationPreferences: [], preferredTeamSize: "",
+    availability: "10hrs_week", commitmentHours: "10", workStyles: [], 
+    collaborationTypes: [], collaborationExpectations: [],
+    collaborationPreferences: [], preferredTeamSize: "3-8",
     experience: [], proofOfWorkUrl: "",
   });
   const [skillSearch, setSkillSearch] = useState("");
@@ -112,7 +153,7 @@ export default function OnboardingPage() {
     setData(prev => ({ ...prev, [key]: value }));
   }, []);
 
-  const toggleArrayItem = useCallback((key: 'roles' | 'intents' | 'collaborationPreferences', item: string) => {
+  const toggleArrayItem = useCallback((key: 'roles' | 'intents' | 'collaborationPreferences' | 'workStyles' | 'collaborationTypes' | 'collaborationExpectations', item: string) => {
     setData(prev => ({
       ...prev,
       [key]: prev[key].includes(item) ? prev[key].filter(i => i !== item) : [...prev[key], item],
@@ -435,27 +476,85 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {/* Step 8: Availability */}
+              {/* Step 8: Collaboration Preferences */}
               {step === 8 && (
                 <div className="space-y-6">
                   <div className="space-y-3">
                     <p className="text-sm font-medium">How much time can you commit?</p>
-                    <div className="grid gap-3">
-                      {AVAILABILITY_OPTIONS.map(opt => (
+                    <div className="flex flex-wrap gap-2">
+                      {COMMITMENT_HOURS.map(opt => (
                         <button
                           key={opt.id}
-                          onClick={() => update("availability", opt.id)}
-                          className={`flex items-center justify-between p-4 rounded-xl border-2 text-start transition-all ${
-                            data.availability === opt.id
-                              ? "border-primary bg-primary/5 shadow-md"
-                              : "border-border hover:border-primary/30 hover:bg-accent"
+                          onClick={() => {
+                            update("commitmentHours", opt.id);
+                            // Set legacy availability mapping for backward compatibility
+                            const legacyMap: Record<string, string> = { "2": "5hrs_week", "5": "5hrs_week", "10": "10hrs_week", "20": "20hrs_week", "40": "full_time" };
+                            update("availability", legacyMap[opt.id] || "flexible");
+                          }}
+                          className={`px-4 py-2 rounded-full border-2 text-sm transition-all ${
+                            data.commitmentHours === opt.id
+                              ? "border-primary bg-primary/5 font-medium text-primary"
+                              : "border-border hover:border-primary/30"
                           }`}
                         >
-                          <div>
-                            <span className="font-medium text-sm">{opt.label}</span>
-                            <span className="block text-xs text-muted-foreground mt-0.5">{opt.desc}</span>
-                          </div>
-                          {data.availability === opt.id && <Check className="h-4 w-4 text-primary" />}
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">Work style (select all that apply)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {WORK_STYLES.map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => toggleArrayItem("workStyles", opt.id)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 text-sm transition-all ${
+                            data.workStyles.includes(opt.id)
+                              ? "border-primary bg-primary/5 font-medium text-primary"
+                              : "border-border hover:border-primary/30"
+                          }`}
+                        >
+                          {opt.label} {data.workStyles.includes(opt.id) && <Check className="h-3 w-3" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">Collaboration types</p>
+                    <div className="flex flex-wrap gap-2">
+                      {COLLAB_TYPES.map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => toggleArrayItem("collaborationTypes", opt.id)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 text-sm transition-all ${
+                            data.collaborationTypes.includes(opt.id)
+                              ? "border-primary bg-primary/5 font-medium text-primary"
+                              : "border-border hover:border-primary/30"
+                          }`}
+                        >
+                          {opt.label} {data.collaborationTypes.includes(opt.id) && <Check className="h-3 w-3" />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium">Expectations</p>
+                    <div className="flex flex-wrap gap-2">
+                      {EXPECTATIONS.map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => toggleArrayItem("collaborationExpectations", opt.id)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 text-sm transition-all ${
+                            data.collaborationExpectations.includes(opt.id)
+                              ? "border-primary bg-primary/5 font-medium text-primary"
+                              : "border-border hover:border-primary/30"
+                          }`}
+                        >
+                          {opt.label} {data.collaborationExpectations.includes(opt.id) && <Check className="h-3 w-3" />}
                         </button>
                       ))}
                     </div>

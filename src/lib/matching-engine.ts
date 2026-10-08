@@ -97,6 +97,44 @@ function calculateAvailabilityMatch(userAvail: string, targetAvail: string): num
   return 0.4;
 }
 
+// ─── Granular Collaboration Matching ─────────────────────────────────
+
+function calculateCommitmentCompatibility(userHours?: string, minHours?: string, maxHours?: string, prefHours?: string): number {
+  if (!userHours && !minHours && !maxHours && !prefHours) return 0; // No signal
+  if (!userHours) return 0; // User has no preference
+
+  const u = parseInt(userHours);
+  
+  if (minHours) {
+    const min = parseInt(minHours);
+    if (u < min) return -1; // Incompatible
+  }
+  
+  if (maxHours) {
+    const max = parseInt(maxHours);
+    if (u > max) return -1; // Incompatible
+  }
+  
+  if (prefHours) {
+    const pref = parseInt(prefHours);
+    if (u === pref) return 1.0;
+    if (Math.abs(u - pref) <= 5) return 0.8;
+    return 0.5;
+  }
+  
+  return 0.8; // Compatible with min/max but no specific preference
+}
+
+function calculateArrayOverlap(userVals?: string[], targetVals?: string[]): number {
+  if (!userVals || userVals.length === 0) return 0;
+  if (!targetVals || targetVals.length === 0) return 0;
+  
+  const matches = userVals.filter(v => targetVals.includes(v));
+  if (matches.length === 0) return -1; // Explicit mismatch
+  
+  return matches.length / Math.min(userVals.length, targetVals.length);
+}
+
 // ─── Complementarity Score ──────────────────────────────────────────
 
 function calculateComplementarity(userSkills: string[], projectNeeds: string[]): number {
@@ -228,6 +266,23 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
     locationScore * DEFAULT_WEIGHTS.location +
     complementarityScore * DEFAULT_WEIGHTS.complementarity;
 
+  // Granular collaboration compatibility
+  const commitmentCompatibility = calculateCommitmentCompatibility(user.commitmentHours, project.minimumCommitmentHours, project.maximumCommitmentHours, project.preferredCommitmentHours);
+  const workStyleCompatibility = calculateArrayOverlap(user.workStyles, project.workStyles);
+  const collabTypeCompatibility = calculateArrayOverlap(user.collaborationTypes, project.collaborationTypes);
+  const expectationCompatibility = calculateArrayOverlap(user.collaborationExpectations, project.collaborationExpectations);
+
+  let collabBonus = 0;
+  if (commitmentCompatibility > 0) collabBonus += commitmentCompatibility * 0.05;
+  if (workStyleCompatibility > 0) collabBonus += workStyleCompatibility * 0.05;
+  if (collabTypeCompatibility > 0) collabBonus += collabTypeCompatibility * 0.05;
+  if (expectationCompatibility > 0) collabBonus += expectationCompatibility * 0.05;
+  
+  // Penalties if explicit mismatch (-1)
+  if (commitmentCompatibility < 0) collabBonus -= 0.10;
+  if (workStyleCompatibility < 0) collabBonus -= 0.05;
+  if (collabTypeCompatibility < 0) collabBonus -= 0.05;
+
   // Evidence Bonus
   let totalEvidenceMatches = 0;
   uniqueProjectSkills.forEach(reqSkill => {
@@ -235,7 +290,8 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
     if (evidenceCount > 0) totalEvidenceMatches++;
   });
   const evidenceBonus = (totalEvidenceMatches / Math.max(uniqueProjectSkills.length, 1)) * 0.15; // Up to 15% bonus
-  rawScore += evidenceBonus;
+  
+  rawScore += evidenceBonus + collabBonus;
 
   // Normalize to 0-100
   const score = Math.min(Math.round(rawScore * 100), 99);
@@ -254,6 +310,19 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
       label: `Experience supported by ${totalEvidenceMatches} evidence-backed projects/skills`,
       strength: 'strong'
     });
+  }
+
+  if (commitmentCompatibility > 0.5) {
+    reasons.push({ type: 'availability', label: `Aligned on time commitment`, strength: 'moderate' });
+  }
+  if (workStyleCompatibility > 0) {
+    reasons.push({ type: 'availability', label: `Compatible work styles`, strength: 'moderate' });
+  }
+  if (collabTypeCompatibility > 0) {
+    reasons.push({ type: 'intent', label: `Matching collaboration type goals`, strength: 'strong' });
+  }
+  if (expectationCompatibility > 0) {
+    reasons.push({ type: 'intent', label: `Aligned on project duration/expectations`, strength: 'strong' });
   }
 
   return {
@@ -330,6 +399,23 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
   const totalRelevantFactors = sharedInterests.length + differentSkills.length;
   const evidenceBonus = totalRelevantFactors > 0 ? (evidenceMatches / totalRelevantFactors) * 0.10 : 0;
 
+  // Granular collaboration compatibility
+  const commitmentCompatibility = calculateCommitmentCompatibility(user.commitmentHours, target.commitmentHours, target.commitmentHours, target.commitmentHours);
+  const workStyleCompatibility = calculateArrayOverlap(user.workStyles, target.workStyles);
+  const collabTypeCompatibility = calculateArrayOverlap(user.collaborationTypes, target.collaborationTypes);
+  const expectationCompatibility = calculateArrayOverlap(user.collaborationExpectations, target.collaborationExpectations);
+
+  let collabBonus = 0;
+  if (commitmentCompatibility > 0) collabBonus += commitmentCompatibility * 0.05;
+  if (workStyleCompatibility > 0) collabBonus += workStyleCompatibility * 0.05;
+  if (collabTypeCompatibility > 0) collabBonus += collabTypeCompatibility * 0.05;
+  if (expectationCompatibility > 0) collabBonus += expectationCompatibility * 0.05;
+  
+  // Penalties if explicit mismatch (-1)
+  if (commitmentCompatibility < 0) collabBonus -= 0.10;
+  if (workStyleCompatibility < 0) collabBonus -= 0.05;
+  if (collabTypeCompatibility < 0) collabBonus -= 0.05;
+
   // Weighted score
   let rawScore =
     skillComplementarity * 0.25 +
@@ -338,7 +424,7 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
     availScore * 0.10 +
     0.1; // base
     
-  rawScore += evidenceBonus;
+  rawScore += evidenceBonus + collabBonus;
 
   const score = Math.min(Math.round(rawScore * 100), 99);
 
@@ -358,6 +444,19 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
 
   if (intentScore > 0.5) {
     reasons.push({ type: 'intent', label: `Both interested in ${user.intents[0]?.replace(/_/g, ' ')}`, strength: 'strong' });
+  }
+
+  if (commitmentCompatibility > 0.5) {
+    reasons.push({ type: 'availability', label: `Aligned on time commitment`, strength: 'moderate' });
+  }
+  if (workStyleCompatibility > 0) {
+    reasons.push({ type: 'availability', label: `Compatible work styles`, strength: 'moderate' });
+  }
+  if (collabTypeCompatibility > 0) {
+    reasons.push({ type: 'intent', label: `Matching collaboration type goals`, strength: 'strong' });
+  }
+  if (expectationCompatibility > 0) {
+    reasons.push({ type: 'intent', label: `Aligned on project duration/expectations`, strength: 'strong' });
   }
 
   return {

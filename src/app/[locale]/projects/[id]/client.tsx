@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2, Flag } from "lucide-react";
+import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2, Flag, Target, Clock, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
@@ -256,6 +256,77 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
 
             {/* Sidebar */}
             <div className="space-y-8">
+              
+              {/* Collaboration Requirements */}
+              {(project.preferredCommitmentHours || (project.workStyles && project.workStyles.length > 0) || (project.collaborationTypes && project.collaborationTypes.length > 0)) && (
+                <section>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Target className="h-5 w-5 text-blue-500" /> Collaboration Requirements
+                  </h3>
+                  <Card className="border-border/50">
+                    <CardContent className="space-y-5 pt-6">
+                      
+                      {/* Commitment */}
+                      {(project.minimumCommitmentHours || project.preferredCommitmentHours || project.maximumCommitmentHours) && (
+                        <div>
+                          <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> Commitment
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.minimumCommitmentHours && <Badge variant="outline" className="text-xs bg-muted/50">Min: {project.minimumCommitmentHours}h/wk</Badge>}
+                            {project.preferredCommitmentHours && <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20">Ideal: {project.preferredCommitmentHours}h/wk</Badge>}
+                            {project.maximumCommitmentHours && <Badge variant="outline" className="text-xs bg-muted/50">Max: {project.maximumCommitmentHours}h/wk</Badge>}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Work Style */}
+                      {project.workStyles && project.workStyles.length > 0 && (
+                        <div>
+                          <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <Zap className="h-3 w-3" /> Work Style
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.workStyles.map((ws: string) => (
+                              <Badge key={ws} variant="outline" className="text-xs bg-muted/50 capitalize">{ws.replace(/_/g, " ")}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Collaboration Type */}
+                      {project.collaborationTypes && project.collaborationTypes.length > 0 && (
+                        <div>
+                          <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <Users className="h-3 w-3" /> Collaboration Type
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.collaborationTypes.map((ct: string) => (
+                              <Badge key={ct} variant="secondary" className="text-xs bg-blue-500/10 text-blue-500 capitalize">{ct.replace(/_/g, " ")}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Expectation */}
+                      {project.collaborationExpectations && project.collaborationExpectations.length > 0 && (
+                        <div>
+                          <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <Calendar className="h-3 w-3" /> Expectation
+                          </h4>
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.collaborationExpectations.map((exp: string) => (
+                              <Badge key={exp} variant="outline" className="text-xs bg-muted/50 capitalize">{exp.replace(/_/g, " ")}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                    </CardContent>
+                  </Card>
+                </section>
+              )}
+
               {/* Needs / Roles */}
               <section>
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">

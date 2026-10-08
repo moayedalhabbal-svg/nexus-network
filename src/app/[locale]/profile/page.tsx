@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import {
   MapPin, Globe, Calendar, Briefcase, GraduationCap, ExternalLink,
-  Edit3, Check, X, Zap, Heart, Target, Clock, Link as LinkIcon, ShieldCheck, Flag
+  Edit3, Check, X, Zap, Heart, Target, Clock, Link as LinkIcon, ShieldCheck, Flag, Users
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -337,42 +337,82 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {/* Intent */}
+            {/* Collaboration Preferences */}
             <Card>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-3 border-b border-border/50">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Target className="h-4 w-4 text-blue-500" /> Looking For
+                  <Target className="h-4 w-4 text-blue-500" /> Collaboration Preferences
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {user.intents.map(intent => (
-                    <div key={intent} className="flex items-center gap-2 text-sm">
-                      <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                      <span className="capitalize text-muted-foreground">{intent.replace(/_/g, " ")}</span>
-                    </div>
-                  ))}
+              <CardContent className="space-y-5 pt-4">
+                
+                {/* Commitment */}
+                <div>
+                  <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                    <Clock className="h-3 w-3" /> Commitment
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {user.commitmentHours ? (
+                      <Badge variant="outline" className="text-xs bg-muted/50">{user.commitmentHours} hrs/week</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs bg-muted/50 capitalize">{user.availability.replace(/_/g, " ")}</Badge>
+                    )}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Availability */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-green-500" /> Availability
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Badge variant="success" className="capitalize">{user.availability.replace(/_/g, " ")}</Badge>
-                <div className="flex flex-wrap gap-1.5">
-                  {user.collaborationPreferences.map(pref => (
-                    <Badge key={pref} variant="outline" className="text-xs capitalize">{pref}</Badge>
-                  ))}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Preferred team: {user.preferredTeamSize} people
-                </p>
+                {/* Work Style */}
+                {user.workStyles && user.workStyles.length > 0 && (
+                  <div>
+                    <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                      <Zap className="h-3 w-3" /> Work Style
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.workStyles.map(ws => (
+                        <Badge key={ws} variant="outline" className="text-xs bg-muted/50 capitalize">{ws.replace(/_/g, " ")}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Collaboration Type */}
+                {(user.collaborationTypes && user.collaborationTypes.length > 0) ? (
+                  <div>
+                    <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                      <Users className="h-3 w-3" /> Collaboration Type
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.collaborationTypes.map(ct => (
+                        <Badge key={ct} variant="secondary" className="text-xs bg-blue-500/10 text-blue-500 capitalize">{ct.replace(/_/g, " ")}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                      <Users className="h-3 w-3" /> Looking For
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.intents.map(intent => (
+                        <Badge key={intent} variant="secondary" className="text-xs bg-blue-500/10 text-blue-500 capitalize">{intent.replace(/_/g, " ")}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Expectation */}
+                {user.collaborationExpectations && user.collaborationExpectations.length > 0 && (
+                  <div>
+                    <h4 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                      <Calendar className="h-3 w-3" /> Expectation
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.collaborationExpectations.map(exp => (
+                        <Badge key={exp} variant="outline" className="text-xs bg-muted/50 capitalize">{exp.replace(/_/g, " ")}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
               </CardContent>
             </Card>
 

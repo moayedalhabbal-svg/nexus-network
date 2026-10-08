@@ -7,6 +7,11 @@ export type CollaborationType = 'remote' | 'hybrid' | 'in-person';
 
 export type AvailabilityStatus = 'open_now' | '5hrs_week' | '10hrs_week' | '20hrs_week' | 'full_time' | 'weekends' | 'flexible' | 'not_available';
 
+export type CommitmentHours = '2' | '5' | '10' | '20' | '40';
+export type WorkStyle = 'async' | 'evenings' | 'weekends' | 'flexible' | 'fixed_schedule';
+export type CollaborationIntent = 'paid' | 'equity' | 'sweat_equity' | 'research' | 'academic_credit' | 'open_source' | 'volunteer' | 'cofounder' | 'mentorship';
+export type CollaborationExpectation = 'short_term' | 'long_term' | 'one_off' | 'ongoing';
+
 export type IntentType =
   | 'project'
   | 'cofounder'
@@ -54,7 +59,11 @@ export interface UserProfile {
   skills: Skill[];
   interests: Interest[];
   intents: IntentType[];
-  availability: AvailabilityStatus;
+  availability: AvailabilityStatus; // Keep for backwards compatibility
+  commitmentHours?: CommitmentHours;
+  workStyles?: WorkStyle[];
+  collaborationTypes?: CollaborationIntent[];
+  collaborationExpectations?: CollaborationExpectation[];
   collaborationPreferences: CollaborationType[];
   preferredTeamSize: string;
   experience: Experience[];
@@ -220,6 +229,12 @@ export interface Project {
   ownerId: string;
   ownerName: string;
   ownerAvatar: string;
+  minimumCommitmentHours?: CommitmentHours;
+  preferredCommitmentHours?: CommitmentHours;
+  maximumCommitmentHours?: CommitmentHours;
+  workStyles?: WorkStyle[];
+  collaborationTypes?: CollaborationIntent[];
+  collaborationExpectations?: CollaborationExpectation[];
   createdAt: string;
   updatedAt: string;
 }
