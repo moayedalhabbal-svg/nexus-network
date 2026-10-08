@@ -14,7 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Avatar } from "@/components/ui/avatar";
 import { useLocale } from "next-intl";
 
-import { semanticSearch, UnifiedSearchResult } from "@/lib/matching-engine";
+import { UnifiedSearchResult } from "@/lib/matching-engine";
+import { semanticSearchAction } from "@/app/actions/discover";
 import { SEED_PROJECTS, SEED_USERS } from "@/lib/seed-data";
 
 export default function DiscoverPage() {
@@ -26,13 +27,20 @@ export default function DiscoverPage() {
 
   // Perform hybrid AI Search whenever query or tab changes
   useEffect(() => {
-    setIsSearching(true);
+    const fetchResults = async () => {
+      setIsSearching(true);
+      try {
+        const searchResults = await semanticSearchAction(query, activeTab);
+        setResults(searchResults);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearching(false);
+      }
+    };
     
-    // Simulate slight network delay for realism of "AI" search
     const timer = setTimeout(() => {
-      const searchResults = semanticSearch(query, activeTab);
-      setResults(searchResults);
-      setIsSearching(false);
+      fetchResults();
     }, 400);
 
     return () => clearTimeout(timer);
