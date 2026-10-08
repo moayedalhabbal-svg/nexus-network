@@ -298,7 +298,7 @@ export default function OnboardingPage() {
               {step === 4 && (
                 <div className="space-y-5">
                   <p className="text-sm text-muted-foreground">Select all that apply to you</p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {ROLE_OPTIONS.map(role => (
                       <button
                         key={role.id}
@@ -344,7 +344,7 @@ export default function OnboardingPage() {
                     className="h-12 text-base"
                     autoFocus
                   />
-                  <div className="max-h-60 overflow-y-auto grid grid-cols-2 gap-2 pr-2">
+                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 pr-2">
                     {filteredSkills.slice(0, 30).map(skill => (
                       <button
                         key={skill.id}
@@ -390,7 +390,7 @@ export default function OnboardingPage() {
                     className="h-12 text-base"
                     autoFocus
                   />
-                  <div className="max-h-60 overflow-y-auto grid grid-cols-2 gap-2 pr-2">
+                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 pr-2">
                     {filteredInterests.map(interest => (
                       <button
                         key={interest.id}
@@ -461,7 +461,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-3">
                     <p className="text-sm font-medium">Collaboration preference</p>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {COLLAB_OPTIONS.map(opt => (
                         <button
                           key={opt.id}
@@ -568,7 +568,7 @@ export default function OnboardingPage() {
                       that align with your skills and intent.
                     </p>
                   </div>
-                  <div className="grid grid-cols-3 gap-4 text-center py-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center py-4">
                     <div className="p-3 rounded-lg bg-muted/50">
                       <div className="text-2xl font-bold text-primary">{data.skills.length}</div>
                       <div className="text-xs text-muted-foreground">Skills</div>

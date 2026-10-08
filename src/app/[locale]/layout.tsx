@@ -12,6 +12,7 @@ const inter = Inter({
 });
 
 import { GlobalAICopilot } from "@/components/layout/ai-copilot";
+import { MobileNavWrapper } from "@/components/layout/mobile-nav-wrapper";
 
 export const metadata: Metadata = {
   title: "NEXUS | Build what's next",
@@ -47,6 +48,7 @@ export default async function RootLayout({
           <AuthProvider>
             {children}
             <GlobalAICopilot />
+            <MobileNavWrapper />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

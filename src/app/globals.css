@@ -1,0 +1,6 @@
+
+@media (max-width: 767px) {
+  body:has(nav.md\:hidden) {
+    padding-bottom: 4rem;
+  }
+}

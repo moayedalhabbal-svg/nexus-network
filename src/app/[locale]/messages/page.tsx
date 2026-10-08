@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import { Send, Search, Phone, Video, MoreVertical, Smile, Paperclip, Bot, MessageSquare, Loader2, Users } from "lucide-react";
+import { Send, Search, Phone, Video, MoreVertical, Smile, Paperclip, Bot, MessageSquare, Loader2, Users, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -234,7 +234,7 @@ export default function MessagesPage() {
             <div className="h-16 border-b flex items-center justify-between px-4 bg-background">
               <div className="flex items-center gap-3">
                 <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSelectedConvo(null)}>
-                  ←
+                  <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
                 </Button>
                 {selectedConvo.is_group ? (
                   <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">

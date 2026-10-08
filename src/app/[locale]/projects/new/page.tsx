@@ -175,7 +175,7 @@ export default function NewProjectPage() {
                       className="h-12" 
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Category</label>
                       <select 
@@ -290,7 +290,7 @@ export default function NewProjectPage() {
                     <p className="text-muted-foreground mt-2">Just a few final details before publishing.</p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <button
                       onClick={() => setRemote(true)}
                       className={`p-6 rounded-xl border-2 text-center transition-all ${

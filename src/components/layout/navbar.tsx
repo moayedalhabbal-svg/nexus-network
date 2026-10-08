@@ -94,7 +94,7 @@ export function Navbar() {
                 {showUserMenu && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border bg-card shadow-xl z-50 p-2 animate-fade-in">
+                    <div className="absolute right-0 top-full mt-2 w-full sm:w-64 rounded-xl border bg-card shadow-xl z-50 p-2 animate-fade-in max-w-[calc(100vw-32px)]">
                       <div className="px-3 py-3 border-b mb-2">
                         <p className="font-semibold text-sm">{user.name}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{user.headline}</p>
@@ -141,20 +141,22 @@ export function Navbar() {
 
           <LanguageSelector />
 
-          {/* Mobile menu toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setShowMobileNav(!showMobileNav)}
-          >
-            {showMobileNav ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          {/* Mobile menu toggle (Only for non-authenticated) */}
+          {!isAuthenticated && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setShowMobileNav(!showMobileNav)}
+            >
+              {showMobileNav ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Mobile nav */}
-      {showMobileNav && (
+      {!isAuthenticated && showMobileNav && (
         <div className="md:hidden border-t bg-background p-4 animate-fade-in">
           <nav className="flex flex-col gap-1">
             {navLinks.map(link => (
