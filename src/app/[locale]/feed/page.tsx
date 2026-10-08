@@ -14,6 +14,7 @@ import { SEED_USERS, SEED_PROJECTS } from "@/lib/seed-data";
 import { Heart, MessageSquare, Share2, Sparkles, Image as ImageIcon, Link as LinkIcon, Send } from "lucide-react";
 import Link from "next/link";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
+import { fetchFeedAction, createPostAction, likePostAction } from "@/app/actions/feed";
 
 // Mock Feed Data
 const MOCK_POSTS = [
@@ -46,26 +47,54 @@ const MOCK_POSTS = [
 
 export default function FeedPage() {
   const { user } = useAuth();
-  const [posts, setPosts] = useState(MOCK_POSTS);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [posts, setPosts] = useState<any[]>([]);
   const [newPost, setNewPost] = useState("");
+  const [postType, setPostType] = useState("general");
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isPosting, setIsPosting] = useState(false);
+
+  const loadPosts = async () => {
+    setLoading(true);
+    const { success, posts: fetchedPosts } = await fetchFeedAction();
+    if (success && fetchedPosts) {
+      setPosts(fetchedPosts);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     setMounted(true);
+    loadPosts();
   }, []);
 
-  const handlePost = () => {
-    if (!newPost.trim() || !user) return;
-    const post = {
-      id: `post-${Date.now()}`,
-      authorId: user.id,
-      content: newPost,
-      timestamp: new Date().toISOString(),
-      likes: 0,
-      comments: 0,
-    };
-    setPosts([post, ...posts]);
-    setNewPost("");
+  const handlePost = async () => {
+    if (!newPost.trim() || !user || isPosting) return;
+    setIsPosting(true);
+    const { success } = await createPostAction(newPost, postType);
+    if (success) {
+      setNewPost("");
+      setPostType("general");
+      loadPosts();
+    }
+    setIsPosting(false);
+  };
+
+  const handleLike = async (postId: string) => {
+    if (!user) return;
+    
+    // Optimistic UI update
+    setPosts(currentPosts => currentPosts.map(p => {
+      if (p.id === postId) {
+        // Simple optimistic toggle for demo
+        return { ...p, likes_count: (p.likes_count || 0) + 1 };
+      }
+      return p;
+    }));
+
+    await likePostAction(postId);
+    loadPosts(); // Refresh actual state
   };
 
   return (
@@ -140,13 +169,28 @@ export default function FeedPage() {
                     rows={3}
                   />
                 </div>
+                {newPost.length > 0 && (
+                  <div className="flex gap-2 mb-3 ms-12">
+                    <select 
+                      className="text-xs border rounded-md px-2 py-1 bg-muted/50"
+                      value={postType}
+                      onChange={e => setPostType(e.target.value)}
+                    >
+                      <option value="general">General Update</option>
+                      <option value="project_launch">Project Launch</option>
+                      <option value="looking_for_collaborators">Looking for Collaborators</option>
+                      <option value="research_update">Research Update</option>
+                      <option value="technical_discussion">Technical Discussion</option>
+                    </select>
+                  </div>
+                )}
                 <div className="flex justify-between items-center pt-3 border-t">
                   <div className="flex gap-1">
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground"><ImageIcon className="h-4 w-4" /></Button>
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground"><LinkIcon className="h-4 w-4" /></Button>
                   </div>
-                  <Button onClick={handlePost} disabled={!newPost.trim()} className="h-8 px-4 rounded-full gap-2">
-                    <Send className="h-3 w-3" /> Post
+                  <Button onClick={handlePost} disabled={!newPost.trim() || isPosting} className="h-8 px-4 rounded-full gap-2">
+                    <Send className="h-3 w-3" /> {isPosting ? "Posting..." : "Post"}
                   </Button>
                 </div>
               </CardContent>
@@ -165,32 +209,41 @@ export default function FeedPage() {
 
           {/* Posts */}
           <div className="space-y-6">
-            {posts.map(post => {
-              const author = SEED_USERS.find(u => u.id === post.authorId);
-              const project = post.projectRef ? SEED_PROJECTS.find(p => p.id === post.projectRef) : null;
-              if (!author) return null;
+            {loading ? (
+              <div className="text-center py-12 text-muted-foreground">Loading feed...</div>
+            ) : posts.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">No posts yet. Be the first to share!</div>
+            ) : posts.map(post => {
+              const author = post.author || { name: 'Unknown', id: post.author_id };
+              const project = post.project;
+              const opportunity = post.opportunity;
 
               return (
                 <Card key={post.id} className="hover:border-primary/20 transition-colors">
                   <CardContent className="p-5">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex gap-3">
-                        <Avatar alt={author.name} />
+                        <Avatar alt={author.full_name || author.name} />
                         <div>
                           <Link href={`/profile/${author.id}`} className="font-bold text-[15px] hover:text-primary transition-colors">
-                            {author.name}
+                            {author.full_name || author.name}
                           </Link>
                           <p className="text-xs text-muted-foreground line-clamp-1">{author.headline}</p>
                           <p className="text-[10px] text-muted-foreground mt-0.5">
-                            {mounted ? formatRelativeTime(post.timestamp) : formatDate(post.timestamp)}
+                            {mounted ? formatRelativeTime(post.created_at) : formatDate(post.created_at)}
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -me-2">...</Button>
+                      <div className="flex items-center gap-2">
+                        {post.post_type !== 'general' && (
+                          <Badge variant="secondary" className="text-[10px] uppercase">{post.post_type.replace(/_/g, ' ')}</Badge>
+                        )}
+                        <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -me-2">...</Button>
+                      </div>
                     </div>
 
                     <div className="text-sm whitespace-pre-wrap leading-relaxed">
-                      {post.content.split(' ').map((word, i) => 
+                      {post.content.split(' ').map((word: string, i: number) => 
                         word.startsWith('#') 
                           ? <span key={i} className="text-primary font-medium hover:underline cursor-pointer">{word} </span>
                           : `${word} `
@@ -201,24 +254,49 @@ export default function FeedPage() {
                       <Link href={`/projects/${project.id}`}>
                         <div className="mt-4 p-4 rounded-xl border bg-muted/30 hover:bg-muted/50 transition-colors group cursor-pointer">
                           <div className="flex items-center justify-between mb-2">
-                            <Badge className="bg-background text-xs">{project.category.replace('_', ' ')}</Badge>
+                            <Badge className="bg-background text-xs">{project.category?.replace('_', ' ') || 'Project'}</Badge>
                             <span className="text-primary text-xs font-medium group-hover:underline flex items-center gap-1">
                               View Project <Sparkles className="h-3 w-3" />
                             </span>
                           </div>
                           <h4 className="font-bold text-base">{project.title}</h4>
                           <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{project.pitch}</p>
+                          
+                          {project.project_needs && project.project_needs.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {project.project_needs.slice(0,2).map((need: any) => (
+                                <Badge key={need.id} variant="outline" className="text-[10px] bg-background">
+                                  Need: {need.role_title}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    )}
+
+                    {opportunity && (
+                      <Link href={`/opportunities`}>
+                        <div className="mt-4 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 transition-colors group cursor-pointer">
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge className="bg-blue-500/10 text-blue-500 text-xs hover:bg-blue-500/20">{opportunity.type?.toUpperCase() || 'OPPORTUNITY'}</Badge>
+                          </div>
+                          <h4 className="font-bold text-base">{opportunity.title}</h4>
+                          <p className="text-sm text-muted-foreground line-clamp-1 mt-1">{opportunity.description}</p>
                         </div>
                       </Link>
                     )}
                   </CardContent>
 
                   <CardFooter className="px-5 py-3 border-t bg-muted/10 flex gap-6">
-                    <button className="flex items-center gap-2 text-muted-foreground hover:text-pink-500 transition-colors text-sm font-medium">
-                      <Heart className="h-4 w-4" /> {post.likes}
+                    <button 
+                      onClick={() => handleLike(post.id)}
+                      className="flex items-center gap-2 text-muted-foreground hover:text-pink-500 transition-colors text-sm font-medium"
+                    >
+                      <Heart className="h-4 w-4" /> {post.likes_count || 0}
                     </button>
                     <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
-                      <MessageSquare className="h-4 w-4" /> {post.comments}
+                      <MessageSquare className="h-4 w-4" /> {post.comments_count || 0}
                     </button>
                     <button className="flex items-center gap-2 text-muted-foreground hover:text-green-500 transition-colors text-sm font-medium ms-auto">
                       <Share2 className="h-4 w-4" /> Share
