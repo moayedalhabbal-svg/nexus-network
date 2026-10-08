@@ -31,11 +31,8 @@ export async function middleware(request: NextRequest) {
             value,
             ...options,
           });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          });
+          // Do NOT overwrite the response with NextResponse.next(), as this destroys next-intl rewrites!
+          // Just append the cookie to the existing response.
           response.cookies.set({
             name,
             value,
@@ -47,11 +44,6 @@ export async function middleware(request: NextRequest) {
             name,
             value: '',
             ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
           });
           response.cookies.set({
             name,
