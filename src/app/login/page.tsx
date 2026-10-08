@@ -25,13 +25,26 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
     
-    const success = await login(email, password);
-    if (success) {
-      router.push("/discover");
-    } else {
-      setError("No account found. Try one of the demo accounts below.");
+    try {
+      const { loginAction } = await import("@/app/actions/auth");
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      
+      const result = await loginAction(formData);
+      if (result.success) {
+        // We still call the client login to populate the mock UI state 
+        // since we haven't stripped out SEED_USERS yet
+        await login(email, password);
+        router.push("/discover");
+      } else {
+        setError(result.error || "Failed to login.");
+      }
+    } catch (e) {
+      setError("An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleDemoLogin = (userId: string) => {
