@@ -11,11 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import {
   MapPin, Globe, Calendar, Briefcase, GraduationCap, ExternalLink,
-  Edit3, Check, X, Zap, Heart, Target, Clock, Link as LinkIcon, ShieldCheck, Flag, Users
+  Edit3, Check, X, Zap, Heart, Target, Clock, Link as LinkIcon, ShieldCheck, Flag, Users,
+  GitBranch, CheckCircle2, Trash2
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { AddProofDialog } from "@/components/profile/add-proof-dialog";
+import { removeProofOfWorkAction } from "@/app/actions/evidence";
+import { GithubStatusBadge } from "@/components/profile/github-status-badge";
 
 export default function ProfilePage() {
   const { user, isAuthenticated, loginAsDemo, updateProfile } = useAuth();
@@ -235,18 +238,30 @@ export default function ProfilePage() {
                 <AddProofDialog />
               </CardHeader>
               <CardContent className="space-y-4">
+                <GithubStatusBadge />
+                
                 {user.proofOfWork && user.proofOfWork.length > 0 ? (
                   user.proofOfWork.map(pow => (
                     <div key={pow.id} className="flex gap-4 pb-6 border-b last:border-0 last:pb-0">
                       <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <ExternalLink className="h-5 w-5 text-primary" />
+                        {pow.type === 'github' ? (
+                          <GitBranch className="h-5 w-5 text-primary" />
+                        ) : (
+                          <ExternalLink className="h-5 w-5 text-primary" />
+                        )}
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium text-sm flex items-center justify-between">
+                        <h4 className="font-medium text-sm flex items-center gap-2 flex-wrap">
                           {pow.title}
-                          <Badge variant="outline" className="text-[10px] capitalize bg-muted text-muted-foreground">
-                            {pow.source || pow.type}
-                          </Badge>
+                          {pow.verificationStatus === 'verified' && pow.type === 'github' ? (
+                            <Badge variant="outline" className="text-[10px] bg-green-500/10 text-green-500 border-green-500/20 gap-1 capitalize">
+                              <CheckCircle2 className="h-3 w-3" /> GitHub · Verified
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-[10px] capitalize bg-muted text-muted-foreground">
+                              {pow.source || pow.type}
+                            </Badge>
+                          )}
                         </h4>
                         <p className="text-sm text-muted-foreground mt-1">{pow.description}</p>
                         
@@ -259,12 +274,27 @@ export default function ProfilePage() {
                             ))}
                           </div>
                         )}
-                        
-                        {pow.url && pow.url !== '#' && (
-                          <a href={pow.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1 mt-2">
-                            <ExternalLink className="h-3 w-3" /> View Evidence
-                          </a>
-                        )}
+                        <div className="flex items-center gap-4 mt-2">
+                          {pow.url && pow.url !== '#' && (
+                            <a href={pow.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                              <ExternalLink className="h-3 w-3" /> View Evidence
+                            </a>
+                          )}
+                          <button 
+                            onClick={async () => {
+                              if (!confirm("Remove this evidence?")) return;
+                              const res = await removeProofOfWorkAction(pow.id);
+                              if (res.success) {
+                                window.location.reload();
+                              } else {
+                                alert(res.error);
+                              }
+                            }}
+                            className="text-xs text-destructive hover:underline flex items-center gap-1"
+                          >
+                            <Trash2 className="h-3 w-3" /> Remove
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
@@ -37,6 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .eq('id', authUser.id)
           .single();
           
+        const { data: powData } = await supabase
+          .from('proof_of_work')
+          .select('*')
+          .eq('user_id', authUser.id)
+          .order('created_at', { ascending: false });
+
         if (profile) {
           setUser({
             id: authUser.id,
@@ -56,7 +63,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             preferredTeamSize: '',
             experience: [],
             education: [],
-            proofOfWork: [],
+            proofOfWork: powData ? powData.map((p: any) => ({
+              id: p.id,
+              userId: p.user_id,
+              type: p.type,
+              title: p.title,
+              url: p.url,
+              description: p.description,
+              source: p.source,
+              skills: p.skills || [],
+              verificationStatus: p.verification_status,
+              createdAt: p.created_at,
+              updatedAt: p.updated_at
+            })) : [],
             verifications: [],
             profileVisibility: 'public',
             searchVisibility: profile.search_visibility,
