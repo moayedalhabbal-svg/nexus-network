@@ -20,14 +20,15 @@ export function Navbar() {
 
   const navLinks = isAuthenticated
     ? [
-        { href: "/discover", label: "Discover", icon: Search },
+        { href: "/feed", label: "Feed", icon: Sparkles },
+        { href: "/discover", label: "Search", icon: Search },
         { href: "/projects", label: "Projects", icon: FolderKanban },
-        { href: "/matches", label: "Matches", icon: Sparkles },
         { href: "/network", label: "Network", icon: Users },
         { href: "/messages", label: "Messages", icon: MessageSquare },
+        { href: "/opportunities", label: "Opportunities", icon: Sparkles },
       ]
     : [
-        { href: "/discover", label: "Discover", icon: Search },
+        { href: "/discover", label: "Search", icon: Search },
         { href: "/projects", label: "Projects", icon: FolderKanban },
         { href: "/network", label: "Network", icon: Users },
       ];

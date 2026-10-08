@@ -9,6 +9,8 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+import { GlobalAICopilot } from "@/components/layout/ai-copilot";
+
 export const metadata: Metadata = {
   title: "NEXUS | Build what's next",
   description: "The intelligent professional network that connects people through the projects, ideas, research and opportunities they care about.",
@@ -29,6 +31,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           {children}
+          <GlobalAICopilot />
         </AuthProvider>
       </body>
     </html>
