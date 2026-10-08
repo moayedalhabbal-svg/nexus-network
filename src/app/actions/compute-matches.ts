@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { matchUserToProject, matchUserToUser } from "@/lib/matching-engine";
 import { UserProfile, Project } from "@/lib/types";
+import { generateTextEmbedding, formatProfileForEmbedding } from "@/lib/embeddings";
 
 // Helper to map DB row to UserProfile
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,20 +47,15 @@ export async function computeMatchesAction(demoUserId?: string) {
     authUserId = authUser.id;
   }
 
-  // Fetch current user full profile (with skills etc in a real app, here we use demo data for now if we don't have joins)
-  // For Phase 8.6 testing, we'll try to get all users and projects
-  const { data: profiles, error: profilesErr } = await supabase.from('profiles').select('*');
-  const { data: projectsData, error: projectsErr } = await supabase.from('projects').select('*, project_needs(*)');
+  // 1. Fetch current user profile
+  const { data: fetchedUser, error: currentUserErr } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', authUserId)
+    .single();
 
-  if (profilesErr) console.error("Profiles fetch error:", profilesErr);
-  if (projectsErr) console.error("Projects fetch error:", projectsErr);
-
-  if (!profiles || !projectsData) {
-    return { success: false, error: `Failed to fetch data. Profiles err: ${profilesErr?.message}, Projects err: ${projectsErr?.message}` };
-  }
-
-  let currentUserData = profiles.find(p => p.id === authUserId);
-  if (!currentUserData) {
+  let currentUserData = fetchedUser;
+  if (currentUserErr || !currentUserData) {
     console.log("Profile missing for auth user, creating default profile.");
     const { data: newProfile, error: insertErr } = await supabase.from('profiles').insert({
       id: authUserId,
@@ -75,11 +71,71 @@ export async function computeMatchesAction(demoUserId?: string) {
     currentUserData = newProfile;
   }
 
-  // Just a simplified mapping for the algorithm
+  // 2. Ensure current user has an embedding
+  let userEmbedding = currentUserData.embedding;
+  if (!userEmbedding || typeof userEmbedding === 'string') {
+    // Need to generate and save it
+    const profileText = formatProfileForEmbedding(currentUserData);
+    userEmbedding = await generateTextEmbedding(profileText);
+    
+    // Save it asynchronously (fire and forget)
+    supabase.from('profiles').update({ 
+      embedding: `[${userEmbedding.join(',')}]`,
+      embedding_generated_at: new Date().toISOString()
+    }).eq('id', authUserId).then(({ error }) => {
+      if (error) console.error("Failed to save user embedding", error);
+    });
+  } else if (Array.isArray(userEmbedding)) {
+    // ensure numeric array
+  } else {
+    userEmbedding = await generateTextEmbedding("Demo User Profile");
+  }
+
   const currentUser = mapDbProfileToUser(currentUserData);
 
+  // 3. Fetch candidates using pgvector
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let candidateProfiles: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let candidateProjects: any[] = [];
+
+  const { data: profileVectorMatches } = await supabase.rpc('match_profiles', {
+    query_embedding: `[${userEmbedding.join(',')}]`,
+    match_threshold: 0.2, // low threshold for initial retrieval
+    match_count: 50
+  });
+
+  const { data: projectVectorMatches } = await supabase.rpc('match_projects', {
+    query_embedding: `[${userEmbedding.join(',')}]`,
+    match_threshold: 0.2,
+    match_count: 50
+  });
+
+  if (profileVectorMatches && profileVectorMatches.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await supabase.from('profiles').select('*').in('id', profileVectorMatches.map((p: any) => p.id));
+    if (data) candidateProfiles = data;
+  }
+
+  if (projectVectorMatches && projectVectorMatches.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await supabase.from('projects').select('*, project_needs(*)').in('id', projectVectorMatches.map((p: any) => p.id));
+    if (data) candidateProjects = data;
+  }
+
+  // Fallback to all if vector search fails (e.g., extensions not installed)
+  if (candidateProfiles.length === 0) {
+    const { data } = await supabase.from('profiles').select('*').limit(50);
+    if (data) candidateProfiles = data;
+  }
+  
+  if (candidateProjects.length === 0) {
+    const { data } = await supabase.from('projects').select('*, project_needs(*)').limit(50);
+    if (data) candidateProjects = data;
+  }
+
   const projectMatches = [];
-  for (const p of projectsData) {
+  for (const p of candidateProjects) {
     if (p.owner_id === currentUser.id) continue;
     
     // Map project
@@ -128,7 +184,7 @@ export async function computeMatchesAction(demoUserId?: string) {
   }
 
   const peopleMatches = [];
-  for (const target of profiles) {
+  for (const target of candidateProfiles) {
     if (target.id === currentUser.id) continue;
     const targetUser = mapDbProfileToUser(target);
     const match = matchUserToUser(currentUser, targetUser);

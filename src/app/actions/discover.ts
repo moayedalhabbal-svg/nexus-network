@@ -5,6 +5,8 @@ import { SEED_PROJECTS, SEED_USERS, SEED_RESEARCH, SEED_MENTORS, SEED_OPPORTUNIT
 import { generateObject } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
+import { generateTextEmbedding } from "@/lib/embeddings";
 
 export async function semanticSearchAction(
   query: string,
@@ -16,8 +18,80 @@ export async function semanticSearchAction(
   }
 
   try {
-    // 2. Build a condensed catalog based on targetType
-    // We only send ID and brief description to save tokens
+    // 2. Try Vector Search first (V3 Architecture)
+    const supabase = await createClient();
+    const queryEmbedding = await generateTextEmbedding(query);
+    
+    // We try to call our RPC functions if they exist
+    let vectorResultsFound = false;
+    const results: UnifiedSearchResult[] = [];
+    
+    // Only search people if requested
+    if (targetType === 'all' || targetType === 'people') {
+      const { data: profileMatches, error: profErr } = await supabase.rpc('match_profiles', {
+        query_embedding: queryEmbedding,
+        match_threshold: 0.5,
+        match_count: 5
+      });
+      
+      if (!profErr && profileMatches && profileMatches.length > 0) {
+        vectorResultsFound = true;
+        // Fetch full profiles
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: fullProfiles } = await supabase.from('profiles').select('*').in('id', profileMatches.map((p: any) => p.id));
+        if (fullProfiles) {
+          for (const match of profileMatches) {
+            const p = fullProfiles.find(fp => fp.id === match.id);
+            if (p) {
+              results.push({
+                id: p.id,
+                type: 'people',
+                data: p,
+                score: Math.round(match.similarity * 100),
+                reason: "Matched semantically via vector similarity."
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // Only search projects if requested
+    if (targetType === 'all' || targetType === 'projects' || targetType === 'startups') {
+      const { data: projectMatches, error: projErr } = await supabase.rpc('match_projects', {
+        query_embedding: queryEmbedding,
+        match_threshold: 0.5,
+        match_count: 5
+      });
+      
+      if (!projErr && projectMatches && projectMatches.length > 0) {
+        vectorResultsFound = true;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: fullProjects } = await supabase.from('projects').select('*').in('id', projectMatches.map((p: any) => p.id));
+        if (fullProjects) {
+          for (const match of projectMatches) {
+            const p = fullProjects.find(fp => fp.id === match.id);
+            if (p) {
+              results.push({
+                id: p.id,
+                type: 'projects',
+                data: p,
+                score: Math.round(match.similarity * 100),
+                reason: "Matched semantically via vector similarity."
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // If we got vector results, return them. 
+    if (vectorResultsFound && results.length > 0) {
+      return results.sort((a, b) => b.score - a.score);
+    }
+
+    // 3. Fallback to V2 Generative Extraction if DB embeddings are empty (e.g. during dev/QA)
+    // Build a condensed catalog based on targetType
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const catalog: any[] = [];
     
@@ -37,7 +111,6 @@ export async function semanticSearchAction(
       SEED_OPPORTUNITIES.forEach(o => catalog.push({ id: o.id, type: 'opportunities', text: `${o.title}. Type: ${o.type}` }));
     }
 
-    // 3. Call OpenAI to find best matches
     const { object } = await generateObject({
       model: openai("gpt-4o-mini"),
       schema: z.object({
@@ -62,7 +135,7 @@ If nothing matches well, return an empty array.
     });
 
     // 4. Map the IDs back to the full data objects
-    const results: UnifiedSearchResult[] = [];
+    const generativeResults: UnifiedSearchResult[] = [];
     
     for (const match of object.matches) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +147,7 @@ If nothing matches well, return an empty array.
       else if (match.type === 'opportunities') data = SEED_OPPORTUNITIES.find(o => o.id === match.id);
 
       if (data) {
-        results.push({
+        generativeResults.push({
           id: match.id,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           type: match.type as any,
@@ -85,7 +158,7 @@ If nothing matches well, return an empty array.
       }
     }
 
-    return results.sort((a, b) => b.score - a.score);
+    return generativeResults.sort((a, b) => b.score - a.score);
 
   } catch (error) {
     console.error("OpenAI Semantic Search Failed, falling back to local:", error);
