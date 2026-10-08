@@ -308,6 +308,22 @@ export default function FeedPage() {
             </Card>
           )}
 
+          {/* Feed Navigation */}
+          <div className="flex items-center gap-1 border-b border-zinc-800 pb-px mb-4 overflow-x-auto scrollbar-hide">
+            {["For You", "Following", "Projects", "Research", "Opportunities"].map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFeedCategory(cat)}
+                className={`px-4 py-3 text-sm font-medium transition-colors relative whitespace-nowrap ${feedCategory === cat ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"}`}
+              >
+                {cat}
+                {feedCategory === cat && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500 rounded-t-full" />
+                )}
+              </button>
+            ))}
+          </div>
+
           {/* Posts */}
           <div className="space-y-4">
             {loading ? (
@@ -510,6 +526,58 @@ export default function FeedPage() {
             })}
           </div>
         </div>
+
+        {/* Right Sidebar (Intelligent Discovery) */}
+        <div className="hidden xl:block w-[300px] space-y-6">
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-sm">
+            <CardHeader className="pb-4 border-b border-zinc-800/50">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-zinc-100">
+                <Sparkles className="h-4 w-4 text-blue-400" /> People for you
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4">
+              {SEED_USERS.slice(3, 6).map(person => (
+                <div key={person.id} className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar size="sm" alt={person.name} className="h-10 w-10 ring-1 ring-zinc-800" />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-[14px] text-zinc-100 truncate hover:text-blue-400 cursor-pointer">{person.name}</p>
+                      <p className="text-xs text-zinc-400 truncate">{person.headline}</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" className="w-full h-7 text-xs bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 rounded-full">
+                    Connect
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+          
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-sm">
+            <CardHeader className="pb-4 border-b border-zinc-800/50">
+              <CardTitle className="text-sm font-semibold text-zinc-100">
+                Trending Topics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-3">
+              {[
+                { tag: "ClimateTech", posts: 1204 },
+                { tag: "Robotics", posts: 932 },
+                { tag: "BioInformatics", posts: 840 },
+                { tag: "OpenSource", posts: 650 }
+              ].map((topic) => (
+                <div key={topic.tag} className="flex flex-col group cursor-pointer">
+                  <span className="font-medium text-[14px] text-zinc-300 group-hover:text-blue-400 transition-colors">#{topic.tag}</span>
+                  <span className="text-xs text-zinc-500">{topic.posts.toLocaleString()} posts</span>
+                </div>
+              ))}
+              <Link href="/discover" className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 mt-2">
+                Explore more <ChevronRight className="h-3 w-3" />
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+
       </main>
     </div>
   );
