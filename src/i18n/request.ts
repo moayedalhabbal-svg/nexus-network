@@ -11,8 +11,22 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = 'en'; // Fallback instead of 404
   }
 
+  let messages;
+  switch (locale) {
+    case 'fr':
+      messages = (await import('../../messages/fr.json')).default;
+      break;
+    case 'ar':
+      messages = (await import('../../messages/ar.json')).default;
+      break;
+    case 'en':
+    default:
+      messages = (await import('../../messages/en.json')).default;
+      break;
+  }
+
   return {
     locale: locale as string,
-    messages: (await import(`../../messages/${locale}.json`)).default
+    messages
   };
 });
