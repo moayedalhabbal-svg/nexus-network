@@ -49,7 +49,11 @@ sqlLines.push('-- 3. Seed Projects');
 for (const project of SEED_PROJECTS) {
   const pid = getUuid(project.id);
   const ownerId = getUuid(project.ownerId);
-  const stage = project.stage.toLowerCase().replace(' ', '_');
+  let stage = project.stage.toLowerCase().replace(' ', '_');
+  const validStages = ['idea', 'validation', 'prototype', 'mvp', 'early_traction', 'growth'];
+  if (!validStages.includes(stage)) {
+    stage = 'idea';
+  }
   const category = project.tags?.[0] || 'technology';
   sqlLines.push(`INSERT INTO projects (id, owner_id, title, pitch, description, stage, category, is_private)`);
   sqlLines.push(`VALUES ('${pid}', '${ownerId}', ${escapeSql(project.title)}, ${escapeSql(project.pitch || project.description.substring(0, 100))}, ${escapeSql(project.description)}, '${stage}', '${category}', false)`);
@@ -60,8 +64,8 @@ for (const project of SEED_PROJECTS) {
   
   // Add needs
   for (const need of (project.needs || [])) {
-    sqlLines.push(`INSERT INTO project_needs (project_id, role_title, description, commitment_level, equity_range)`);
-    sqlLines.push(`VALUES ('${pid}', ${escapeSql(need.role)}, ${escapeSql(need.description || '')}, ${escapeSql(need.commitment || 'flexible')}, ${escapeSql('equity' in need ? 'Yes' : 'No')});`);
+    sqlLines.push(`INSERT INTO project_needs (project_id, role_title, commitment)`);
+    sqlLines.push(`VALUES ('${pid}', ${escapeSql(need.role)}, ${escapeSql(need.commitment || 'flexible')});`);
   }
 }
 

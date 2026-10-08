@@ -1,25 +1,117 @@
 "use client";
 
-import { useState } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/layout/navbar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
+import { createClient } from "@/lib/supabase/client";
+import { useLocale } from "next-intl";
 
 import { semanticSearch } from "@/lib/matching-engine";
 import { SEED_PROJECTS, SEED_USERS } from "@/lib/seed-data";
 
 export default function DiscoverPage() {
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState<"projects" | "people">("projects");
   const [query, setQuery] = useState("");
+  
+  const [dbProjects, setDbProjects] = useState<any[]>([]);
+  const [dbProfiles, setDbProfiles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const searchResults = query.trim() !== "" ? semanticSearch(query, activeTab) : null;
+  useEffect(() => {
+    const fetchDbData = async () => {
+      setLoading(true);
+      const supabase = createClient();
+      
+      // Fetch projects
+      const { data: projectsData } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          profiles!projects_owner_id_fkey(full_name, location),
+          project_needs(id, role_title)
+        `)
+        .order('created_at', { ascending: false });
+        
+      if (projectsData) {
+        setDbProjects(projectsData.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          category: p.category,
+          stage: p.stage,
+          pitch: p.pitch,
+          description: p.description || '',
+          ownerName: p.profiles?.full_name || 'Unknown',
+          location: p.profiles?.location || 'Remote',
+          needs: p.project_needs?.map((n: any) => ({ id: n.id, role: n.role_title })) || []
+        })));
+      }
 
-  const displayProjects = searchResults?.projects || SEED_PROJECTS;
-  const displayPeople = searchResults?.people || SEED_USERS;
+      // Fetch profiles
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('search_visibility', true);
+        
+      if (profilesData) {
+        setDbProfiles(profilesData.map((p: any) => ({
+          id: p.id,
+          name: p.full_name,
+          headline: p.headline || '',
+          bio: p.bio || '',
+          avatar: p.avatar_url,
+          location: p.location || 'Remote',
+          availability: 'flexible',
+          skills: [], // Add skills when user_skills table is joined
+          intents: ['collaboration']
+        })));
+      }
+      
+      setLoading(false);
+    };
+    
+    fetchDbData();
+  }, []);
+
+  // Simple client-side search if DB data is used
+  const baseProjects = dbProjects.length > 0 ? dbProjects : SEED_PROJECTS;
+  const baseProfiles = dbProfiles.length > 0 ? dbProfiles : SEED_USERS;
+
+  let displayProjects = baseProjects;
+  let displayPeople = baseProfiles;
+  
+  if (query.trim() !== "") {
+    const q = query.toLowerCase();
+    displayProjects = baseProjects.filter(p => 
+      p.title?.toLowerCase().includes(q) || 
+      p.pitch?.toLowerCase().includes(q) || 
+      p.description?.toLowerCase().includes(q) ||
+      p.category?.toLowerCase().includes(q)
+    );
+    displayPeople = baseProfiles.filter(p => 
+      p.name?.toLowerCase().includes(q) || 
+      p.headline?.toLowerCase().includes(q) || 
+      p.bio?.toLowerCase().includes(q)
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 bg-muted/20 flex flex-col items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Discovering opportunities...</p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -80,7 +172,8 @@ export default function DiscoverPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {activeTab === "projects" && displayProjects.map(project => (
-              <Card key={project.id} className="flex flex-col hover:border-primary/50 transition-colors cursor-pointer group">
+              <Link key={project.id} href={`/${locale}/projects/${project.id}`}>
+                <Card className="h-full flex flex-col hover:border-primary/50 transition-colors cursor-pointer group">
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start mb-2">
                     <Badge variant="outline" className="capitalize">{project.category.replace('_', ' ')}</Badge>
@@ -117,6 +210,7 @@ export default function DiscoverPage() {
                   <span className="text-xs text-muted-foreground">{project.location}</span>
                 </CardFooter>
               </Card>
+              </Link>
             ))}
 
             {activeTab === "people" && displayPeople.map(person => (

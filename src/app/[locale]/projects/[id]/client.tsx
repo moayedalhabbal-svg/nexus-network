@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, use } from "react";
-import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,59 @@ import { matchUserToProject } from "@/lib/matching-engine";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ProjectClient({ projectId }: { projectId: string }) {
-  const project = getProjectById(projectId) || getProjectById("proj-1")!;
+  const [project, setProject] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    async function fetchProject() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          profiles!projects_owner_id_fkey(full_name, avatar_url, location),
+          project_needs(*),
+          project_members(*, profiles(full_name, avatar_url))
+        `)
+        .eq('id', projectId)
+        .single();
+        
+      if (data) {
+        // Map to expected UI format
+        setProject({
+          ...data,
+          ownerName: data.profiles?.full_name || 'Unknown',
+          ownerAvatar: data.profiles?.avatar_url || '',
+          location: data.profiles?.location || 'Remote',
+          milestones: [], // Mock or omit for now
+          technologies: [], // Mock or omit
+          team: data.project_members?.map((m: any) => ({
+            id: m.id,
+            name: m.profiles?.full_name || 'Unknown',
+            avatar: m.profiles?.avatar_url || '',
+            role: m.role || 'Member'
+          })) || [],
+          needs: data.project_needs?.map((n: any) => ({
+            id: n.id,
+            role: n.role_title,
+            commitment: n.commitment,
+            compensation: 'equity', // Mock for now
+            collaboration: 'remote', // Mock for now
+            requiredSkills: [] // Mock for now
+          })) || []
+        });
+      } else {
+        // Fallback to seed data if not found (for legacy testing)
+        setProject(getProjectById(projectId) || getProjectById("proj-1"));
+      }
+      setLoading(false);
+    }
+    fetchProject();
+  }, [projectId]);
+
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [matchResult, setMatchResult] = useState<any>(null);
   const { user, isAuthenticated } = useAuth();
@@ -27,9 +77,23 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
       router.push("/login");
       return;
     }
-    setMatchResult(matchUserToProject(user, project));
+    setMatchResult(matchUserToProject(user, project as any));
+
     setShowJoinModal(true);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-muted/10">
+        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground">Loading project...</p>
+      </div>
+    );
+  }
+
+  if (!project) {
+    return <div className="p-8 text-center text-red-500">Project not found</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
