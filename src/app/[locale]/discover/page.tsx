@@ -194,7 +194,7 @@ export default function DiscoverPage() {
                   <div className="space-y-3 mt-auto">
                     <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Looking for:</div>
                     <div className="flex flex-wrap gap-2">
-                      {project.needs.map(need => (
+                      {project.needs.map((need: any) => (
                         <Badge key={need.id} variant="secondary" className="text-xs font-normal">
                           {need.role}
                         </Badge>
@@ -213,7 +213,7 @@ export default function DiscoverPage() {
               </Link>
             ))}
 
-            {activeTab === "people" && displayPeople.map(person => (
+            {activeTab === "people" && displayPeople.map((person: any) => (
               <Card key={person.id} className="flex flex-col hover:border-primary/50 transition-colors cursor-pointer group">
                 <CardHeader className="pb-4 flex flex-row items-start gap-4">
                   <Avatar size="lg" alt={person.name} />
@@ -229,7 +229,7 @@ export default function DiscoverPage() {
                     <div>
                       <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Top Skills</div>
                       <div className="flex flex-wrap gap-1.5">
-                        {person.skills.slice(0, 4).map(skill => (
+                        {person.skills.slice(0, 4).map((skill: any) => (
                           <Badge key={skill.id} variant="outline" className="text-xs font-normal">
                             {skill.name}
                           </Badge>
@@ -245,7 +245,7 @@ export default function DiscoverPage() {
                     <div>
                       <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Intent</div>
                       <div className="flex flex-wrap gap-1.5">
-                        {person.intents.map(intent => (
+                        {person.intents.map((intent: any) => (
                           <Badge key={intent} className="bg-primary/10 text-primary hover:bg-primary/20 border-transparent text-xs font-normal capitalize">
                             {intent.replace('_', ' ')}
                           </Badge>

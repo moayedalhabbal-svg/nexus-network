@@ -141,7 +141,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   Join Project
                 </Button>
                 <div className="flex -space-x-2 justify-center">
-                  {project.team.map(member => (
+                  {project.team.map((member: any) => (
                     <Avatar key={member.id} alt={member.name} src={member.avatar} className="border-2 border-background" />
                   ))}
                   <div className="h-10 w-10 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-medium">
@@ -203,7 +203,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
               <section>
                 <h2 className="text-xl font-semibold mb-4">Technologies</h2>
                 <div className="flex flex-wrap gap-2">
-                  {project.technologies.map(tech => (
+                  {project.technologies.map((tech: any) => (
                     <Badge key={tech} variant="secondary">{tech}</Badge>
                   ))}
                 </div>
@@ -213,7 +213,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
               <section>
                 <h2 className="text-xl font-semibold mb-6">Milestones</h2>
                 <div className="space-y-4">
-                  {project.milestones.map((milestone, idx) => (
+                  {project.milestones.map((milestone: any, idx: number) => (
                     <div key={milestone.id} className="flex gap-4">
                       <div className="flex flex-col items-center">
                         <div className={`h-6 w-6 rounded-full flex items-center justify-center shrink-0 ${milestone.completed ? 'bg-primary text-primary-foreground' : 'bg-muted border'}`}>
@@ -240,7 +240,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   <Zap className="h-5 w-5 text-yellow-500" /> Open Roles
                 </h3>
                 <div className="grid gap-4">
-                  {project.needs.map(need => (
+                  {project.needs.map((need: any) => (
                     <Card key={need.id} className="border-primary/20 bg-primary/5">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start">
@@ -253,7 +253,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                       </CardHeader>
                       <CardContent>
                         <div className="flex flex-wrap gap-1.5">
-                          {need.requiredSkills.map(skill => (
+                          {need.requiredSkills.map((skill: any) => (
                             <Badge key={skill} variant="secondary" className="text-[10px]">{skill}</Badge>
                           ))}
                         </div>
@@ -269,7 +269,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   <Users className="h-5 w-5 text-blue-500" /> The Team
                 </h3>
                 <div className="grid gap-4">
-                  {project.team.map(member => (
+                  {project.team.map((member: any) => (
                     <div key={member.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
                       <Avatar alt={member.name} src={member.avatar} />
                       <div>
