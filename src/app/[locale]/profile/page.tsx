@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import {
   MapPin, Globe, Calendar, Briefcase, GraduationCap, ExternalLink,
-  Edit3, Check, X, Zap, Heart, Target, Clock, Users, Link as LinkIcon,
+  Edit3, Check, X, Zap, Heart, Target, Clock, Users, Link as LinkIcon, ShieldCheck, Flag
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -95,11 +95,28 @@ export default function ProfilePage() {
                     </p>
                   )}
                 </div>
-                <Badge variant="success" className="hidden sm:flex">
-                  <span className="h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse" />
-                  {user.onlineStatus === "online" ? "Online" : user.onlineStatus}
-                </Badge>
+                <div className="flex items-center gap-3">
+                  <Badge variant="success" className="hidden sm:flex">
+                    <span className="h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse" />
+                    {user.onlineStatus === "online" ? "Online" : user.onlineStatus}
+                  </Badge>
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                    <Flag className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
+
+              {/* Explicit Verification States */}
+              {user.verifications && user.verifications.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mt-3">
+                  {user.verifications.map((v: any) => (
+                    <Badge key={v.type} variant="secondary" className="bg-primary/5 text-primary border-primary/20 flex gap-1 items-center font-normal text-xs">
+                      <ShieldCheck className="h-3 w-3 text-green-500" />
+                      {v.label}
+                    </Badge>
+                  ))}
+                </div>
+              )}
 
               <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {user.location}</span>
@@ -327,10 +344,10 @@ export default function ProfilePage() {
                 <CardTitle className="text-sm">Verifications</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {user.verifications.map(v => (
-                  <div key={v} className="flex items-center gap-2 text-sm">
+                {user.verifications.map((v: any) => (
+                  <div key={v.type} className="flex items-center gap-2 text-sm">
                     <Check className="h-4 w-4 text-green-500" />
-                    <span className="capitalize text-muted-foreground">{v} verified</span>
+                    <span className="capitalize text-muted-foreground">{v.label}</span>
                   </div>
                 ))}
               </CardContent>

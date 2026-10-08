@@ -23,7 +23,11 @@ export type IntentType =
 
 export type SkillCategory = 'technical' | 'business' | 'creative' | 'research' | 'leadership' | 'domain';
 
-export type VerificationType = 'email' | 'university' | 'company' | 'identity';
+export interface Verification {
+  type: 'email' | 'university' | 'organization' | 'identity';
+  label: string;
+  verifiedAt: string;
+}
 
 export interface Skill {
   id: string;
@@ -56,7 +60,7 @@ export interface UserProfile {
   experience: Experience[];
   education: Education[];
   proofOfWork: ProofOfWork[];
-  verifications: VerificationType[];
+  verifications: Verification[];
   profileVisibility: 'public' | 'network' | 'connections' | 'private';
   searchVisibility: boolean;
   onlineStatus: 'online' | 'away' | 'offline' | 'hidden';
@@ -479,4 +483,20 @@ export interface Report {
   createdAt: string;
   reviewedAt: string | null;
   reviewedBy: string | null;
+  actionTaken: 'none' | 'warning' | 'content_removed' | 'account_suspended' | 'account_banned' | null;
+  resolution: string | null;
+  reporterName: string;
+  targetName: string;
+}
+
+export interface AuditLog {
+  id: string;
+  actionId: string;
+  adminId: string;
+  adminName: string;
+  action: 'approve_verification' | 'reject_verification' | 'resolve_report' | 'suspend_user' | 'ban_user' | 'delete_content';
+  targetType: 'user' | 'project' | 'report' | 'message';
+  targetId: string;
+  details: string;
+  timestamp: string;
 }

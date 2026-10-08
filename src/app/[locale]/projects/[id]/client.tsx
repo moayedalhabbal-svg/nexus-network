@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2, Flag } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
@@ -162,6 +162,11 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   </div>
                 </div>
                 <p className="text-xs text-center text-muted-foreground">Active team members</p>
+                <div className="flex justify-center mt-4">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
+                    <Flag className="h-4 w-4 mr-2" /> Report Project
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

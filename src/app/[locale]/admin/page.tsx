@@ -2,21 +2,18 @@
 
 import { useState } from "react";
 import { Navbar } from "@/components/layout/navbar";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SEED_USERS, SEED_PROJECTS } from "@/lib/seed-data";
-import { ShieldAlert, Users, FolderKanban, Activity, AlertTriangle, CheckCircle, Ban, ArrowUpRight } from "lucide-react";
+import { SEED_USERS, SEED_PROJECTS, SEED_REPORTS, SEED_AUDIT_LOGS } from "@/lib/seed-data";
+import { ShieldAlert, Users, FolderKanban, Activity, AlertTriangle, CheckCircle, Ban, ArrowUpRight, History, Eye, XCircle } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
-
-// Mock Flagged Content
-const FLAGGED_CONTENT = [
-  { id: "flag-1", type: "user", refId: "user-4", reason: "Spam behavior in DMs", status: "pending" },
-  { id: "flag-2", type: "project", refId: "proj-2", reason: "Unrealistic funding claims", status: "pending" },
-];
+import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit">("overview");
+  const [reports, setReports] = useState(SEED_REPORTS);
+  const [logs, setLogs] = useState(SEED_AUDIT_LOGS);
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/10">
@@ -55,7 +52,19 @@ export default function AdminDashboardPage() {
               }`}
             >
               <AlertTriangle className="h-4 w-4" /> Moderation Queue
-              <Badge className="ml-auto bg-destructive text-destructive-foreground">2</Badge>
+              {reports.filter(r => r.status === 'pending').length > 0 && (
+                 <Badge className="ml-auto bg-destructive text-destructive-foreground">
+                   {reports.filter(r => r.status === 'pending').length}
+                 </Badge>
+              )}
+            </button>
+            <button 
+              onClick={() => setActiveTab("audit")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "audit" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+              }`}
+            >
+              <History className="h-4 w-4" /> Audit Logs
             </button>
           </nav>
         </aside>
@@ -124,7 +133,9 @@ export default function AdminDashboardPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground mb-1">Pending Reports</p>
-                        <h3 className="text-3xl font-bold text-destructive">2</h3>
+                        <h3 className="text-3xl font-bold text-destructive">
+                           {reports.filter(r => r.status === 'pending').length}
+                        </h3>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
                         <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -207,40 +218,122 @@ export default function AdminDashboardPage() {
           {activeTab === "moderation" && (
             <div className="space-y-6 animate-fade-in">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight mb-2 text-destructive">Moderation Queue</h1>
+                <h1 className="text-3xl font-bold tracking-tight mb-2 text-destructive">Moderation Dashboard</h1>
                 <p className="text-muted-foreground">Review flagged content, spam reports, and terms of service violations.</p>
               </div>
 
-              <div className="grid gap-4">
-                {FLAGGED_CONTENT.map(flag => {
-                  const target = flag.type === "user" 
-                    ? SEED_USERS.find(u => u.id === flag.refId)?.name 
-                    : SEED_PROJECTS.find(p => p.id === flag.refId)?.title;
-
-                  return (
-                    <Card key={flag.id} className="border-destructive/30 bg-destructive/5">
-                      <CardContent className="p-6 flex flex-col md:flex-row justify-between gap-6 items-center">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="uppercase text-[10px] bg-background text-destructive border-destructive/20">
-                              {flag.type} Report
-                            </Badge>
-                            <span className="text-sm font-semibold">{target}</span>
+              <div className="grid gap-6">
+                {reports.map(report => (
+                  <Card key={report.id} className={`border ${report.status === 'pending' ? 'border-destructive/50 shadow-md' : 'border-border/50 bg-muted/20'}`}>
+                    <CardHeader className="pb-3 border-b border-border/50">
+                       <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-3">
+                             <Badge variant={report.status === 'pending' ? 'destructive' : 'outline'} className="capitalize">
+                               {report.status}
+                             </Badge>
+                             <Badge variant="secondary" className="capitalize">
+                               Target: {report.targetType}
+                             </Badge>
+                             <Badge variant="outline" className="capitalize text-muted-foreground">
+                               Reason: {report.reason.replace('_', ' ')}
+                             </Badge>
                           </div>
-                          <p className="font-medium">Reason: {flag.reason}</p>
-                          <p className="text-sm text-muted-foreground mt-1">Reported by Anonymous User • 2 hours ago</p>
-                        </div>
-                        <div className="flex gap-2 w-full md:w-auto">
-                          <Button variant="outline" className="flex-1">Dismiss</Button>
-                          <Button variant="destructive" className="flex-1 gap-2">
-                            <Ban className="h-4 w-4" /> Take Action
+                          <span className="text-xs text-muted-foreground">{formatDate(report.createdAt)}</span>
+                       </div>
+                    </CardHeader>
+                    <CardContent className="pt-4 pb-4">
+                       <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                             <p className="text-sm font-semibold text-muted-foreground mb-1">Reported Entity</p>
+                             <div className="flex items-center gap-2">
+                                <Avatar size="sm" alt={report.targetName} />
+                                <span className="font-medium">{report.targetName}</span>
+                                <Button variant="link" size="sm" className="h-auto p-0 ml-2"><Eye className="h-3 w-3 mr-1" /> View</Button>
+                             </div>
+                          </div>
+                          <div>
+                             <p className="text-sm font-semibold text-muted-foreground mb-1">Reporter</p>
+                             <div className="flex items-center gap-2">
+                                <Avatar size="sm" alt={report.reporterName} />
+                                <span className="text-sm">{report.reporterName}</span>
+                             </div>
+                          </div>
+                       </div>
+                       <div className="mt-4 p-3 bg-muted/50 rounded-md border border-border/50">
+                          <p className="text-sm font-semibold mb-1">Description:</p>
+                          <p className="text-sm text-foreground/80">{report.description}</p>
+                       </div>
+
+                       {report.status !== 'pending' && (
+                          <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-md">
+                             <p className="text-sm font-semibold text-green-700 dark:text-green-400 mb-1">Resolution ({formatDate(report.reviewedAt || '')})</p>
+                             <p className="text-sm text-green-700/80 dark:text-green-400/80">Moderator: {report.reviewedBy}</p>
+                             <p className="text-sm text-green-700/80 dark:text-green-400/80">Action Taken: <span className="capitalize">{report.actionTaken?.replace('_', ' ')}</span></p>
+                             <p className="text-sm text-green-700/80 dark:text-green-400/80 mt-1">Notes: {report.resolution}</p>
+                          </div>
+                       )}
+                    </CardContent>
+                    
+                    {report.status === 'pending' && (
+                       <CardFooter className="pt-4 border-t border-border/50 bg-muted/20 flex gap-3 justify-end">
+                          <Button variant="outline" size="sm" className="gap-2">
+                             <XCircle className="h-4 w-4" /> Dismiss Report
                           </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                          <Button variant="destructive" size="sm" className="gap-2">
+                             <Ban className="h-4 w-4" /> Take Action
+                          </Button>
+                       </CardFooter>
+                    )}
+                  </Card>
+                ))}
               </div>
+            </div>
+          )}
+
+          {activeTab === "audit" && (
+            <div className="space-y-6 animate-fade-in">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight mb-2">Audit Logs</h1>
+                <p className="text-muted-foreground">Immutable record of all administrative and moderation actions.</p>
+              </div>
+
+              <Card>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
+                      <tr>
+                        <th className="px-6 py-4 font-medium">Timestamp</th>
+                        <th className="px-6 py-4 font-medium">Admin</th>
+                        <th className="px-6 py-4 font-medium">Action</th>
+                        <th className="px-6 py-4 font-medium">Target</th>
+                        <th className="px-6 py-4 font-medium">Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {logs.map(log => (
+                        <tr key={log.id} className="border-b hover:bg-muted/20 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
+                            {formatDate(log.timestamp)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-medium">{log.adminName}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <Badge variant="outline" className="capitalize bg-muted/50">{log.action.replace(/_/g, ' ')}</Badge>
+                          </td>
+                          <td className="px-6 py-4">
+                             <span className="capitalize">{log.targetType}</span>
+                             <span className="text-muted-foreground ml-2 text-xs font-mono">{log.targetId}</span>
+                          </td>
+                          <td className="px-6 py-4 max-w-md">
+                            <p className="truncate" title={log.details}>{log.details}</p>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
             </div>
           )}
           
