@@ -3,9 +3,13 @@ import { notFound } from 'next/navigation';
 
 const locales = ['en', 'fr', 'ar'];
 
-export default getRequestConfig(async ({ locale }) => {
+export default getRequestConfig(async ({ requestLocale }) => {
+  let locale = await requestLocale;
+  
   // Validate that the incoming `locale` parameter is valid
-  if (!locales.includes(locale as any)) notFound();
+  if (!locale || !locales.includes(locale as any)) {
+    locale = 'en'; // Fallback instead of 404
+  }
 
   return {
     locale: locale as string,
