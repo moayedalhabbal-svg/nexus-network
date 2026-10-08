@@ -69,6 +69,7 @@ export interface UserProfile {
   experience: Experience[];
   education: Education[];
   proofOfWork: ProofOfWork[];
+  trustSummary?: TrustSummary;
   verifications: Verification[];
   profileVisibility: 'public' | 'network' | 'connections' | 'private';
   searchVisibility: boolean;
@@ -112,6 +113,47 @@ export interface ProofOfWork {
   verificationStatus: 'verified' | 'added_by_you' | 'evidence_found' | 'external_evidence';
   createdAt: string;
   updatedAt: string;
+}
+
+// ─── Trust & Reputation Types ───────────────────────────────────────
+
+export type FeedbackRating = 'strong' | 'average' | 'weak' | 'none';
+
+export interface CollaborationRecord {
+  id: string;
+  userId: string;
+  projectId: string;
+  projectTitle: string;
+  role: string;
+  joinedAt: string;
+  completedAt: string | null;
+  contributionStatus: 'active' | 'completed' | 'abandoned';
+  completionConfirmation: 'confirmed' | 'unconfirmed' | 'rejected';
+}
+
+export interface CollaborationFeedback {
+  id: string;
+  collaborationId: string;
+  reviewerId: string;
+  reviewedUserId: string;
+  reliability: FeedbackRating;
+  communication: FeedbackRating;
+  contribution: FeedbackRating;
+  teamwork: FeedbackRating;
+  wouldCollaborateAgain: 'yes' | 'maybe' | 'no';
+  comment?: string;
+  createdAt: string;
+}
+
+export interface TrustSummary {
+  completedProjects: number;
+  verifiedCollaborations: number;
+  reliabilityScore: number; // 0-100 derived internally, only shown as labels
+  communicationScore: number;
+  contributionScore: number;
+  teamworkScore: number;
+  feedbackCount: number;
+  abandonedProjects: number;
 }
 
 // ─── Project Types ──────────────────────────────────────────────────

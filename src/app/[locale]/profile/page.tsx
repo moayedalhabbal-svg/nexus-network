@@ -293,6 +293,90 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
+            {/* Trust & Collaboration */}
+            {user.trustSummary ? (
+              <Card className="border-border">
+                <CardHeader className="pb-3 border-b border-border/50">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-primary" /> Trust & Collaboration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4 space-y-4">
+                  <div className="space-y-2">
+                    {user.trustSummary.completedProjects > 0 && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-muted-foreground">{user.trustSummary.completedProjects} Completed {user.trustSummary.completedProjects === 1 ? 'Project' : 'Projects'}</span>
+                      </div>
+                    )}
+                    {user.trustSummary.verifiedCollaborations > 0 && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-muted-foreground">{user.trustSummary.verifiedCollaborations} Verified {user.trustSummary.verifiedCollaborations === 1 ? 'Collaboration' : 'Collaborations'}</span>
+                      </div>
+                    )}
+                    {user.trustSummary.reliabilityScore > 80 && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-muted-foreground">Reliable Contributor</span>
+                      </div>
+                    )}
+                    {user.trustSummary.communicationScore > 80 && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-muted-foreground">Responsive Communicator</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {user.trustSummary.feedbackCount > 0 && (
+                    <div className="pt-4 border-t border-border/50 space-y-2">
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Collaborator Feedback</p>
+                      
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground">Reliability</span>
+                        <span className={user.trustSummary.reliabilityScore > 80 ? "text-primary font-medium" : "font-medium"}>
+                          {user.trustSummary.reliabilityScore > 80 ? 'Strong' : 'Average'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground">Communication</span>
+                        <span className={user.trustSummary.communicationScore > 80 ? "text-primary font-medium" : "font-medium"}>
+                          {user.trustSummary.communicationScore > 80 ? 'Strong' : 'Average'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground">Contribution</span>
+                        <span className={user.trustSummary.contributionScore > 80 ? "text-primary font-medium" : "font-medium"}>
+                          {user.trustSummary.contributionScore > 80 ? 'Strong' : 'Average'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground">Teamwork</span>
+                        <span className={user.trustSummary.teamworkScore > 80 ? "text-primary font-medium" : "font-medium"}>
+                          {user.trustSummary.teamworkScore > 80 ? 'Strong' : 'Average'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-border">
+                <CardHeader className="pb-3 border-b border-border/50">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-primary" /> Trust & Collaboration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="text-center py-2">
+                    <p className="text-sm text-muted-foreground">New to NEXUS</p>
+                    <p className="text-[10px] text-muted-foreground/70 mt-1">Limited collaboration history</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Skills */}
             <Card>
               <CardHeader className="pb-3">

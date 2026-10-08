@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2, Flag, Target, Clock, Calendar } from "lucide-react";
+import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2, Flag, Target, Clock, Calendar, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ import { trackEvent } from "@/lib/analytics";
 export default function ProjectClient({ projectId }: { projectId: string }) {
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackTarget, setFeedbackTarget] = useState<any>(null);
   
   const params = useParams();
   const locale = params?.locale || "en";
@@ -389,6 +391,37 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                             </div>
                           </div>
                         )}
+                        {fullMember?.trustSummary && fullMember.trustSummary.completedProjects > 0 && (
+                          <div className="pt-2 mt-1 border-t border-border/50">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <ShieldCheck className="h-3 w-3 text-green-500" />
+                              <span>{fullMember.trustSummary.completedProjects} Completed {fullMember.trustSummary.completedProjects === 1 ? 'Project' : 'Projects'}</span>
+                            </div>
+                            {fullMember.trustSummary.verifiedCollaborations > 0 && (
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                                <ShieldCheck className="h-3 w-3 text-green-500" />
+                                <span>{fullMember.trustSummary.verifiedCollaborations} Verified {fullMember.trustSummary.verifiedCollaborations === 1 ? 'Collab' : 'Collabs'}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {/* Feedback Button */}
+                        {user && project.collaborationStatus === 'completed' && member.userId !== user.id && project.team.some((m: any) => m.userId === user.id) && (
+                          <div className="pt-2 mt-1">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full text-xs h-7"
+                              onClick={() => {
+                                setFeedbackTarget(member);
+                                setShowFeedbackModal(true);
+                              }}
+                            >
+                              Leave Feedback
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -469,6 +502,56 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   alert("Failed to submit: " + result.error);
                 }
               }}>Submit Application</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      )}
+
+      {/* Feedback Modal */}
+      {showFeedbackModal && feedbackTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
+          <Card className="w-full max-w-lg shadow-2xl animate-fade-in-up">
+            <CardHeader className="border-b bg-muted/30">
+              <div className="flex justify-between items-center mb-2">
+                <CardTitle>Provide Feedback</CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setShowFeedbackModal(false)}>✕</Button>
+              </div>
+              <CardDescription>Leave feedback for {feedbackTarget.name} on their contribution.</CardDescription>
+            </CardHeader>
+            <CardContent className="py-6 space-y-6">
+              <div>
+                <p className="text-sm font-medium mb-3">Would you collaborate with this person again?</p>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground">Yes</Button>
+                  <Button variant="outline" className="flex-1 hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground">Maybe</Button>
+                  <Button variant="outline" className="flex-1 hover:bg-destructive hover:text-destructive-foreground focus:bg-destructive focus:text-destructive-foreground">No</Button>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium mb-3">Rate their contribution (Optional)</p>
+                <div className="space-y-3">
+                  {['Reliability', 'Communication', 'Contribution', 'Teamwork'].map(dim => (
+                    <div key={dim} className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">{dim}</span>
+                      <div className="flex gap-1">
+                        <Badge variant="outline" className="cursor-pointer hover:bg-primary/20">Strong</Badge>
+                        <Badge variant="outline" className="cursor-pointer hover:bg-muted">Avg</Badge>
+                        <Badge variant="outline" className="cursor-pointer hover:bg-destructive/20 text-destructive/80">Weak</Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium mb-2">Private Comment (Optional)</p>
+                <textarea className="w-full min-h-[80px] p-3 text-sm rounded-md border border-input bg-transparent" placeholder="Any additional context..." />
+              </div>
+            </CardContent>
+            <CardFooter className="bg-muted/30 border-t flex justify-end gap-3 p-4">
+              <Button variant="ghost" onClick={() => setShowFeedbackModal(false)}>Cancel</Button>
+              <Button onClick={() => setShowFeedbackModal(false)}>Submit Feedback</Button>
             </CardFooter>
           </Card>
         </div>

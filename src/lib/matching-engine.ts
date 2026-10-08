@@ -135,6 +135,41 @@ function calculateArrayOverlap(userVals?: string[], targetVals?: string[]): numb
   return matches.length / Math.min(userVals.length, targetVals.length);
 }
 
+// ─── Trust & Reputation Matching ─────────────────────────────────────
+
+function calculateTrustBonus(trust?: import('./types').TrustSummary): { bonus: number; reason: string | null } {
+  if (!trust || trust.completedProjects === 0) {
+    return { bonus: 0, reason: null }; // New user fairness: no penalty
+  }
+
+  let bonus = 0;
+  
+  // Completed projects (up to 4% bonus)
+  bonus += Math.min(trust.completedProjects * 0.01, 0.04);
+  
+  // Verified collaborations (up to 2% bonus)
+  bonus += Math.min(trust.verifiedCollaborations * 0.01, 0.02);
+  
+  // Feedback rating (up to 2% bonus)
+  if (trust.reliabilityScore > 80 && trust.contributionScore > 80) {
+    bonus += 0.02;
+  }
+  
+  // Abandonment penalty (up to -5% penalty)
+  if (trust.abandonedProjects > 0) {
+    bonus -= Math.min(trust.abandonedProjects * 0.02, 0.05);
+  }
+  
+  let reason = null;
+  if (bonus > 0.05) {
+    reason = `Strong fit with ${trust.completedProjects} verified project ${trust.completedProjects === 1 ? 'experience' : 'experiences'} and positive collaborator feedback`;
+  } else if (bonus > 0) {
+    reason = `Verified collaboration history (${trust.completedProjects} completed)`;
+  }
+
+  return { bonus: Math.max(bonus, -0.05), reason };
+}
+
 // ─── Complementarity Score ──────────────────────────────────────────
 
 function calculateComplementarity(userSkills: string[], projectNeeds: string[]): number {
@@ -291,7 +326,10 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
   });
   const evidenceBonus = (totalEvidenceMatches / Math.max(uniqueProjectSkills.length, 1)) * 0.15; // Up to 15% bonus
   
-  rawScore += evidenceBonus + collabBonus;
+  // Trust & Reputation
+  const { bonus: trustBonus, reason: trustReason } = calculateTrustBonus(user.trustSummary);
+
+  rawScore += evidenceBonus + collabBonus + trustBonus;
 
   // Normalize to 0-100
   const score = Math.min(Math.round(rawScore * 100), 99);
@@ -323,6 +361,10 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
   }
   if (expectationCompatibility > 0) {
     reasons.push({ type: 'intent', label: `Aligned on project duration/expectations`, strength: 'strong' });
+  }
+  
+  if (trustReason) {
+    reasons.push({ type: 'skill', label: trustReason, strength: 'strong' });
   }
 
   return {
@@ -416,7 +458,11 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
   if (workStyleCompatibility < 0) collabBonus -= 0.05;
   if (collabTypeCompatibility < 0) collabBonus -= 0.05;
 
-  // Weighted score
+  // Trust Bonus
+  const { bonus: trustBonus1 } = calculateTrustBonus(user.trustSummary);
+  const { bonus: trustBonus2, reason: trustReason2 } = calculateTrustBonus(target.trustSummary);
+  const avgTrustBonus = (trustBonus1 + trustBonus2) / 2;
+
   let rawScore =
     skillComplementarity * 0.25 +
     interestSimilarity * 0.30 +
@@ -424,7 +470,7 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
     availScore * 0.10 +
     0.1; // base
     
-  rawScore += evidenceBonus + collabBonus;
+  rawScore += evidenceBonus + collabBonus + avgTrustBonus;
 
   const score = Math.min(Math.round(rawScore * 100), 99);
 
@@ -457,6 +503,10 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
   }
   if (expectationCompatibility > 0) {
     reasons.push({ type: 'intent', label: `Aligned on project duration/expectations`, strength: 'strong' });
+  }
+
+  if (trustReason2) {
+    reasons.push({ type: 'skill', label: trustReason2, strength: 'strong' });
   }
 
   return {
