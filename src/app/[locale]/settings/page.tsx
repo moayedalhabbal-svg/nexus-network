@@ -173,7 +173,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground">Sign out of your account on this device</p>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => { logout(); router.push("/"); }}>
-                    <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                    <LogOut className="h-4 w-4 me-2" /> Sign Out
                   </Button>
                 </div>
                 <div className="flex items-center justify-between">
@@ -182,7 +182,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground">Permanently delete your account and all data</p>
                   </div>
                   <Button variant="destructive" size="sm">
-                    <Trash2 className="h-4 w-4 mr-2" /> Delete
+                    <Trash2 className="h-4 w-4 me-2" /> Delete
                   </Button>
                 </div>
               </CardContent>

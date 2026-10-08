@@ -53,7 +53,7 @@ export default function AdminDashboardPage() {
             >
               <AlertTriangle className="h-4 w-4" /> Moderation Queue
               {reports.filter(r => r.status === 'pending').length > 0 && (
-                 <Badge className="ml-auto bg-destructive text-destructive-foreground">
+                 <Badge className="ms-auto bg-destructive text-destructive-foreground">
                    {reports.filter(r => r.status === 'pending').length}
                  </Badge>
               )}
@@ -92,7 +92,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm text-green-500 font-medium">
-                      <ArrowUpRight className="h-4 w-4 mr-1" /> +12% this week
+                      <ArrowUpRight className="h-4 w-4 me-1" /> +12% this week
                     </div>
                   </CardContent>
                 </Card>
@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm text-green-500 font-medium">
-                      <ArrowUpRight className="h-4 w-4 mr-1" /> +8% this week
+                      <ArrowUpRight className="h-4 w-4 me-1" /> +8% this week
                     </div>
                   </CardContent>
                 </Card>
@@ -124,7 +124,7 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                     <div className="mt-4 flex items-center text-sm text-green-500 font-medium">
-                      <ArrowUpRight className="h-4 w-4 mr-1" /> +24% this week
+                      <ArrowUpRight className="h-4 w-4 me-1" /> +24% this week
                     </div>
                   </CardContent>
                 </Card>
@@ -173,14 +173,14 @@ export default function AdminDashboardPage() {
 
               <Card>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
+                  <table className="w-full text-sm text-start">
                     <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
                       <tr>
                         <th className="px-6 py-4 font-medium">User</th>
                         <th className="px-6 py-4 font-medium">Role</th>
                         <th className="px-6 py-4 font-medium">Joined</th>
                         <th className="px-6 py-4 font-medium">Status</th>
-                        <th className="px-6 py-4 font-medium text-right">Actions</th>
+                        <th className="px-6 py-4 font-medium text-end">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -202,7 +202,7 @@ export default function AdminDashboardPage() {
                           <td className="px-6 py-4">
                             <Badge className="bg-green-500/10 text-green-500 border-green-200/20">Active</Badge>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-6 py-4 text-end">
                             <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Edit</Button>
                             <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">Suspend</Button>
                           </td>
@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
                              <div className="flex items-center gap-2">
                                 <Avatar size="sm" alt={report.targetName} />
                                 <span className="font-medium">{report.targetName}</span>
-                                <Button variant="link" size="sm" className="h-auto p-0 ml-2"><Eye className="h-3 w-3 mr-1" /> View</Button>
+                                <Button variant="link" size="sm" className="h-auto p-0 ms-2"><Eye className="h-3 w-3 me-1" /> View</Button>
                              </div>
                           </div>
                           <div>
@@ -299,7 +299,7 @@ export default function AdminDashboardPage() {
 
               <Card>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
+                  <table className="w-full text-sm text-start">
                     <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
                       <tr>
                         <th className="px-6 py-4 font-medium">Timestamp</th>
@@ -323,7 +323,7 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="px-6 py-4">
                              <span className="capitalize">{log.targetType}</span>
-                             <span className="text-muted-foreground ml-2 text-xs font-mono">{log.targetId}</span>
+                             <span className="text-muted-foreground ms-2 text-xs font-mono">{log.targetId}</span>
                           </td>
                           <td className="px-6 py-4 max-w-md">
                             <p className="truncate" title={log.details}>{log.details}</p>

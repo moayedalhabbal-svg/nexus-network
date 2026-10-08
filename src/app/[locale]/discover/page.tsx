@@ -173,7 +173,7 @@ export default function DiscoverPage() {
                 <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="e.g. 'Find climate tech startups looking for engineers'" 
-                  className="pl-9 pr-4 h-11 w-full border-primary/20 focus-visible:ring-primary"
+                  className="ps-9 pe-4 h-11 w-full border-primary/20 focus-visible:ring-primary"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />

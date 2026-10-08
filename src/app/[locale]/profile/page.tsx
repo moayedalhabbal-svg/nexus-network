@@ -98,7 +98,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge variant="success" className="hidden sm:flex">
-                    <span className="h-2 w-2 rounded-full bg-green-500 mr-2 animate-pulse" />
+                    <span className="h-2 w-2 rounded-full bg-green-500 me-2 animate-pulse" />
                     {user.onlineStatus === "online" ? "Online" : user.onlineStatus}
                   </Badge>
                   <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     size="sm"
                     onClick={() => { setEditBioValue(user.bio); setEditingBio(true); }}
                   >
-                    <Edit3 className="h-3.5 w-3.5 mr-2" /> Edit
+                    <Edit3 className="h-3.5 w-3.5 me-2" /> Edit
                   </Button>
                 )}
               </CardHeader>
@@ -191,7 +191,7 @@ export default function ProfilePage() {
                       <p className="text-sm text-muted-foreground">{exp.company} · {exp.location}</p>
                       <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(exp.startDate)} – {exp.current ? "Present" : exp.endDate ? formatDate(exp.endDate) : ""}
-                        {exp.current && <Badge variant="success" className="ml-2 text-[10px]">Current</Badge>}
+                        {exp.current && <Badge variant="success" className="ms-2 text-[10px]">Current</Badge>}
                       </p>
                       <p className="text-sm text-muted-foreground mt-2">{exp.description}</p>
                     </div>

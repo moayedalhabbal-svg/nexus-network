@@ -216,8 +216,8 @@ export default function NewProjectPage() {
                     <label className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Technologies & Stack</label>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {technologies.map(tech => (
-                        <Badge key={tech} variant="secondary" className="pr-1 py-1 text-sm">
-                          {tech} <button onClick={() => setTechnologies(t => t.filter(x => x !== tech))} className="ml-2 hover:text-destructive"><X className="h-3 w-3" /></button>
+                        <Badge key={tech} variant="secondary" className="pe-1 py-1 text-sm">
+                          {tech} <button onClick={() => setTechnologies(t => t.filter(x => x !== tech))} className="ms-2 hover:text-destructive"><X className="h-3 w-3" /></button>
                         </Badge>
                       ))}
                     </div>
@@ -276,7 +276,7 @@ export default function NewProjectPage() {
                       onKeyDown={e => e.key === "Enter" && addNeed()}
                       className="h-11"
                     />
-                    <Button onClick={addNeed} variant="secondary" className="h-11"><Plus className="h-4 w-4 mr-2" /> Add Role</Button>
+                    <Button onClick={addNeed} variant="secondary" className="h-11"><Plus className="h-4 w-4 me-2" /> Add Role</Button>
                   </div>
                 </div>
               )}
@@ -330,16 +330,16 @@ export default function NewProjectPage() {
 
               <div className="flex justify-between mt-10 pt-6 border-t">
                 <Button variant="ghost" onClick={() => setStep(s => Math.max(1, s - 1))} disabled={step === 1}>
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Back
+                  <ArrowLeft className="h-4 w-4 me-2" /> Back
                 </Button>
                 
                 {step < 4 ? (
                   <Button onClick={() => setStep(s => s + 1)} disabled={!canProceed()}>
-                    Continue <ArrowRight className="h-4 w-4 ml-2" />
+                    Continue <ArrowRight className="h-4 w-4 ms-2" />
                   </Button>
                 ) : (
                   <Button onClick={handleSubmit} disabled={!canProceed()} className="bg-green-600 hover:bg-green-700">
-                    <Check className="h-4 w-4 mr-2" /> Publish Project
+                    <Check className="h-4 w-4 me-2" /> Publish Project
                   </Button>
                 )}
               </div>

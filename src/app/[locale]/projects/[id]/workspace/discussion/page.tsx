@@ -13,7 +13,7 @@ export default function WorkspaceDiscussion() {
       <h1 className="text-2xl font-bold">Project Discussion</h1>
       <p className="text-muted-foreground mt-2 max-w-md mb-6">Discussions happen in the main NEXUS Messages app. When you join a project, a group conversation is automatically created.</p>
       <Link href={`/${params.locale}/messages`}>
-        <Button>Open Messages <ArrowRight className="ml-2 h-4 w-4" /></Button>
+        <Button>Open Messages <ArrowRight className="ms-2 h-4 w-4" /></Button>
       </Link>
     </div>
   );

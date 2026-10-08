@@ -127,7 +127,7 @@ export default function LoginPage() {
               <button
                 key={user.id}
                 onClick={() => handleDemoLogin(user.id)}
-                className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent hover:border-primary/30 transition-all text-left group"
+                className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:bg-accent hover:border-primary/30 transition-all text-start group"
               >
                 <Avatar size="sm" alt={user.name} />
                 <div className="flex-1 min-w-0">

@@ -110,14 +110,14 @@ export default function WorkspaceTeam() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-lg">{owner.full_name}</h3>
-                      <Badge variant="default" className="bg-primary text-primary-foreground text-[10px] h-5"><Shield className="h-3 w-3 mr-1" /> Owner</Badge>
+                      <Badge variant="default" className="bg-primary text-primary-foreground text-[10px] h-5"><Shield className="h-3 w-3 me-1" /> Owner</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">{owner.headline}</p>
                   </div>
                 </div>
                 {owner.id !== user?.id && (
                   <Button variant="outline" size="sm">
-                    <MessageSquare className="h-4 w-4 mr-2" /> Message
+                    <MessageSquare className="h-4 w-4 me-2" /> Message
                   </Button>
                 )}
               </CardContent>
@@ -139,7 +139,7 @@ export default function WorkspaceTeam() {
                 </div>
                 {m.profiles.id !== user?.id && (
                   <Button variant="outline" size="sm">
-                    <MessageSquare className="h-4 w-4 mr-2" /> Message
+                    <MessageSquare className="h-4 w-4 me-2" /> Message
                   </Button>
                 )}
               </CardContent>

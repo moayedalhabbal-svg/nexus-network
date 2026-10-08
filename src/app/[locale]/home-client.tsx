@@ -46,11 +46,11 @@ export function HomeClient() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="flex-1 text-center lg:text-left z-10 w-full"
+          className="flex-1 text-center lg:text-start z-10 w-full"
         >
           <motion.div variants={itemVariants}>
             <Badge variant="secondary" className="mb-6 mx-auto lg:mx-0 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
-              <Sparkles className="mr-2 h-3 w-3" />
+              <Sparkles className="me-2 h-3 w-3" />
               Not just another social network
             </Badge>
           </motion.div>
@@ -66,7 +66,7 @@ export function HomeClient() {
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
             <Link href="/onboarding" className="w-full sm:w-auto">
               <Button size="lg" className="w-full h-12 px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow">
-                Join the Network <ArrowRight className="ml-2 h-4 w-4 rtl:rotate-180" />
+                Join the Network <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
               </Button>
             </Link>
             <Link href="/discover" className="w-full sm:w-auto">
@@ -123,7 +123,7 @@ export function HomeClient() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8 }}
-                className="flex items-center gap-4 relative z-10 ml-8"
+                className="flex items-center gap-4 relative z-10 ms-8"
               >
                 <Avatar className="h-10 w-10 border-2 border-background shadow-sm" src={SEED_USERS[2].avatar} alt="User" />
                 <div className="flex-1 bg-background rounded-lg p-3 text-sm border shadow-sm flex justify-between items-center hover:bg-muted/50 cursor-pointer transition-colors">
@@ -139,7 +139,7 @@ export function HomeClient() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1 }}
-                className="flex items-center gap-4 relative z-10 ml-8"
+                className="flex items-center gap-4 relative z-10 ms-8"
               >
                 <Avatar className="h-10 w-10 border-2 border-background shadow-sm" src={SEED_USERS[3].avatar} alt="User" />
                 <div className="flex-1 bg-background rounded-lg p-3 text-sm border shadow-sm flex justify-between items-center hover:bg-muted/50 cursor-pointer transition-colors">
@@ -210,7 +210,7 @@ export function HomeClient() {
             className="flex-1 space-y-6"
           >
             <Badge variant="outline" className="border-primary/30 text-primary">
-              <Bot className="mr-2 h-3 w-3" />
+              <Bot className="me-2 h-3 w-3" />
               Intelligence Layer
             </Badge>
             <h2 className="text-4xl font-bold tracking-tight">Connections powered by deep context.</h2>

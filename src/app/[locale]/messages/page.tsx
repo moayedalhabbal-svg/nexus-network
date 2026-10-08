@@ -183,7 +183,7 @@ export default function MessagesPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search conversations..."
-                className="pl-9"
+                className="ps-9"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
@@ -202,7 +202,7 @@ export default function MessagesPage() {
                   <button
                     key={convo.id}
                     onClick={() => setSelectedConvo(convo)}
-                    className={`w-full flex items-center gap-3 p-4 border-b text-left transition-colors ${
+                    className={`w-full flex items-center gap-3 p-4 border-b text-start transition-colors ${
                       isSelected ? "bg-primary/5 border-l-2 border-l-primary" : "hover:bg-accent"
                     }`}
                   >
@@ -269,7 +269,7 @@ export default function MessagesPage() {
                 return (
                   <div key={msg.id} className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
                     {!isOwn && selectedConvo.is_group && (
-                      <span className="text-xs text-muted-foreground ml-1 mb-1">{msg.profiles?.full_name}</span>
+                      <span className="text-xs text-muted-foreground ms-1 mb-1">{msg.profiles?.full_name}</span>
                     )}
                     <div className={`max-w-[70%] rounded-2xl px-4 py-2.5 ${
                       isOwn
@@ -277,7 +277,7 @@ export default function MessagesPage() {
                         : "bg-background border shadow-sm rounded-bl-md"
                     }`}>
                       <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                      <p className={`text-[10px] mt-1 text-right ${isOwn ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                      <p className={`text-[10px] mt-1 text-end ${isOwn ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
                         {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>

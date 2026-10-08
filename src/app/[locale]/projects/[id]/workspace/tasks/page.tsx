@@ -91,7 +91,7 @@ export default function WorkspaceTasks() {
             onChange={e => setNewTaskTitle(e.target.value)}
             className="w-64"
           />
-          <Button type="submit"><Plus className="h-4 w-4 mr-2" /> Add Task</Button>
+          <Button type="submit"><Plus className="h-4 w-4 me-2" /> Add Task</Button>
         </form>
       </div>
 

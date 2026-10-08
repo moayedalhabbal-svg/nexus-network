@@ -201,15 +201,15 @@ export default function MatchesPage() {
                 <CardFooter className="pt-4 border-t flex flex-col gap-3 bg-muted/10">
                   <div className="flex w-full gap-2 justify-between">
                     <Button variant="ghost" size="sm" onClick={() => handleFeedback(match.id, 'not_relevant', 'project')}>
-                      <X className="mr-2 h-4 w-4" /> Not Relevant
+                      <X className="me-2 h-4 w-4" /> Not Relevant
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleExplain(match, project.title)}>
-                      <Bot className="mr-2 h-4 w-4" /> Explain Match
+                      <Bot className="me-2 h-4 w-4" /> Explain Match
                     </Button>
                   </div>
                   <Link href={`/${locale}/projects/${project.id}`} className="w-full">
                     <Button className="w-full">
-                      <FileText className="mr-2 h-4 w-4" /> View Project
+                      <FileText className="me-2 h-4 w-4" /> View Project
                     </Button>
                   </Link>
                 </CardFooter>
@@ -254,14 +254,14 @@ export default function MatchesPage() {
                 <CardFooter className="pt-4 border-t flex flex-col gap-3 bg-muted/10">
                   <div className="flex w-full gap-2 justify-between">
                     <Button variant="ghost" size="sm" onClick={() => handleFeedback(match.id, 'not_relevant', 'people')}>
-                      <X className="mr-2 h-4 w-4" /> Not Relevant
+                      <X className="me-2 h-4 w-4" /> Not Relevant
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleExplain(match, person.name)}>
-                      <Bot className="mr-2 h-4 w-4" /> Explain Match
+                      <Bot className="me-2 h-4 w-4" /> Explain Match
                     </Button>
                   </div>
                   <Button className="w-full">
-                    <UserPlus className="mr-2 h-4 w-4" /> Connect
+                    <UserPlus className="me-2 h-4 w-4" /> Connect
                   </Button>
                 </CardFooter>
               </Card>

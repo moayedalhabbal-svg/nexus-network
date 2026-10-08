@@ -76,7 +76,7 @@ export default function NetworkPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search people by name, skill, or role..."
-                  className="pl-9"
+                  className="ps-9"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                 />
@@ -186,7 +186,7 @@ export default function NetworkPage() {
                     {isConnected ? (
                       <>
                         <Button variant="outline" className="w-full text-green-600" disabled>
-                          <Check className="h-4 w-4 mr-2" /> Connected
+                          <Check className="h-4 w-4 me-2" /> Connected
                         </Button>
                         <Button variant="outline" size="icon">
                           <MessageSquare className="h-4 w-4" />
@@ -194,12 +194,12 @@ export default function NetworkPage() {
                       </>
                     ) : isPending ? (
                       <Button variant="outline" className="w-full" disabled>
-                        <div className="h-4 w-4 mr-2 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <div className="h-4 w-4 me-2 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         Pending...
                       </Button>
                     ) : (
                       <Button className="w-full" onClick={() => handleConnect(person.id)}>
-                        <UserPlus className="h-4 w-4 mr-2" /> Connect
+                        <UserPlus className="h-4 w-4 me-2" /> Connect
                       </Button>
                     )}
                   </div>

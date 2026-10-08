@@ -83,7 +83,7 @@ export default function ProjectsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search projects..."
-                  className="pl-9"
+                  className="ps-9"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                 />
@@ -155,7 +155,7 @@ export default function ProjectsPage() {
                         </Badge>
                         {project.matchScore !== null && project.matchScore > 50 && (
                           <Badge className="bg-primary/10 text-primary border-primary/20 text-xs" variant="outline">
-                            <Sparkles className="h-3 w-3 mr-1" />
+                            <Sparkles className="h-3 w-3 me-1" />
                             {project.matchScore}%
                           </Badge>
                         )}

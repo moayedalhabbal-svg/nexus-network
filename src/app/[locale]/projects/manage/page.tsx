@@ -134,10 +134,10 @@ export default function ManageProjectsPage() {
                             {app.status === "pending" ? (
                               <div className="flex gap-2">
                                 <Button onClick={() => handleAction(app.id, "accept")} className="flex-1 bg-green-600 hover:bg-green-700">
-                                  <Check className="h-4 w-4 mr-2" /> Accept
+                                  <Check className="h-4 w-4 me-2" /> Accept
                                 </Button>
                                 <Button onClick={() => handleAction(app.id, "reject")} variant="outline" className="flex-1 text-destructive hover:bg-destructive/10">
-                                  <X className="h-4 w-4 mr-2" /> Decline
+                                  <X className="h-4 w-4 me-2" /> Decline
                                 </Button>
                               </div>
                             ) : (

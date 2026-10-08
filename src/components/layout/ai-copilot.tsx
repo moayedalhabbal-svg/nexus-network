@@ -71,7 +71,7 @@ export function GlobalAICopilot() {
                 <Bot className="h-4 w-4 text-primary" />
               </div>
               <span className="font-semibold text-sm">NEXUS Copilot</span>
-              <Badge variant="outline" className="text-[9px] h-4 bg-primary/5 text-primary border-primary/20 ml-1">AI</Badge>
+              <Badge variant="outline" className="text-[9px] h-4 bg-primary/5 text-primary border-primary/20 ms-1">AI</Badge>
             </div>
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-8 w-8">
               <X className="h-4 w-4" />
@@ -125,7 +125,7 @@ export function GlobalAICopilot() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 placeholder="Ask Copilot..."
-                className="pl-9 pr-10 rounded-full bg-muted/30 border-transparent focus-visible:ring-1 focus-visible:bg-background h-10"
+                className="ps-9 pe-10 rounded-full bg-muted/30 border-transparent focus-visible:ring-1 focus-visible:bg-background h-10"
               />
               <button 
                 type="submit" 

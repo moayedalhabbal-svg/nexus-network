@@ -303,7 +303,7 @@ export default function OnboardingPage() {
                       <button
                         key={role.id}
                         onClick={() => toggleArrayItem("roles", role.id)}
-                        className={`flex items-center gap-3 p-4 rounded-xl border-2 text-left transition-all ${
+                        className={`flex items-center gap-3 p-4 rounded-xl border-2 text-start transition-all ${
                           data.roles.includes(role.id)
                             ? "border-primary bg-primary/5 shadow-md"
                             : "border-border hover:border-primary/30 hover:bg-accent"
@@ -312,7 +312,7 @@ export default function OnboardingPage() {
                         <span className="text-2xl">{role.emoji}</span>
                         <span className="font-medium text-sm">{role.label}</span>
                         {data.roles.includes(role.id) && (
-                          <Check className="h-4 w-4 text-primary ml-auto" />
+                          <Check className="h-4 w-4 text-primary ms-auto" />
                         )}
                       </button>
                     ))}
@@ -328,11 +328,11 @@ export default function OnboardingPage() {
                       {data.skills.map(skill => (
                         <Badge
                           key={skill.id}
-                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer pr-1 py-1.5 text-sm"
+                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer pe-1 py-1.5 text-sm"
                           onClick={() => toggleSkill(skill)}
                         >
                           {skill.name}
-                          <span className="ml-2 text-xs opacity-60">✕</span>
+                          <span className="ms-2 text-xs opacity-60">✕</span>
                         </Badge>
                       ))}
                     </div>
@@ -344,12 +344,12 @@ export default function OnboardingPage() {
                     className="h-12 text-base"
                     autoFocus
                   />
-                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 pr-2">
+                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 pe-2">
                     {filteredSkills.slice(0, 30).map(skill => (
                       <button
                         key={skill.id}
                         onClick={() => toggleSkill(skill)}
-                        className={`flex items-center gap-2 p-3 rounded-lg border text-left text-sm transition-all ${
+                        className={`flex items-center gap-2 p-3 rounded-lg border text-start text-sm transition-all ${
                           data.skills.find(s => s.id === skill.id)
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/30 hover:bg-accent"
@@ -374,11 +374,11 @@ export default function OnboardingPage() {
                       {data.interests.map(interest => (
                         <Badge
                           key={interest.id}
-                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer pr-1 py-1.5 text-sm"
+                          className="bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer pe-1 py-1.5 text-sm"
                           onClick={() => toggleInterest(interest)}
                         >
                           {interest.name}
-                          <span className="ml-2 text-xs opacity-60">✕</span>
+                          <span className="ms-2 text-xs opacity-60">✕</span>
                         </Badge>
                       ))}
                     </div>
@@ -390,12 +390,12 @@ export default function OnboardingPage() {
                     className="h-12 text-base"
                     autoFocus
                   />
-                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 pr-2">
+                  <div className="max-h-60 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2 pe-2">
                     {filteredInterests.map(interest => (
                       <button
                         key={interest.id}
                         onClick={() => toggleInterest(interest)}
-                        className={`flex items-center gap-2 p-3 rounded-lg border text-left text-sm transition-all ${
+                        className={`flex items-center gap-2 p-3 rounded-lg border text-start text-sm transition-all ${
                           data.interests.find(i => i.id === interest.id)
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/30 hover:bg-accent"
@@ -418,7 +418,7 @@ export default function OnboardingPage() {
                       <button
                         key={intent.id}
                         onClick={() => toggleArrayItem("intents", intent.id)}
-                        className={`flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
+                        className={`flex items-center gap-4 p-4 rounded-xl border-2 text-start transition-all ${
                           data.intents.includes(intent.id)
                             ? "border-primary bg-primary/5 shadow-md"
                             : "border-border hover:border-primary/30 hover:bg-accent"
@@ -443,7 +443,7 @@ export default function OnboardingPage() {
                         <button
                           key={opt.id}
                           onClick={() => update("availability", opt.id)}
-                          className={`flex items-center justify-between p-4 rounded-xl border-2 text-left transition-all ${
+                          className={`flex items-center justify-between p-4 rounded-xl border-2 text-start transition-all ${
                             data.availability === opt.id
                               ? "border-primary bg-primary/5 shadow-md"
                               : "border-border hover:border-primary/30 hover:bg-accent"

@@ -20,7 +20,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               <span className="font-extrabold text-sm text-primary-foreground">N</span>
             </div>
             <span className="font-bold tracking-tight">NEXUS</span>
-            <span className="text-sm text-muted-foreground ml-2">© 2026. All rights reserved.</span>
+            <span className="text-sm text-muted-foreground ms-2">© 2026. All rights reserved.</span>
           </div>
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link href="/about" className="hover:text-foreground">About</Link>

@@ -110,7 +110,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
         <div className="bg-muted/30 border-b">
           <div className="container mx-auto px-4 py-12">
             <Link href="/discover" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Discover
+              <ArrowLeft className="me-2 h-4 w-4" /> Back to Discover
             </Link>
             
             <div className="flex flex-col md:flex-row gap-8 justify-between items-start">
@@ -165,7 +165,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                 <p className="text-xs text-center text-muted-foreground">Active team members</p>
                 <div className="flex justify-center mt-4">
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-destructive">
-                    <Flag className="h-4 w-4 mr-2" /> Report Project
+                    <Flag className="h-4 w-4 me-2" /> Report Project
                   </Button>
                 </div>
               </div>

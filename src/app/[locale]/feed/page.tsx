@@ -186,7 +186,7 @@ export default function FeedPage() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -mr-2">...</Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 -mt-2 -me-2">...</Button>
                     </div>
 
                     <div className="text-sm whitespace-pre-wrap leading-relaxed">
@@ -220,7 +220,7 @@ export default function FeedPage() {
                     <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm font-medium">
                       <MessageSquare className="h-4 w-4" /> {post.comments}
                     </button>
-                    <button className="flex items-center gap-2 text-muted-foreground hover:text-green-500 transition-colors text-sm font-medium ml-auto">
+                    <button className="flex items-center gap-2 text-muted-foreground hover:text-green-500 transition-colors text-sm font-medium ms-auto">
                       <Share2 className="h-4 w-4" /> Share
                     </button>
                   </CardFooter>

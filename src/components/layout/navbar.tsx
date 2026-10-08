@@ -85,7 +85,7 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 rounded-full p-1 pr-3 hover:bg-accent transition-colors"
+                  className="flex items-center gap-2 rounded-full p-1 pe-3 hover:bg-accent transition-colors"
                 >
                   <Avatar size="sm" alt={user.name} />
                   <span className="text-sm font-medium hidden sm:inline">{user.name.split(' ')[0]}</span>
