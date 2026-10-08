@@ -9,6 +9,12 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
+  // 0. Force manual HTTP redirect for the root path to bypass all rewrite bugs on Vercel
+  if (request.nextUrl.pathname === '/') {
+    const localeCookie = request.cookies.get('NEXT_LOCALE')?.value || 'en';
+    return NextResponse.redirect(new URL(`/${localeCookie}`, request.url));
+  }
+
   // 1. Run Internationalization Middleware
   let response = intlMiddleware(request);
 
