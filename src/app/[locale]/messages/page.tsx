@@ -8,59 +8,142 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import { SEED_USERS } from "@/lib/seed-data";
-import { Send, Search, Phone, Video, MoreVertical, Smile, Paperclip, Bot, MessageSquare } from "lucide-react";
+import { Send, Search, Phone, Video, MoreVertical, Smile, Paperclip, Bot, MessageSquare, Loader2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-interface ChatMessage {
-  id: string;
-  senderId: string;
-  text: string;
-  timestamp: string;
-  type: "text" | "system" | "ai-suggestion";
-}
-
-const INITIAL_CONVERSATIONS = SEED_USERS.slice(0, 8).map((user, idx) => ({
-  userId: user.id,
-  lastMessage: [
-    "Would love to discuss the project further!",
-    "Thanks for connecting! Your work on climate tech is fascinating.",
-    "Are you available for a call this week?",
-    "I've been thinking about your proposal...",
-    "The prototype is looking great so far.",
-    "Let me know if you need help with the ML pipeline.",
-    "Excited to collaborate on this!",
-    "Just shared the design mockups with you.",
-  ][idx],
-  lastMessageTime: new Date(Date.now() - idx * 3600000 * (idx + 1)).toISOString(),
-  unread: idx < 3 ? Math.max(0, 3 - idx) : 0,
-}));
-
-function generateAIResponse(userMessage: string, contactName: string): string {
-  const responses = [
-    `That sounds exciting! I'd love to explore this further. When are you free for a call?`,
-    `Great point! I was actually thinking along similar lines. Let me put together some notes and share them.`,
-    `I've been working on something related — let me send you the repo link. Could be useful for the project.`,
-    `Absolutely, I'm in. Let me check my schedule and get back to you by tomorrow.`,
-    `Interesting approach! Have you considered using a transformer architecture for that? I have some experience there.`,
-    `Love the direction. Let me loop in a few people from my network who might be interested in contributing.`,
-  ];
-  return responses[Math.floor(Math.random() * responses.length)];
-}
+import { createClient } from "@/lib/supabase/client";
 
 export default function MessagesPage() {
   const { user, isAuthenticated, loginAsDemo } = useAuth();
   const router = useRouter();
-  const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
+  
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConvo, setSelectedConvo] = useState<any | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
-  const [conversations, setConversations] = useState(INITIAL_CONVERSATIONS);
-  const [chatMessages, setChatMessages] = useState<Record<string, ChatMessage[]>>({});
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const supabase = createClient();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatMessages, selectedConvo]);
+  }, [messages]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) return;
+    
+    async function loadConversations() {
+      // Fetch conversations the user is part of
+      const { data: convMembers } = await supabase
+        .from('conversation_members')
+        .select('conversation_id')
+        .eq('user_id', user!.id);
+        
+      if (!convMembers || convMembers.length === 0) {
+        setLoading(false);
+        return;
+      }
+      
+      const convoIds = convMembers.map(m => m.conversation_id);
+      
+      // Fetch details
+      const { data: convos } = await supabase
+        .from('conversations')
+        .select(`
+          id, is_group, project_id, context_message, updated_at,
+          projects(title),
+          conversation_members(user_id, last_read_at, profiles(id, full_name, avatar_url))
+        `)
+        .in('id', convoIds)
+        .order('updated_at', { ascending: false });
+        
+      if (convos) {
+        // Format for UI
+        const formatted = convos.map(c => {
+          // Identify other participants
+          const others = c.conversation_members.filter((m: any) => m.user_id !== user!.id);
+          const proj = c.projects as any;
+          const otherProfile = (others[0] as any)?.profiles;
+          
+          const name = c.is_group 
+            ? (proj?.title ? `Project: ${proj.title}` : 'Group Chat')
+            : (otherProfile?.full_name || 'Unknown User');
+            
+          const avatar = c.is_group ? null : otherProfile?.avatar_url;
+          
+          return {
+            ...c,
+            displayName: name,
+            displayAvatar: avatar,
+            participants: others
+          };
+        });
+        setConversations(formatted);
+      }
+      setLoading(false);
+    }
+    
+    loadConversations();
+    
+    // Subscribe to new messages affecting our conversations
+    const channel = supabase.channel('public:messages')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+        // If message is for currently selected convo, append it
+        if (selectedConvo && payload.new.conversation_id === selectedConvo.id) {
+          setMessages(prev => [...prev, payload.new]);
+        }
+        // Also update conversations list order and last message snippet (simplification: just reload convos)
+        loadConversations();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, isAuthenticated, selectedConvo]);
+
+  useEffect(() => {
+    if (!selectedConvo) return;
+    
+    async function loadMessages() {
+      const { data } = await supabase
+        .from('messages')
+        .select('*, profiles(full_name, avatar_url)')
+        .eq('conversation_id', selectedConvo.id)
+        .order('created_at', { ascending: true });
+        
+      if (data) setMessages(data);
+      
+      // Mark as read
+      await supabase
+        .from('conversation_members')
+        .update({ last_read_at: new Date().toISOString() })
+        .eq('conversation_id', selectedConvo.id)
+        .eq('user_id', user!.id);
+    }
+    loadMessages();
+  }, [selectedConvo, user]);
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!messageInput.trim() || !selectedConvo || !user) return;
+    
+    setSending(true);
+    const text = messageInput;
+    setMessageInput("");
+    
+    await supabase.from('messages').insert({
+      conversation_id: selectedConvo.id,
+      sender_id: user.id,
+      content: text
+    });
+    
+    // Update conversation timestamp
+    await supabase.from('conversations').update({ updated_at: new Date().toISOString() }).eq('id', selectedConvo.id);
+    setSending(false);
+  };
 
   if (!isAuthenticated || !user) {
     return (
@@ -82,64 +165,9 @@ export default function MessagesPage() {
     );
   }
 
-  const selectedContact = selectedConvo ? SEED_USERS.find(u => u.id === selectedConvo) : null;
-  const currentMessages = selectedConvo ? (chatMessages[selectedConvo] || []) : [];
-
-  const filteredConversations = conversations.filter(c => {
-    const contact = SEED_USERS.find(u => u.id === c.userId);
-    if (!contact) return false;
-    if (!searchQuery.trim()) return true;
-    return contact.name.toLowerCase().includes(searchQuery.toLowerCase());
-  });
-
-  const sendMessage = () => {
-    if (!messageInput.trim() || !selectedConvo) return;
-
-    const newMsg: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      senderId: user.id,
-      text: messageInput,
-      timestamp: new Date().toISOString(),
-      type: "text",
-    };
-
-    setChatMessages(prev => ({
-      ...prev,
-      [selectedConvo]: [...(prev[selectedConvo] || []), newMsg],
-    }));
-
-    setConversations(prev =>
-      prev.map(c => c.userId === selectedConvo ? { ...c, lastMessage: messageInput, lastMessageTime: new Date().toISOString(), unread: 0 } : c)
-    );
-
-    setMessageInput("");
-
-    // Simulate reply
-    const contactName = selectedContact?.name || "User";
-    setTimeout(() => {
-      const reply: ChatMessage = {
-        id: `msg-${Date.now()}-reply`,
-        senderId: selectedConvo,
-        text: generateAIResponse(messageInput, contactName),
-        timestamp: new Date().toISOString(),
-        type: "text",
-      };
-
-      setChatMessages(prev => ({
-        ...prev,
-        [selectedConvo]: [...(prev[selectedConvo] || []), reply],
-      }));
-    }, 1500 + Math.random() * 2000);
-  };
-
-  const formatTime = (ts: string) => {
-    const d = new Date(ts);
-    const now = new Date();
-    const diffH = Math.floor((now.getTime() - d.getTime()) / 3600000);
-    if (diffH < 1) return "Just now";
-    if (diffH < 24) return `${diffH}h ago`;
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
+  const filteredConversations = conversations.filter(c => 
+    c.displayName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -161,97 +189,94 @@ export default function MessagesPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {filteredConversations.map(convo => {
-              const contact = SEED_USERS.find(u => u.id === convo.userId);
-              if (!contact) return null;
-              const isSelected = selectedConvo === convo.userId;
-
-              return (
-                <button
-                  key={convo.userId}
-                  onClick={() => {
-                    setSelectedConvo(convo.userId);
-                    setConversations(prev => prev.map(c => c.userId === convo.userId ? { ...c, unread: 0 } : c));
-                  }}
-                  className={`w-full flex items-start gap-3 p-4 border-b text-left transition-colors ${
-                    isSelected ? "bg-primary/5 border-l-2 border-l-primary" : "hover:bg-accent"
-                  }`}
-                >
-                  <div className="relative">
-                    <Avatar size="md" alt={contact.name} />
-                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-center">
-                      <span className={`text-sm ${convo.unread > 0 ? 'font-bold' : 'font-medium'}`}>{contact.name}</span>
-                      <span className="text-[10px] text-muted-foreground shrink-0">{formatTime(convo.lastMessageTime)}</span>
+            {loading ? (
+              <div className="flex justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+            ) : filteredConversations.length === 0 ? (
+              <div className="text-center p-8 text-muted-foreground">No conversations found.</div>
+            ) : (
+              filteredConversations.map(convo => {
+                const isSelected = selectedConvo?.id === convo.id;
+                return (
+                  <button
+                    key={convo.id}
+                    onClick={() => setSelectedConvo(convo)}
+                    className={`w-full flex items-center gap-3 p-4 border-b text-left transition-colors ${
+                      isSelected ? "bg-primary/5 border-l-2 border-l-primary" : "hover:bg-accent"
+                    }`}
+                  >
+                    {convo.is_group ? (
+                      <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                        <Users className="h-5 w-5 text-primary" />
+                      </div>
+                    ) : (
+                      <Avatar className="h-10 w-10 shrink-0" alt={convo.displayName} src={convo.displayAvatar} />
+                    )}
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-medium truncate">{convo.displayName}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {convo.context_message || "Active conversation"}
+                      </p>
                     </div>
-                    <p className={`text-xs mt-0.5 truncate ${convo.unread > 0 ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-                      {convo.lastMessage}
-                    </p>
-                  </div>
-                  {convo.unread > 0 && (
-                    <span className="h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center shrink-0">
-                      {convo.unread}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
 
         {/* Chat Area */}
-        {selectedContact ? (
-          <div className="flex-1 flex flex-col">
+        {selectedConvo ? (
+          <div className="flex-1 flex flex-col bg-muted/10">
             {/* Chat Header */}
             <div className="h-16 border-b flex items-center justify-between px-4 bg-background">
               <div className="flex items-center gap-3">
                 <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSelectedConvo(null)}>
                   ←
                 </Button>
-                <Avatar size="sm" alt={selectedContact.name} />
+                {selectedConvo.is_group ? (
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                    <Users className="h-4 w-4 text-primary" />
+                  </div>
+                ) : (
+                  <Avatar className="h-8 w-8" alt={selectedConvo.displayName} src={selectedConvo.displayAvatar} />
+                )}
                 <div>
-                  <p className="text-sm font-semibold">{selectedContact.name}</p>
-                  <p className="text-xs text-green-500">Online</p>
+                  <p className="text-sm font-semibold">{selectedConvo.displayName}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon"><Phone className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon"><Video className="h-4 w-4" /></Button>
                 <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>
               </div>
             </div>
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {/* AI Suggestion */}
-              {currentMessages.length === 0 && (
-                <div className="flex items-start gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20 mb-6">
-                  <Bot className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-primary">AI Conversation Starter</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      You both share an interest in {selectedContact.interests[0]?.name || "technology"}.
-                      {selectedContact.intents.includes("collaborator") && " They're actively looking for collaborators."}
-                      Try asking about their work on {selectedContact.skills[0]?.name || "their latest project"}!
-                    </p>
-                  </div>
+              {selectedConvo.context_message && (
+                <div className="flex justify-center my-4">
+                  <Badge variant="secondary" className="px-3 py-1 font-normal bg-primary/10 text-primary border-primary/20">
+                    {selectedConvo.context_message}
+                  </Badge>
                 </div>
               )}
 
-              {currentMessages.map(msg => {
-                const isOwn = msg.senderId === user.id;
+              {messages.map(msg => {
+                const isOwn = msg.sender_id === user.id;
                 return (
-                  <div key={msg.id} className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+                  <div key={msg.id} className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
+                    {!isOwn && selectedConvo.is_group && (
+                      <span className="text-xs text-muted-foreground ml-1 mb-1">{msg.profiles?.full_name}</span>
+                    )}
                     <div className={`max-w-[70%] rounded-2xl px-4 py-2.5 ${
                       isOwn
                         ? "bg-primary text-primary-foreground rounded-br-md"
-                        : "bg-muted rounded-bl-md"
+                        : "bg-background border shadow-sm rounded-bl-md"
                     }`}>
-                      <p className="text-sm">{msg.text}</p>
-                      <p className={`text-[10px] mt-1 ${isOwn ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      <p className={`text-[10px] mt-1 text-right ${isOwn ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                        {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>
                   </div>
@@ -262,26 +287,23 @@ export default function MessagesPage() {
 
             {/* Input */}
             <div className="p-4 border-t bg-background">
-              <form
-                onSubmit={e => { e.preventDefault(); sendMessage(); }}
-                className="flex items-center gap-2"
-              >
+              <form onSubmit={sendMessage} className="flex items-center gap-2">
                 <Button type="button" variant="ghost" size="icon"><Paperclip className="h-4 w-4" /></Button>
                 <Input
                   placeholder="Type a message..."
                   value={messageInput}
                   onChange={e => setMessageInput(e.target.value)}
                   className="flex-1 h-11"
+                  disabled={sending}
                 />
-                <Button type="button" variant="ghost" size="icon"><Smile className="h-4 w-4" /></Button>
-                <Button type="submit" size="icon" disabled={!messageInput.trim()}>
+                <Button type="submit" size="icon" disabled={!messageInput.trim() || sending}>
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
             </div>
           </div>
         ) : (
-          <div className="flex-1 hidden md:flex items-center justify-center bg-muted/20">
+          <div className="flex-1 hidden md:flex items-center justify-center bg-muted/10">
             <div className="text-center">
               <div className="mx-auto h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
                 <MessageSquare className="h-8 w-8 text-muted-foreground" />

@@ -13,12 +13,15 @@ import { getProjectById } from "@/lib/seed-data";
 import { matchUserToProject } from "@/lib/matching-engine";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function ProjectClient({ projectId }: { projectId: string }) {
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  const params = useParams();
+  const locale = params?.locale || "en";
   
   useEffect(() => {
     async function fetchProject() {
@@ -139,9 +142,17 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
               </div>
               
               <div className="w-full md:w-auto shrink-0 space-y-4">
-                <Button size="lg" className="w-full h-12 text-base shadow-lg" onClick={handleJoinClick}>
-                  Join Project
-                </Button>
+                {user && ((project.owner_id || project.ownerId) === user.id || project.team.some((m: any) => m.id === user.id)) ? (
+                  <Link href={`/${locale}/projects/${projectId}/workspace`} className="w-full">
+                    <Button size="lg" className="w-full h-12 text-base shadow-lg bg-primary">
+                      Open Workspace
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button size="lg" className="w-full h-12 text-base shadow-lg" onClick={handleJoinClick}>
+                    Join Project
+                  </Button>
+                )}
                 <div className="flex -space-x-2 justify-center">
                   {project.team.map((member: any) => (
                     <Avatar key={member.id} alt={member.name} src={member.avatar} className="border-2 border-background" />
