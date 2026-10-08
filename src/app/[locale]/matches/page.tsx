@@ -1,22 +1,67 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, ArrowRight, UserPlus, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sparkles, ArrowRight, UserPlus, FileText, Check, X, Bot, Loader2 } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 
-import { getProjectRecommendations, getPeopleRecommendations } from "@/lib/matching-engine";
-import { CURRENT_USER } from "@/lib/seed-data";
+import { explainMatchAction, saveMatchFeedbackAction } from "@/app/actions/matching";
+import { computeMatchesAction } from "@/app/actions/compute-matches";
 import { MatchReason } from "@/lib/types";
+import { useAuth } from "@/lib/auth-context";
+import Link from "next/link";
+import { useLocale } from "next-intl";
 
 export default function MatchesPage() {
   const [activeTab, setActiveTab] = useState<"projects" | "people">("projects");
+  const [loading, setLoading] = useState(true);
+  const [projectMatches, setProjectMatches] = useState<any[]>([]);
+  const [peopleMatches, setPeopleMatches] = useState<any[]>([]);
+  const [explanationText, setExplanationText] = useState("");
+  const [isExplainOpen, setIsExplainOpen] = useState(false);
+  const [explaining, setExplaining] = useState(false);
+  
+  const { user } = useAuth();
+  const locale = useLocale();
 
-  const projectMatches = getProjectRecommendations(CURRENT_USER, 10);
-  const peopleMatches = getPeopleRecommendations(CURRENT_USER, 10);
+  useEffect(() => {
+    async function loadMatches() {
+      const res = await computeMatchesAction();
+      if (res.success) {
+        setProjectMatches(res.projectMatches || []);
+        setPeopleMatches(res.peopleMatches || []);
+      }
+      setLoading(false);
+    }
+    if (user) loadMatches();
+    else setLoading(false);
+  }, [user]);
+
+  const handleExplain = async (match: any, targetName: string) => {
+    setExplaining(true);
+    setIsExplainOpen(true);
+    const res = await explainMatchAction(user?.id || '', targetName, match.reasons, match.gaps);
+    if (res.success) {
+      setExplanationText(res.explanation!);
+    } else {
+      setExplanationText("Explanation unavailable.");
+    }
+    setExplaining(false);
+  };
+
+  const handleFeedback = async (matchId: string, status: 'relevant' | 'not_relevant', type: 'project' | 'people') => {
+    await saveMatchFeedbackAction(matchId, status);
+    if (status === 'not_relevant') {
+      if (type === 'project') {
+        setProjectMatches(prev => prev.filter(p => p.match.id !== matchId));
+      } else {
+        setPeopleMatches(prev => prev.filter(p => p.match.id !== matchId));
+      }
+    }
+  };
 
   const getMatchColor = (score: number) => {
     if (score >= 90) return "bg-green-500/10 text-green-500 border-green-500/20";
@@ -29,10 +74,23 @@ export default function MatchesPage() {
       case "skill": return "✓";
       case "interest": return "♥";
       case "intent": return "🎯";
+      case "availability": return "⌚";
       case "complementary": return "➕";
       default: return "•";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 bg-muted/20 flex flex-col items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Running AI Hybrid Matching Engine...</p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -45,9 +103,9 @@ export default function MatchesPage() {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                <h1 className="text-3xl font-bold tracking-tight">Your Matches</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Your AI Matches</h1>
               </div>
-              <p className="text-muted-foreground">AI-curated recommendations based on your skills, intent, and complementarity.</p>
+              <p className="text-muted-foreground">V2.0 Hybrid Recommendations based on skills, intent, and semantic alignment.</p>
             </div>
           </div>
 
@@ -79,13 +137,13 @@ export default function MatchesPage() {
           {/* Content */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {activeTab === "projects" && projectMatches.map(project => (
+            {activeTab === "projects" && projectMatches.map(({ project, match }) => (
               <Card key={project.id} className="flex flex-col overflow-hidden">
                 <CardHeader className="pb-4 border-b bg-muted/30">
                   <div className="flex justify-between items-start mb-4">
-                    <Badge variant="outline" className="capitalize">{project.category.replace('_', ' ')}</Badge>
-                    <Badge className={getMatchColor(project.match.score)} variant="outline">
-                      {project.match.score}% Match
+                    <Badge variant="outline" className="capitalize">{project.categories?.[0]?.replace('_', ' ')}</Badge>
+                    <Badge className={getMatchColor(match.score)} variant="outline">
+                      {match.score}% Match
                     </Badge>
                   </div>
                   <CardTitle className="text-xl">{project.title}</CardTitle>
@@ -96,25 +154,24 @@ export default function MatchesPage() {
                   <div>
                     <h4 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">Why you match</h4>
                     <div className="grid gap-3">
-                      {project.match.reasons.map((reason, idx) => (
+                      {match.reasons.map((reason: any, idx: number) => (
                         <div key={idx} className="flex items-start gap-3 text-sm">
                           <span className={`mt-0.5 flex shrink-0 items-center justify-center rounded-full h-5 w-5 text-[10px] bg-primary/10 text-primary`}>
                             {getReasonIcon(reason.type)}
                           </span>
                           <span className={`${reason.type === 'complementary' ? 'font-medium' : ''}`}>
-                            {reason.type === 'complementary' ? reason.label : reason.label}
-                            {reason.type === 'intent' && <span className="text-muted-foreground block text-xs mt-0.5">Project is actively looking for collaborators</span>}
+                            {reason.label}
                           </span>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  {project.match.gaps.length > 0 && (
+                  {match.gaps.length > 0 && (
                     <div className="p-4 rounded-lg bg-yellow-500/5 border border-yellow-500/10">
                       <h4 className="text-xs font-semibold text-yellow-600 dark:text-yellow-500 uppercase tracking-wider mb-2">Potential Gaps</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {project.match.gaps.map((gap, idx) => (
+                        {match.gaps.map((gap: any, idx: number) => (
                           <li key={idx}>• {gap.label}</li>
                         ))}
                       </ul>
@@ -122,15 +179,25 @@ export default function MatchesPage() {
                   )}
                 </CardContent>
                 
-                <CardFooter className="pt-4 border-t flex gap-3 bg-muted/10">
-                  <Button className="w-full">
-                    <FileText className="mr-2 h-4 w-4" /> View Project
-                  </Button>
+                <CardFooter className="pt-4 border-t flex flex-col gap-3 bg-muted/10">
+                  <div className="flex w-full gap-2 justify-between">
+                    <Button variant="ghost" size="sm" onClick={() => handleFeedback(match.id, 'not_relevant', 'project')}>
+                      <X className="mr-2 h-4 w-4" /> Not Relevant
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleExplain(match, project.title)}>
+                      <Bot className="mr-2 h-4 w-4" /> Explain Match
+                    </Button>
+                  </div>
+                  <Link href={`/${locale}/projects/${project.id}`} className="w-full">
+                    <Button className="w-full">
+                      <FileText className="mr-2 h-4 w-4" /> View Project
+                    </Button>
+                  </Link>
                 </CardFooter>
               </Card>
             ))}
 
-            {activeTab === "people" && peopleMatches.map(person => (
+            {activeTab === "people" && peopleMatches.map(({ user: person, match }) => (
               <Card key={person.id} className="flex flex-col overflow-hidden">
                 <CardHeader className="pb-4 border-b bg-muted/30">
                   <div className="flex justify-between items-start">
@@ -141,8 +208,8 @@ export default function MatchesPage() {
                         <CardDescription className="line-clamp-1 mt-1">{person.headline}</CardDescription>
                       </div>
                     </div>
-                    <Badge className={getMatchColor(person.match.score)} variant="outline">
-                      {person.match.score}% Match
+                    <Badge className={getMatchColor(match.score)} variant="outline">
+                      {match.score}% Match
                     </Badge>
                   </div>
                 </CardHeader>
@@ -151,7 +218,7 @@ export default function MatchesPage() {
                   <div>
                     <h4 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wider">Why you should meet</h4>
                     <div className="grid gap-3">
-                      {person.match.reasons.map((reason, idx) => (
+                      {match.reasons.map((reason: any, idx: number) => (
                         <div key={idx} className="flex items-start gap-3 text-sm">
                           <span className={`mt-0.5 flex shrink-0 items-center justify-center rounded-full h-5 w-5 text-[10px] bg-primary/10 text-primary`}>
                             {getReasonIcon(reason.type)}
@@ -165,17 +232,58 @@ export default function MatchesPage() {
                   </div>
                 </CardContent>
                 
-                <CardFooter className="pt-4 border-t flex gap-3 bg-muted/10">
+                <CardFooter className="pt-4 border-t flex flex-col gap-3 bg-muted/10">
+                  <div className="flex w-full gap-2 justify-between">
+                    <Button variant="ghost" size="sm" onClick={() => handleFeedback(match.id, 'not_relevant', 'people')}>
+                      <X className="mr-2 h-4 w-4" /> Not Relevant
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleExplain(match, person.name)}>
+                      <Bot className="mr-2 h-4 w-4" /> Explain Match
+                    </Button>
+                  </div>
                   <Button className="w-full">
                     <UserPlus className="mr-2 h-4 w-4" /> Connect
                   </Button>
                 </CardFooter>
               </Card>
             ))}
+            
+            {((activeTab === 'projects' && projectMatches.length === 0) || (activeTab === 'people' && peopleMatches.length === 0)) && (
+               <div className="col-span-full py-20 text-center text-muted-foreground">
+                 No matches found.
+               </div>
+            )}
 
           </div>
         </div>
       </main>
+      
+      {/* Explain Match Modal */}
+      {isExplainOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-background w-full max-w-md rounded-xl p-6 shadow-xl border">
+            <h2 className="text-xl font-bold mb-2">AI Match Explanation</h2>
+            <p className="text-muted-foreground text-sm mb-4">Understanding why the engine recommended this for you.</p>
+            
+            <div className="py-4 whitespace-pre-wrap max-h-[60vh] overflow-y-auto">
+              {explaining ? (
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Loader2 className="animate-spin h-5 w-5" /> 
+                  Generating semantic explanation...
+                </div>
+              ) : (
+                <div className="text-sm">
+                  {explanationText}
+                </div>
+              )}
+            </div>
+            
+            <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+              <Button variant="outline" onClick={() => setIsExplainOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
