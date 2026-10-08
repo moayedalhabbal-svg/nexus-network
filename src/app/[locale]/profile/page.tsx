@@ -315,19 +315,31 @@ export default function ProfilePage() {
                         <span className="text-muted-foreground">{user.trustSummary.verifiedCollaborations} Verified {user.trustSummary.verifiedCollaborations === 1 ? 'Collaboration' : 'Collaborations'}</span>
                       </div>
                     )}
-                    {user.trustSummary.reliabilityScore > 80 && (
+                    {user.trustSummary.reliabilityStatus && (
                       <div className="flex items-center gap-2 text-sm">
-                        <Check className="h-4 w-4 text-green-500" />
-                        <span className="text-muted-foreground">Reliable Contributor</span>
-                      </div>
-                    )}
-                    {user.trustSummary.communicationScore > 80 && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Check className="h-4 w-4 text-green-500" />
-                        <span className="text-muted-foreground">Responsive Communicator</span>
+                        {user.trustSummary.reliabilityStatus === 'Reliable Collaborator' ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <div className="h-4 w-4 flex items-center justify-center"><div className="h-2 w-2 rounded-full bg-yellow-500" /></div>
+                        )}
+                        <span className="text-muted-foreground">{user.trustSummary.reliabilityStatus}</span>
                       </div>
                     )}
                   </div>
+
+                  {user.trustSummary.responseRate > 0 && (
+                    <div className="pt-4 border-t border-border/50 space-y-2">
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Response Pattern</p>
+                      <div className="text-sm text-muted-foreground">
+                        {user.trustSummary.averageResponseTimeHours <= 24 ? 
+                          'Usually responds within 24 hours' : 
+                         user.trustSummary.averageResponseTimeHours <= 48 ? 
+                          'Usually responds within 1–2 days' : 
+                          'Response pattern varies'
+                        }
+                      </div>
+                    </div>
+                  )}
 
                   {user.trustSummary.feedbackCount > 0 && (
                     <div className="pt-4 border-t border-border/50 space-y-2">

@@ -155,14 +155,24 @@ function calculateTrustBonus(trust?: import('./types').TrustSummary): { bonus: n
     bonus += 0.02;
   }
   
+  // Response Reliability (up to 2% bonus)
+  if (trust.responseRate >= 90 && trust.recentResponseActivity > 80) {
+    bonus += 0.02;
+  } else if (trust.responseRate < 50 && trust.recentResponseActivity < 50) {
+    // Penalty for consistent recent ghosting/low response
+    bonus -= 0.02;
+  }
+  
   // Abandonment penalty (up to -5% penalty)
   if (trust.abandonedProjects > 0) {
     bonus -= Math.min(trust.abandonedProjects * 0.02, 0.05);
   }
   
   let reason = null;
-  if (bonus > 0.05) {
-    reason = `Strong fit with ${trust.completedProjects} verified project ${trust.completedProjects === 1 ? 'experience' : 'experiences'} and positive collaborator feedback`;
+  if (bonus > 0.07) {
+    reason = `Strong collaboration fit with a consistent response pattern and ${trust.completedProjects} completed projects`;
+  } else if (bonus > 0.04) {
+    reason = `Verified collaboration history and reliable response pattern`;
   } else if (bonus > 0) {
     reason = `Verified collaboration history (${trust.completedProjects} completed)`;
   }

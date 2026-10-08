@@ -3,13 +3,15 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, Activity, CheckSquare, Users } from "lucide-react";
+import { Loader2, Activity, CheckSquare, Users, AlertCircle } from "lucide-react";
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function WorkspaceOverview() {
   const params = useParams();
   const [stats, setStats] = useState({ tasks: 0, members: 0, updates: 0 });
   const [loading, setLoading] = useState(true);
+  const [showReminder, setShowReminder] = useState(true);
 
   useEffect(() => {
     async function loadStats() {
@@ -45,6 +47,25 @@ export default function WorkspaceOverview() {
         <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
         <p className="text-muted-foreground mt-1">Project activity and quick metrics.</p>
       </div>
+      
+      {showReminder && (
+        <Card className="border-yellow-500/50 bg-yellow-500/5 shadow-sm">
+          <CardContent className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Your project team is waiting for an update.</p>
+                <p className="text-xs text-muted-foreground mt-1">Consistent communication builds your reliability score.</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <Button size="sm" onClick={() => setShowReminder(false)}>Send Update</Button>
+              <Button size="sm" variant="outline" onClick={() => setShowReminder(false)}>Adjust Availability</Button>
+              <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setShowReminder(false)}>Leave Project</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>

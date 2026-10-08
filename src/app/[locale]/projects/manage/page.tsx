@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { SEED_PROJECTS, SEED_USERS } from "@/lib/seed-data";
 import { trackEvent } from "@/lib/analytics";
-import { FolderKanban, Users, Check, X } from "lucide-react";
+import { FolderKanban, Users, Check, X, AlertCircle } from "lucide-react";
 
 // Mock Applications Data
 const MOCK_APPLICATIONS = [
@@ -21,6 +21,7 @@ const MOCK_APPLICATIONS = [
 export default function ManageProjectsPage() {
   const { user, isAuthenticated, loginAsDemo } = useAuth();
   const [apps, setApps] = useState(MOCK_APPLICATIONS);
+  const [showReminder, setShowReminder] = useState(true);
 
   if (!isAuthenticated || !user) {
     return (
@@ -89,6 +90,23 @@ export default function ManageProjectsPage() {
 
             {/* Applications List */}
             <div className="lg:col-span-3 space-y-6">
+              {showReminder && apps.filter(a => a.status === 'pending').length > 0 && (
+                <Card className="border-yellow-500/50 bg-yellow-500/5 shadow-sm">
+                  <CardContent className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-sm">{apps.filter(a => a.status === 'pending').length} applicants are waiting for a response.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Prompt responses to applicants improve your reliability score.</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                      <Button size="sm" onClick={() => setShowReminder(false)}>Review Applications</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              
               <Card>
                 <CardHeader>
                   <CardTitle className="text-xl">Pending Applications</CardTitle>
@@ -131,6 +149,21 @@ export default function ManageProjectsPage() {
                                 <span className="text-sm font-semibold">AI Match Score:</span>
                                 <Badge className="bg-primary/10 text-primary border-primary/20">{app.score}%</Badge>
                               </div>
+                              
+                              {applicant.trustSummary && (
+                                <div className="space-y-1 mb-4 pt-4 border-t border-border/50">
+                                  <div className="flex justify-between items-center text-xs">
+                                    <span className="text-muted-foreground">Projects:</span>
+                                    <span className="font-medium">{applicant.trustSummary.completedProjects} Completed</span>
+                                  </div>
+                                  <div className="flex justify-between items-center text-xs">
+                                    <span className="text-muted-foreground">Reliability:</span>
+                                    <span className={applicant.trustSummary.reliabilityStatus === 'Reliable Collaborator' ? "text-green-500 font-medium" : "text-yellow-500 font-medium"}>
+                                      {applicant.trustSummary.reliabilityStatus}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
                             </div>
                             
                             {app.status === "pending" ? (

@@ -127,8 +127,9 @@ export interface CollaborationRecord {
   role: string;
   joinedAt: string;
   completedAt: string | null;
-  contributionStatus: 'active' | 'completed' | 'abandoned';
+  contributionStatus: 'active' | 'completed' | 'abandoned' | 'withdrawn' | 'cancelled';
   completionConfirmation: 'confirmed' | 'unconfirmed' | 'rejected';
+  withdrawalReason?: string;
 }
 
 export interface CollaborationFeedback {
@@ -154,6 +155,11 @@ export interface TrustSummary {
   teamworkScore: number;
   feedbackCount: number;
   abandonedProjects: number;
+  withdrawals: number;
+  responseRate: number; // percentage 0-100
+  averageResponseTimeHours: number;
+  recentResponseActivity: number; // 0-100
+  reliabilityStatus: 'Reliable Collaborator' | 'Response Pattern Varies' | 'Limited Collaboration History';
 }
 
 // ─── Project Types ──────────────────────────────────────────────────
