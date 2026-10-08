@@ -43,6 +43,8 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
           location: data.profiles?.location || 'Remote',
           milestones: [], // Mock or omit for now
           technologies: [], // Mock or omit
+          fundingStatus: data.fundingStatus || 'bootstrapped',
+          remote: data.remote ?? true,
           team: data.project_members?.map((m: any) => ({
             id: m.id,
             name: m.profiles?.full_name || 'Unknown',

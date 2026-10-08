@@ -6,12 +6,18 @@ const supabase = createClient(
 );
 
 async function run() {
-  console.log('Querying projects...');
-  const { data: projects, error } = await supabase.from('projects').select('*');
-  console.log('Projects count:', projects?.length, error);
-
-  console.log('Querying profiles...');
-  const { data: profiles, error: pError } = await supabase.from('profiles').select('*');
-  console.log('Profiles count:', profiles?.length, pError);
+  const projectId = '11111111-2222-3333-4444-000000000032';
+  const { data, error } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          profiles!projects_owner_id_fkey(full_name, avatar_url, location),
+          project_needs(*),
+          project_members(*, profiles(full_name, avatar_url))
+        `)
+        .eq('id', projectId)
+        .single();
+  console.log("Error:", error);
+  console.log("Data:", !!data);
 }
 run();
