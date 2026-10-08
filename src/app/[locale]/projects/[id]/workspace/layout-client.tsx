@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   LayoutDashboard, Users, CheckSquare, Target, 
-  FileText, MessageSquare, ArrowLeft, Loader2
+  FileText, MessageSquare, ArrowLeft, Loader2, UserPlus
 } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { createClient } from "@/lib/supabase/client";
@@ -17,6 +17,7 @@ const WORKSPACE_NAV = [
   { name: "Tasks", href: "/tasks", icon: CheckSquare },
   { name: "Milestones", href: "/milestones", icon: Target },
   { name: "Team", href: "/team", icon: Users },
+  { name: "Recruit", href: "/recruit", icon: UserPlus },
   { name: "Files", href: "/files", icon: FileText },
   { name: "Discussion", href: "/discussion", icon: MessageSquare },
 ];

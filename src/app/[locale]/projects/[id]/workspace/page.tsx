@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SEED_PROJECTS, SEED_WORKSPACE_MILESTONES, SEED_WORKSPACE_TASKS } from "@/lib/seed-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Activity, CheckSquare, Users, AlertCircle, Target, ArrowRight } from "lucide-react";
+import { Loader2, Activity, CheckSquare, Users, AlertCircle, Target, ArrowRight, UserPlus } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +143,20 @@ export default function WorkspaceOverview() {
             <CardContent>
               <div className="text-3xl font-bold">{stats.members}</div>
               <p className="text-xs text-muted-foreground mt-1">Active Collaborators</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-sm flex items-center gap-2 text-primary">
+                <UserPlus className="h-4 w-4" /> Recruiting
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs mb-3">Looking to expand your team? Use AI to find the perfect collaborators.</p>
+              <Button asChild size="sm" className="w-full">
+                <Link href="./workspace/recruit">Find Collaborators</Link>
+              </Button>
             </CardContent>
           </Card>
 
