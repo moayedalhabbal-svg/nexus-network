@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { projectSchema, applicationSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
+import { formatProjectForEmbedding, generateTextEmbedding } from "@/lib/embeddings";
 
 export async function createProjectAction(formData: FormData) {
   try {
@@ -46,6 +47,28 @@ export async function createProjectAction(formData: FormData) {
       console.error("Failed to create project:", error);
       return { success: false, error: error.message };
     }
+
+    // Fire and forget embedding generation
+    const projectForEmbedding = {
+      title: project.title,
+      category: project.category,
+      pitch: project.pitch,
+      problem: project.problem,
+      solution: project.solution,
+      description: project.description,
+      project_needs: [] // Since we haven't added needs yet, this is empty on creation
+    };
+    const embeddingText = formatProjectForEmbedding(projectForEmbedding);
+    generateTextEmbedding(embeddingText).then(async (embeddingArray) => {
+      if (embeddingArray && embeddingArray.length > 0) {
+        await supabase.from("projects").update({
+          embedding: `[${embeddingArray.join(',')}]`,
+          embedding_generated_at: new Date().toISOString()
+        }).eq("id", project.id);
+      }
+    }).catch(err => {
+      console.error("Failed to generate embedding for project", err);
+    });
 
     revalidatePath("/projects");
     return { success: true, projectId: project.id };
