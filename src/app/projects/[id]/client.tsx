@@ -9,17 +9,25 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 
-import { getProjectById, CURRENT_USER } from "@/lib/seed-data";
+import { getProjectById } from "@/lib/seed-data";
 import { matchUserToProject } from "@/lib/matching-engine";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function ProjectClient({ projectId }: { projectId: string }) {
   const project = getProjectById(projectId) || getProjectById("proj-1")!;
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [matchResult, setMatchResult] = useState<any>(null);
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
   
   const handleJoinClick = () => {
-    setMatchResult(matchUserToProject(CURRENT_USER, project));
+    if (!isAuthenticated || !user) {
+      router.push("/login");
+      return;
+    }
+    setMatchResult(matchUserToProject(user, project));
     setShowJoinModal(true);
   };
 
