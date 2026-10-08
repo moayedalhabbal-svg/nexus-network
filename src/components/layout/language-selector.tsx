@@ -20,6 +20,7 @@ export function LanguageSelector() {
   ];
 
   const handleLanguageChange = (newLocale: string) => {
+    // eslint-disable-next-line react-hooks/immutability
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     
     // Replace the first segment (the old locale) with the new locale

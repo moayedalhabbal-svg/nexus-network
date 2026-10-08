@@ -4,7 +4,7 @@
 import type {
   UserProfile, Project, ResearchOpportunity, MentorProfile,
   InvestorProfile, Opportunity, FeedPost, Notification,
-  Conversation, Message, ProjectApplication, MatchResult,
+  Conversation, Message,
   Connection
 } from './types';
 

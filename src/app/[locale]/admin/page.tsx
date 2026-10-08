@@ -12,8 +12,8 @@ import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit">("overview");
-  const [reports, setReports] = useState(SEED_REPORTS);
-  const [logs, setLogs] = useState(SEED_AUDIT_LOGS);
+  const [reports] = useState(SEED_REPORTS);
+  const [logs] = useState(SEED_AUDIT_LOGS);
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/10">

@@ -9,8 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { SEED_PROJECTS, SEED_USERS } from "@/lib/seed-data";
-import { FolderKanban, Users, Check, X, ArrowRight, Settings } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { FolderKanban, Users, Check, X } from "lucide-react";
 
 // Mock Applications Data
 const MOCK_APPLICATIONS = [
@@ -20,7 +19,6 @@ const MOCK_APPLICATIONS = [
 
 export default function ManageProjectsPage() {
   const { user, isAuthenticated, loginAsDemo } = useAuth();
-  const router = useRouter();
   const [apps, setApps] = useState(MOCK_APPLICATIONS);
 
   if (!isAuthenticated || !user) {
@@ -117,7 +115,7 @@ export default function ManageProjectsPage() {
                               </div>
                             </div>
                             <div className="bg-muted/50 p-4 rounded-lg">
-                              <p className="text-sm italic text-muted-foreground">"{app.message}"</p>
+                              <p className="text-sm italic text-muted-foreground">&quot;{app.message}&quot;</p>
                             </div>
                           </div>
                           

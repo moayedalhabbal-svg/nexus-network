@@ -3,13 +3,13 @@
 import { Navbar } from "@/components/layout/navbar";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  Bell, Shield, Eye, Globe, Moon, Sun, Palette, LogOut, Trash2, User, Lock,
+  Bell, Shield, Eye, Moon, Sun, Palette, LogOut, Trash2, User,
 } from "lucide-react";
 
 export default function SettingsPage() {

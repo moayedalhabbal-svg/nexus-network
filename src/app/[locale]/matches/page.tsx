@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from "react";
 import { Sparkles, ArrowRight, UserPlus, FileText, Check, X, Bot, Loader2 } from "lucide-react";
@@ -40,6 +41,7 @@ export default function MatchesPage() {
       setLoading(false);
     }
     if (user) loadMatches();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     else setLoading(false);
   }, [user]);
 

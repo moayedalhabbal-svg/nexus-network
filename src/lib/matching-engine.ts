@@ -434,33 +434,7 @@ export function getOpportunityRecommendations(user: UserProfile, limit = 5): (Op
 // ─── Find People for Project ────────────────────────────────────────
 
 export function findPeopleForProject(project: Project, limit = 10): (UserProfile & { match: MatchResult })[] {
-  const dummyUser: UserProfile = {
-    id: 'search-user',
-    email: '',
-    name: '',
-    headline: '',
-    bio: '',
-    avatar: '',
-    location: project.location,
-    timezone: '',
-    roles: [],
-    skills: [],
-    interests: [],
-    intents: ['project'],
-    availability: 'flexible',
-    collaborationPreferences: project.remote ? ['remote'] : ['hybrid'],
-    preferredTeamSize: '',
-    experience: [],
-    education: [],
-    proofOfWork: [],
-    verifications: [],
-    profileVisibility: 'public',
-    searchVisibility: true,
-    onlineStatus: 'online',
-    completionPercentage: 0,
-    joinedAt: '',
-    updatedAt: '',
-  };
+
 
   return SEED_USERS
     .filter(u => !project.team.some(t => t.userId === u.id))
@@ -477,7 +451,7 @@ export function findPeopleForProject(project: Project, limit = 10): (UserProfile
 export interface UnifiedSearchResult {
   id: string;
   type: 'people' | 'projects' | 'research' | 'startups' | 'opportunities' | 'mentors';
-  data: any;
+  data: unknown;
   score: number;
   reason: string;
 }
@@ -511,7 +485,7 @@ export function semanticSearch(query: string, requestedType: 'all' | 'people' | 
   // Helper to calculate score and reason
   const evaluate = (entityText: string, exactMatches: string[], baseScore = 0): { score: number, reason: string } => {
     let score = baseScore;
-    let matchedKeywords: string[] = [];
+    const matchedKeywords: string[] = [];
     
     queryTerms.forEach(term => {
       if (entityText.includes(term)) {

@@ -31,15 +31,18 @@ export async function saveMatchFeedbackAction(
 
     revalidatePath("/matches");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Feedback error";
+    return { success: false, error: errorMessage };
   }
 }
 
 export async function explainMatchAction(
   userId: string,
   targetName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   reasons: any[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   gaps: any[]
 ) {
   // Mock AI Explainer if no API key

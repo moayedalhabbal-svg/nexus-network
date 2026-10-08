@@ -1,5 +1,10 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const analyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -30,6 +35,6 @@ const nextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default analyzer(withNextIntl(nextConfig));
 
 // trigger vercel build 1791464916

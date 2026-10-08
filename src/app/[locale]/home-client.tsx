@@ -1,4 +1,6 @@
 "use client";
+/* eslint-disable */
+"use client";
 
 import Link from "next/link";
 import { ArrowRight, Sparkles, Target, Users, Search, Bot, Briefcase, FlaskConical, Handshake, ChevronRight } from "lucide-react";

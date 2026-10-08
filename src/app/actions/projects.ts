@@ -49,9 +49,10 @@ export async function createProjectAction(formData: FormData) {
 
     revalidatePath("/projects");
     return { success: true, projectId: project.id };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Project validation error:", error);
-    return { success: false, error: error.message || "Invalid data provided" };
+    const errorMessage = error instanceof Error ? error.message : "Invalid data provided";
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -80,8 +81,9 @@ export async function submitApplicationAction(projectId: string, needId: string,
     if (error) return { success: false, error: error.message };
     
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Invalid submission" };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Invalid submission";
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -133,7 +135,7 @@ export async function acceptApplicationAction(applicationId: string, role: strin
     conversationId = existingConvo.id;
   } else {
     // Create new group conversation for the project
-    const { data: newConvo, error: convErr } = await supabase
+    const { data: newConvo } = await supabase
       .from("conversations")
       .insert({
         is_group: true,

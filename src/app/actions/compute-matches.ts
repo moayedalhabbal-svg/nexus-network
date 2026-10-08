@@ -5,6 +5,7 @@ import { matchUserToProject, matchUserToUser } from "@/lib/matching-engine";
 import { UserProfile, Project } from "@/lib/types";
 
 // Helper to map DB row to UserProfile
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapDbProfileToUser(dbProfile: any): UserProfile {
   return {
     id: dbProfile.id,
@@ -99,6 +100,7 @@ export async function computeMatchesAction(demoUserId?: string) {
       collaborationStatus: 'actively_looking',
       visibility: 'public',
       technologies: [],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       needs: (p.project_needs || []).map((n: any) => ({
         id: n.id,
         role: n.role_title,

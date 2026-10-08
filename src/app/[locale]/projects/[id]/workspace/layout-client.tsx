@@ -1,11 +1,12 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { 
   LayoutDashboard, Users, CheckSquare, Target, 
-  FileText, MessageSquare, Bell, ArrowLeft, Loader2 
+  FileText, MessageSquare, ArrowLeft, Loader2
 } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { createClient } from "@/lib/supabase/client";
@@ -47,7 +48,7 @@ export default function WorkspaceLayoutClient({
       const supabase = createClient();
       
       // Fetch project details and check membership
-      const { data: proj, error } = await supabase
+      const { data: proj } = await supabase
         .from('projects')
         .select(`
           id, title, owner_id,

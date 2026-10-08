@@ -119,6 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const login = useCallback(async (email: string, _password: string): Promise<boolean> => {
     // If we just logged in via Supabase action, the onAuthStateChange will catch it.
     // We just manually re-fetch here to be safe and fast.

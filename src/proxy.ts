@@ -8,7 +8,7 @@ const intlMiddleware = createIntlMiddleware({
   localePrefix: 'always'
 });
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 0. Force manual HTTP redirect for the root path to bypass all rewrite bugs on Vercel
   if (request.nextUrl.pathname === '/') {
     const localeCookie = request.cookies.get('NEXT_LOCALE')?.value || 'en';
@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 1. Run Internationalization Middleware
-  let response = intlMiddleware(request);
+  const response = intlMiddleware(request);
 
   // If in demo mode, skip Supabase auth middleware
   if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'demo' || !process.env.NEXT_PUBLIC_SUPABASE_URL) {

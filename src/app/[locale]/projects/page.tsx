@@ -9,12 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import { SEED_PROJECTS, CURRENT_USER } from "@/lib/seed-data";
+import { SEED_PROJECTS } from "@/lib/seed-data";
 import { matchUserToProject } from "@/lib/matching-engine";
 import {
   Search, Plus, SlidersHorizontal, MapPin, Globe, Users,
-  FolderKanban, Sparkles, ArrowUpRight,
+  FolderKanban, Sparkles,
 } from "lucide-react";
+import type { ProjectCategory } from "@/lib/types";
 
 const CATEGORIES = [
   "all", "ai", "climate", "healthcare", "education", "fintech",
@@ -31,7 +32,7 @@ export default function ProjectsPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const filtered = SEED_PROJECTS.filter(p => {
-    if (selectedCategory !== "all" && !p.categories.includes(selectedCategory as any)) return false;
+    if (selectedCategory !== "all" && !p.categories.includes(selectedCategory as ProjectCategory)) return false;
     if (selectedStage !== "all" && p.stage !== selectedStage) return false;
     if (query.trim()) {
       const q = query.toLowerCase();

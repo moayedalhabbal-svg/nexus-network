@@ -8,7 +8,6 @@ import { useParams } from "next/navigation";
 
 export default function WorkspaceOverview() {
   const params = useParams();
-  const [projectId, setProjectId] = useState<string | null>(null);
   const [stats, setStats] = useState({ tasks: 0, members: 0, updates: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -16,7 +15,6 @@ export default function WorkspaceOverview() {
     async function loadStats() {
       if (!params?.id) return;
       const resolvedId = params.id as string;
-      setProjectId(resolvedId);
       
       const supabase = createClient();
       

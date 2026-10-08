@@ -54,6 +54,7 @@ for (const project of SEED_PROJECTS) {
   if (!validStages.includes(stage)) {
     stage = 'idea';
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const category = (project as any).tags?.[0] || 'technology';
   sqlLines.push(`INSERT INTO projects (id, owner_id, title, pitch, description, stage, category, is_private)`);
   sqlLines.push(`VALUES ('${pid}', '${ownerId}', ${escapeSql(project.title)}, ${escapeSql(project.pitch || project.description.substring(0, 100))}, ${escapeSql(project.description)}, '${stage}', '${category}', false)`);

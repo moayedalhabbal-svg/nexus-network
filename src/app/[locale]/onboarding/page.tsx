@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar } from "@/components/ui/avatar";
+// removed Avatar
 import { SKILLS_DATABASE, INTERESTS_DATABASE } from "@/lib/seed-data";
 import {
   ArrowRight, ArrowLeft, Check, User, Target, Zap, MapPin,
-  Briefcase, GraduationCap, Globe, Heart, Clock, Sparkles,
+  Briefcase, GraduationCap, Heart, Clock, Sparkles,
 } from "lucide-react";
 
 type OnboardingData = {

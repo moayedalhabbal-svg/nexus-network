@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -10,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import {
   MapPin, Globe, Calendar, Briefcase, GraduationCap, ExternalLink,
-  Edit3, Check, X, Zap, Heart, Target, Clock, Users, Link as LinkIcon, ShieldCheck, Flag
+  Edit3, Check, X, Zap, Heart, Target, Clock, Link as LinkIcon, ShieldCheck, Flag
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";

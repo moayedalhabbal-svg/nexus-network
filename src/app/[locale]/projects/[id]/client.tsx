@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from "react";
 import { ArrowLeft, Users, Zap, Briefcase, MapPin, Globe, CheckCircle2, Bot, Check, Loader2, Flag } from "lucide-react";
@@ -26,7 +27,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
   useEffect(() => {
     async function fetchProject() {
       const supabase = createClient();
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('projects')
         .select(`
           *,
@@ -312,7 +313,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                 <CardTitle>Join {project.title}</CardTitle>
                 <Button variant="ghost" size="icon" onClick={() => setShowJoinModal(false)}>✕</Button>
               </div>
-              <CardDescription>AI has evaluated your profile against this project's needs.</CardDescription>
+              <CardDescription>AI has evaluated your profile against this project&apos;s needs.</CardDescription>
             </CardHeader>
             <CardContent className="py-6">
               {matchResult ? (
@@ -329,7 +330,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   </div>
                   
                   <div className="space-y-4">
-                    <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Why you're a fit</h4>
+                    <h4 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground">Why you&apos;re a fit</h4>
                     <div className="grid gap-3">
                       {matchResult.reasons.map((reason: any, idx: number) => (
                         <div key={idx} className="flex items-start gap-3 text-sm">

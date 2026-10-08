@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState } from "react";
 import { Navbar } from "@/components/layout/navbar";
@@ -11,7 +12,6 @@ import { Avatar } from "@/components/ui/avatar";
 import { SEED_USERS } from "@/lib/seed-data";
 import { getPeopleRecommendations } from "@/lib/matching-engine";
 import { Search, UserPlus, Check, MessageSquare, Filter, Sparkles } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function NetworkPage() {
