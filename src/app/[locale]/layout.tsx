@@ -13,6 +13,7 @@ const inter = Inter({
 
 import { GlobalAICopilot } from "@/components/layout/ai-copilot";
 import { MobileNavWrapper } from "@/components/layout/mobile-nav-wrapper";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "NEXUS | Build what's next",
@@ -59,20 +60,27 @@ export default async function RootLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir} className="dark">
+    <html lang={locale} dir={dir} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           inter.variable
         )}
       >
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <AuthProvider>
-            {children}
-            <GlobalAICopilot />
-            <MobileNavWrapper />
-          </AuthProvider>
-        </NextIntlClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <NextIntlClientProvider messages={messages} locale={locale}>
+            <AuthProvider>
+              {children}
+              <GlobalAICopilot />
+              <MobileNavWrapper />
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -12,6 +12,7 @@ import {
   Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert
 } from "lucide-react";
 import { LanguageSelector } from "./language-selector";
+import { ThemeToggle } from "../theme-toggle";
 import { useTranslations } from "next-intl";
 
 export function Navbar() {
@@ -139,6 +140,7 @@ export function Navbar() {
             </>
           )}
 
+          <ThemeToggle />
           <LanguageSelector />
 
           {/* Mobile menu toggle (Only for non-authenticated) */}
