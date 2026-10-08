@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { SEED_PROJECTS, SEED_USERS } from "@/lib/seed-data";
+import { trackEvent } from "@/lib/analytics";
 import { FolderKanban, Users, Check, X } from "lucide-react";
 
 // Mock Applications Data
@@ -46,6 +47,7 @@ export default function ManageProjectsPage() {
   const displayProjects = myProjects.length > 0 ? myProjects : [SEED_PROJECTS[0]];
 
   const handleAction = (appId: string, action: "accept" | "reject") => {
+    trackEvent(action === 'accept' ? 'application_accepted' : 'application_rejected', { application_id: appId });
     setApps(apps.map(a => a.id === appId ? { ...a, status: action } : a));
   };
 

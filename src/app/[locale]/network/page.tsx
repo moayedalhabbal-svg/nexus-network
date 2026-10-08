@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { SEED_USERS } from "@/lib/seed-data";
+import { trackEvent } from "@/lib/analytics";
 import { getPeopleRecommendations } from "@/lib/matching-engine";
 import { Search, UserPlus, Check, MessageSquare, Filter, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -34,10 +35,12 @@ export default function NetworkPage() {
     : activeTab === "suggested" ? recommendations : allPeople;
 
   const handleConnect = (userId: string) => {
+    trackEvent('connection_requested', { target_user_id: userId });
     setPendingIds(prev => [...prev, userId]);
     setTimeout(() => {
       setPendingIds(prev => prev.filter(id => id !== userId));
       setConnectedIds(prev => [...prev, userId]);
+      trackEvent('connection_accepted', { target_user_id: userId });
     }, 1500);
   };
 

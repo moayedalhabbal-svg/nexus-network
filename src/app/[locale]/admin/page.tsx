@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SEED_USERS, SEED_PROJECTS, SEED_REPORTS, SEED_AUDIT_LOGS } from "@/lib/seed-data";
-import { ShieldAlert, Users, FolderKanban, Activity, AlertTriangle, CheckCircle, Ban, ArrowUpRight, History, Eye, XCircle } from "lucide-react";
+import { ShieldAlert, Users, FolderKanban, Activity, AlertTriangle, CheckCircle, Ban, ArrowUpRight, History, Eye, XCircle, LineChart, Sparkles } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit" | "analytics">("overview");
   const [reports] = useState(SEED_REPORTS);
   const [logs] = useState(SEED_AUDIT_LOGS);
 
@@ -65,6 +65,14 @@ export default function AdminDashboardPage() {
               }`}
             >
               <History className="h-4 w-4" /> Audit Logs
+            </button>
+            <button 
+              onClick={() => setActiveTab("analytics")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "analytics" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+              }`}
+            >
+              <LineChart className="h-4 w-4" /> Product Analytics
             </button>
           </nav>
         </aside>
@@ -334,6 +342,49 @@ export default function AdminDashboardPage() {
                   </table>
                 </div>
               </Card>
+            </div>
+          )}
+          
+          {activeTab === "analytics" && (
+            <div className="space-y-8 animate-fade-in">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight mb-2">Product Analytics</h1>
+                <p className="text-muted-foreground">Monitor the primary product metric: Meaningful Collaborations Created.</p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-4">
+                <Card className="border shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Matches</p>
+                    <h3 className="text-3xl font-bold text-blue-500">1,245</h3>
+                    <p className="text-xs text-muted-foreground mt-2">AI \u0026 Manual discover</p>
+                  </CardContent>
+                </Card>
+                <Card className="border shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Connections</p>
+                    <h3 className="text-3xl font-bold text-yellow-500">892</h3>
+                    <p className="text-xs text-muted-foreground mt-2">71% conversion rate</p>
+                  </CardContent>
+                </Card>
+                <Card className="border shadow-sm">
+                  <CardContent className="p-6">
+                    <p className="text-sm font-medium text-muted-foreground mb-1">Applications</p>
+                    <h3 className="text-3xl font-bold text-orange-500">412</h3>
+                    <p className="text-xs text-muted-foreground mt-2">46% conversion rate</p>
+                  </CardContent>
+                </Card>
+                <Card className="border shadow-sm bg-primary/5 border-primary/20">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      <p className="text-sm font-medium text-primary">Collaborations</p>
+                    </div>
+                    <h3 className="text-3xl font-bold text-primary">156</h3>
+                    <p className="text-xs text-primary/80 mt-2">37% conversion rate</p>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
           

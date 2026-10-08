@@ -16,6 +16,7 @@ import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 
 export default function ProjectClient({ projectId }: { projectId: string }) {
   const [project, setProject] = useState<any>(null);
@@ -68,6 +69,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
         // Fallback to seed data if not found (for legacy testing)
         setProject(getProjectById(projectId) || getProjectById("proj-1"));
       }
+      trackEvent('project_viewed', { project_id: projectId });
       setLoading(false);
     }
     fetchProject();
@@ -367,6 +369,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                 // The textarea value should technically be tracked in state, but for now we simulate
                 const result = await submitApplicationAction(project.id, project.needs[0]?.id || "demo-need", "Here is my application pitch...");
                 if (result.success) {
+                  trackEvent('project_application', { project_id: project.id, ai_match_score: matchResult.score });
                   setShowJoinModal(false);
                   alert("Application submitted successfully!");
                 } else {

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
+import { trackEvent } from "@/lib/analytics";
 import { Send, Search, MoreVertical, Paperclip, MessageSquare, Loader2, Users, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -141,6 +142,8 @@ export default function MessagesPage() {
       sender_id: user.id,
       content: text
     });
+    
+    trackEvent('message_sent', { conversation_id: selectedConvo.id });
     
     // Update conversation timestamp
     await supabase.from('conversations').update({ updated_at: new Date().toISOString() }).eq('id', selectedConvo.id);

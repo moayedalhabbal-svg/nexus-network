@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { trackEvent } from "@/lib/analytics";
 import { ArrowRight, ArrowLeft, FolderKanban, Sparkles, Plus, X, Globe, MapPin, Check } from "lucide-react";
 import type { ProjectCategory, ProjectStage } from "@/lib/types";
 
@@ -122,6 +123,7 @@ export default function NewProjectPage() {
       const result = await createProjectAction(formData);
       
       if (result.success) {
+        trackEvent('project_created', { category, stage });
         router.push("/projects");
       } else {
         alert("Failed to create project: " + result.error);

@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 // removed Avatar
 import { SKILLS_DATABASE, INTERESTS_DATABASE } from "@/lib/seed-data";
+import { trackEvent } from "@/lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, User, Target, Zap, MapPin,
   Briefcase, GraduationCap, Heart, Clock, Sparkles,
@@ -153,6 +154,7 @@ export default function OnboardingPage() {
   };
 
   const handleFinish = () => {
+    trackEvent('onboarding_completed', { role: data.roles?.[0] || 'unknown', goals: data.intents?.length || 0 });
     loginAsDemo("user-1");
     router.push("/discover");
   };

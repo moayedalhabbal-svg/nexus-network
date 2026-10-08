@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 
 import { explainMatchAction, saveMatchFeedbackAction } from "@/app/actions/matching";
+import { trackEvent } from "@/lib/analytics";
 import { computeMatchesAction } from "@/app/actions/compute-matches";
 import { MatchReason } from "@/lib/types";
 import { useAuth } from "@/lib/auth-context";
@@ -46,6 +47,7 @@ export default function MatchesPage() {
   }, [user]);
 
   const handleExplain = async (match: any, targetName: string) => {
+    trackEvent('match_viewed', { match_id: match.id, target: targetName });
     setExplaining(true);
     setIsExplainOpen(true);
     const res = await explainMatchAction(user?.id || '', targetName, match.reasons, match.gaps);
@@ -58,6 +60,7 @@ export default function MatchesPage() {
   };
 
   const handleFeedback = async (matchId: string, status: 'relevant' | 'not_relevant', type: 'project' | 'people') => {
+    trackEvent(status === 'relevant' ? 'match_accepted' : 'match_rejected', { match_id: matchId, type });
     await saveMatchFeedbackAction(matchId, status);
     if (status === 'not_relevant') {
       if (type === 'project') {
