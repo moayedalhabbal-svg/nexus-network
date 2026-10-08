@@ -30,7 +30,7 @@ export default function MatchesPage() {
 
   useEffect(() => {
     async function loadMatches() {
-      const res = await computeMatchesAction();
+      const res = await computeMatchesAction(user?.id);
       if (res.success) {
         setProjectMatches(res.projectMatches || []);
         setPeopleMatches(res.peopleMatches || []);
