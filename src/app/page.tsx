@@ -32,7 +32,7 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-              <Link href="/signup">
+              <Link href="/login">
                 <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base shadow-lg shadow-primary/25">
                   Join the Network <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

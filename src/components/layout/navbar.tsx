@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import {
   Sparkles, Search, FolderKanban, Users, MessageSquare,
-  Bell, ChevronDown, LogOut, User, Settings, Menu, X,
+  Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert
 } from "lucide-react";
 
 export function Navbar() {
@@ -102,6 +102,9 @@ export function Navbar() {
                       </Link>
                       <Link href="/projects/manage" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
                         <FolderKanban className="h-4 w-4" /> Manage Projects
+                      </Link>
+                      <Link href="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors text-primary font-medium">
+                        <ShieldAlert className="h-4 w-4" /> Admin Panel
                       </Link>
                       <Link href="/settings" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
                         <Settings className="h-4 w-4" /> Settings
