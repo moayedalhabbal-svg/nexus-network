@@ -18,6 +18,7 @@ import { useLocale } from "next-intl";
 export default function MatchesPage() {
   const [activeTab, setActiveTab] = useState<"projects" | "people">("projects");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [projectMatches, setProjectMatches] = useState<any[]>([]);
   const [peopleMatches, setPeopleMatches] = useState<any[]>([]);
   const [explanationText, setExplanationText] = useState("");
@@ -33,6 +34,8 @@ export default function MatchesPage() {
       if (res.success) {
         setProjectMatches(res.projectMatches || []);
         setPeopleMatches(res.peopleMatches || []);
+      } else {
+        setError(res.error || "Failed to load matches");
       }
       setLoading(false);
     }
@@ -87,6 +90,20 @@ export default function MatchesPage() {
         <main className="flex-1 bg-muted/20 flex flex-col items-center justify-center">
           <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
           <p className="text-muted-foreground">Running AI Hybrid Matching Engine...</p>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 bg-muted/20 flex flex-col items-center justify-center text-center p-4">
+          <div className="bg-destructive/10 text-destructive p-4 rounded-lg max-w-md border border-destructive/20">
+            <h2 className="font-bold mb-2">Notice</h2>
+            <p className="text-sm">{error}</p>
+          </div>
         </main>
       </div>
     );

@@ -42,15 +42,32 @@ export async function computeMatchesAction() {
 
   // Fetch current user full profile (with skills etc in a real app, here we use demo data for now if we don't have joins)
   // For Phase 8.6 testing, we'll try to get all users and projects
-  const { data: profiles } = await supabase.from('profiles').select('*');
-  const { data: projectsData } = await supabase.from('projects').select('*, project_needs(*)');
+  const { data: profiles, error: profilesErr } = await supabase.from('profiles').select('*');
+  const { data: projectsData, error: projectsErr } = await supabase.from('projects').select('*, project_needs(*)');
+
+  if (profilesErr) console.error("Profiles fetch error:", profilesErr);
+  if (projectsErr) console.error("Projects fetch error:", projectsErr);
 
   if (!profiles || !projectsData) {
-    return { success: false, error: "Failed to fetch data" };
+    return { success: false, error: `Failed to fetch data. Profiles err: ${profilesErr?.message}, Projects err: ${projectsErr?.message}` };
   }
 
-  const currentUserData = profiles.find(p => p.id === authUser.id);
-  if (!currentUserData) return { success: false, error: "Profile not found" };
+  let currentUserData = profiles.find(p => p.id === authUser.id);
+  if (!currentUserData) {
+    console.log("Profile missing for auth user, creating default profile.");
+    const { data: newProfile, error: insertErr } = await supabase.from('profiles').insert({
+      id: authUser.id,
+      username: authUser.email?.split('@')[0] || `user_${Date.now()}`,
+      full_name: authUser.user_metadata?.full_name || 'New User',
+      search_visibility: true
+    }).select().single();
+    
+    if (insertErr || !newProfile) {
+      console.error("Failed to create default profile", insertErr);
+      return { success: false, error: "Profile not found and could not be created." };
+    }
+    currentUserData = newProfile;
+  }
 
   // Just a simplified mapping for the algorithm
   const currentUser = mapDbProfileToUser(currentUserData);
