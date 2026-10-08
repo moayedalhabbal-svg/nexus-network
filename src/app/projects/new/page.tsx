@@ -51,6 +51,7 @@ export default function NewProjectPage() {
   
   const [needs, setNeeds] = useState<{ role: string; count: number; commitment: string }[]>([]);
   const [needInput, setNeedInput] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isAuthenticated || !user) {
     return (
@@ -99,10 +100,35 @@ export default function NewProjectPage() {
     return true;
   };
 
-  const handleSubmit = () => {
-    // In a real app, this would save to a database.
-    // We will just redirect back to the projects page and simulate success.
-    router.push("/projects");
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("pitch", pitch);
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("stage", stage);
+      formData.append("is_private", "false");
+
+      // We'd dynamically import the action to avoid client/server issues
+      // but for this demo context we can just simulate it or call it if it's imported
+      // Actually we need to import it at the top level
+      
+      const { createProjectAction } = await import('@/app/actions/projects');
+      const result = await createProjectAction(formData);
+      
+      if (result.success) {
+        router.push("/projects");
+      } else {
+        alert("Failed to create project: " + result.error);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

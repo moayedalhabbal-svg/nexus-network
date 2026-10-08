@@ -22,19 +22,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Rehydrate from localStorage on mount
   useEffect(() => {
+    let mounted = true;
     const stored = localStorage.getItem("nexus-auth");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
         if (parsed.userId) {
           const found = SEED_USERS.find(u => u.id === parsed.userId);
-          if (found) {
-            setUser(found);
-            setIsDemoMode(true);
+          if (found && mounted) {
+            setTimeout(() => {
+              setUser(found);
+              setIsDemoMode(true);
+            }, 0);
           }
         }
       } catch { /* ignore */ }
     }
+    return () => { mounted = false; };
   }, []);
 
   const login = useCallback(async (email: string, _password: string): Promise<boolean> => {
