@@ -218,7 +218,7 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
   const locationScore = project.remote ? 0.9 : (user.location === project.location ? 1 : 0.3);
 
   // Weighted final score
-  const rawScore =
+  let rawScore =
     skillScore * DEFAULT_WEIGHTS.skill +
     interestScore * DEFAULT_WEIGHTS.interest +
     intentScore * DEFAULT_WEIGHTS.intent +
@@ -227,6 +227,15 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
     experienceScore * DEFAULT_WEIGHTS.experience +
     locationScore * DEFAULT_WEIGHTS.location +
     complementarityScore * DEFAULT_WEIGHTS.complementarity;
+
+  // Evidence Bonus
+  let totalEvidenceMatches = 0;
+  uniqueProjectSkills.forEach(reqSkill => {
+    const evidenceCount = (user.proofOfWork || []).filter(pow => pow.skills?.includes(reqSkill)).length;
+    if (evidenceCount > 0) totalEvidenceMatches++;
+  });
+  const evidenceBonus = (totalEvidenceMatches / Math.max(uniqueProjectSkills.length, 1)) * 0.15; // Up to 15% bonus
+  rawScore += evidenceBonus;
 
   // Normalize to 0-100
   const score = Math.min(Math.round(rawScore * 100), 99);
@@ -237,12 +246,22 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
   const complementarySkills = getComplementarySkills(userSkillNames, complementarySkillsNeeded);
   const missingSkills = getMissingSkills(userSkillNames, uniqueProjectSkills);
 
+  const reasons = buildMatchReasons(user, matchedSkills, matchedInterests, intentScore, availScore, complementarySkills);
+  
+  if (totalEvidenceMatches > 0) {
+    reasons.push({
+      type: 'skill',
+      label: `Experience supported by ${totalEvidenceMatches} evidence-backed projects/skills`,
+      strength: 'strong'
+    });
+  }
+
   return {
     id: `match-${user.id}-${project.id}`,
     targetType: 'project',
     targetId: project.id,
     score,
-    reasons: buildMatchReasons(user, matchedSkills, matchedInterests, intentScore, availScore, complementarySkills),
+    reasons,
     gaps: buildMatchGaps(missingSkills),
     skillMatch: Math.round(skillScore * 100),
     interestMatch: Math.round(interestScore * 100),
@@ -293,19 +312,35 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
 
   const availScore = calculateAvailabilityMatch(user.availability, target.availability);
 
+  const sharedInterests = userInterestNames.filter(i =>
+    targetInterestNames.map(ti => ti.toLowerCase()).includes(i.toLowerCase())
+  );
+
+  // Evidence Bonus
+  let evidenceMatches = 0;
+  sharedInterests.forEach(interest => {
+      // Just a proxy: if they have evidence for shared things, give a small bonus
+      const count = (user.proofOfWork || []).filter(pow => pow.description?.toLowerCase().includes(interest.toLowerCase())).length;
+      if (count > 0) evidenceMatches++;
+  });
+  differentSkills.forEach(skill => {
+      const count = (user.proofOfWork || []).filter(pow => pow.skills?.includes(skill)).length;
+      if (count > 0) evidenceMatches++;
+  });
+  const totalRelevantFactors = sharedInterests.length + differentSkills.length;
+  const evidenceBonus = totalRelevantFactors > 0 ? (evidenceMatches / totalRelevantFactors) * 0.10 : 0;
+
   // Weighted score
-  const rawScore =
+  let rawScore =
     skillComplementarity * 0.25 +
     interestSimilarity * 0.30 +
     intentScore * 0.25 +
     availScore * 0.10 +
     0.1; // base
+    
+  rawScore += evidenceBonus;
 
   const score = Math.min(Math.round(rawScore * 100), 99);
-
-  const sharedInterests = userInterestNames.filter(i =>
-    targetInterestNames.map(ti => ti.toLowerCase()).includes(i.toLowerCase())
-  );
 
   const reasons: MatchReason[] = [];
 
@@ -316,6 +351,10 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
   differentSkills.slice(0, 3).forEach(skill => {
     reasons.push({ type: 'complementary', label: `Brings: ${skill}`, strength: 'moderate' });
   });
+
+  if (evidenceMatches > 0) {
+    reasons.push({ type: 'skill', label: `Skills supported by ${evidenceMatches} pieces of evidence`, strength: 'strong' });
+  }
 
   if (intentScore > 0.5) {
     reasons.push({ type: 'intent', label: `Both interested in ${user.intents[0]?.replace(/_/g, ' ')}`, strength: 'strong' });

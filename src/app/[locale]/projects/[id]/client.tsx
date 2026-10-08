@@ -14,6 +14,7 @@ import { getProjectById } from "@/lib/seed-data";
 import { matchUserToProject } from "@/lib/matching-engine";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import { SEED_USERS } from "@/lib/seed-data";
 import { useRouter, useParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/analytics";
@@ -290,15 +291,36 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
                   <Users className="h-5 w-5 text-blue-500" /> The Team
                 </h3>
                 <div className="grid gap-4">
-                  {project.team.map((member: any) => (
-                    <div key={member.id} className="flex items-center gap-3 p-3 rounded-lg border bg-card">
-                      <Avatar alt={member.name} src={member.avatar} />
-                      <div>
-                        <p className="font-medium text-sm">{member.name}</p>
-                        <p className="text-xs text-muted-foreground">{member.role}</p>
+                  {project.team.map((member: any) => {
+                    const fullMember = SEED_USERS.find(u => u.id === member.userId);
+                    const evidenceSkills = fullMember ? fullMember.skills.filter(s => 
+                      fullMember.proofOfWork?.some(pow => pow.skills?.includes(s.name))
+                    ).slice(0, 3) : [];
+
+                    return (
+                      <div key={member.id} className="flex flex-col gap-2 p-3 rounded-lg border bg-card">
+                        <div className="flex items-center gap-3">
+                          <Avatar alt={member.name} src={member.avatar} />
+                          <div>
+                            <p className="font-medium text-sm">{member.name}</p>
+                            <p className="text-xs text-muted-foreground">{member.role}</p>
+                          </div>
+                        </div>
+                        {evidenceSkills.length > 0 && (
+                          <div className="pt-2 mt-1 border-t border-border/50">
+                            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-1.5">Proof of Work</p>
+                            <div className="flex flex-wrap gap-1">
+                              {evidenceSkills.map((sk: any) => (
+                                <Badge key={sk.id} variant="secondary" className="text-[9px] bg-primary/5 text-primary">
+                                  <Check className="h-2.5 w-2.5 mr-0.5" /> {sk.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
             </div>

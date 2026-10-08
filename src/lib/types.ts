@@ -92,10 +92,17 @@ export interface Education {
 
 export interface ProofOfWork {
   id: string;
-  type: 'github' | 'portfolio' | 'website' | 'paper' | 'presentation' | 'prototype' | 'video' | 'certificate' | 'publication';
+  userId: string;
+  type: 'github' | 'portfolio' | 'website' | 'paper' | 'presentation' | 'prototype' | 'video' | 'certificate' | 'publication' | 'project';
   title: string;
   url: string;
   description: string;
+  source: string;
+  skills: string[];
+  projectId?: string;
+  verificationStatus: 'verified' | 'added_by_you' | 'evidence_found' | 'external_evidence';
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ─── Project Types ──────────────────────────────────────────────────

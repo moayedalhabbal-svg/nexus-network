@@ -163,8 +163,8 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-2', institution: 'UC Berkeley', degree: 'BS', field: 'Mechanical Engineering', startDate: '2018-08', endDate: '2022-05', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-1', type: 'github', title: 'SolarBot', url: 'https://github.com/evasquez/solarbot', description: 'Open-source robotic solar panel inspection system' },
-      { id: 'pow-2', type: 'paper', title: 'Autonomous Inspection of Solar Installations', url: '#', description: 'Published in IEEE Robotics & Automation Letters' },
+      { id: 'pow-1', userId: 'user-1', source: 'GitHub', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'github', title: 'SolarBot', url: 'https://github.com/evasquez/solarbot', description: 'Open-source robotic solar panel inspection system'},
+      { id: 'pow-2', userId: 'user-1', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'paper', title: 'Autonomous Inspection of Solar Installations', url: '#', description: 'Published in IEEE Robotics & Automation Letters'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -214,7 +214,7 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-3', institution: 'Stanford University', degree: 'BS', field: 'Computer Science', startDate: '2017-09', endDate: '2021-06', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-3', type: 'github', title: 'OpenLedger', url: 'https://github.com/mchen/openledger', description: 'Open-source accounting platform for small businesses' },
+      { id: 'pow-3', userId: 'user-2', source: 'GitHub', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'github', title: 'OpenLedger', url: 'https://github.com/mchen/openledger', description: 'Open-source accounting platform for small businesses'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }, { type: 'organization', label: 'Company Verified', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -265,7 +265,7 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-5', institution: 'University of Lagos', degree: 'BSc', field: 'Electrical Engineering', startDate: '2014-09', endDate: '2018-06', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-4', type: 'paper', title: 'ML-Based Battery Degradation Prediction', url: '#', description: '8 publications in Nature Energy and Joule' },
+      { id: 'pow-4', userId: 'user-3', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'paper', title: 'ML-Based Battery Degradation Prediction', url: '#', description: '8 publications in Nature Energy and Joule'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -314,7 +314,7 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-6', institution: 'Parsons School of Design', degree: 'BFA', field: 'Communication Design', startDate: '2014-09', endDate: '2018-05', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-5', type: 'portfolio', title: 'Design Portfolio', url: 'https://kai.design', description: 'Selected work from Figma, Airbnb, and freelance projects' },
+      { id: 'pow-5', userId: 'user-4', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'portfolio', title: 'Design Portfolio', url: 'https://kai.design', description: 'Selected work from Figma, Airbnb, and freelance projects'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'organization', label: 'Organization Verified: Fanuc', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -364,8 +364,8 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-7', institution: 'IIT Bombay', degree: 'MTech', field: 'Computer Science - AI', startDate: '2019-07', endDate: '2021-06', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-6', type: 'paper', title: 'MobilePathNet: Lightweight Pathology on Edge', url: '#', description: 'Published at NeurIPS 2023' },
-      { id: 'pow-7', type: 'github', title: 'LowCostDiag', url: 'https://github.com/priyasharma/lowcostdiag', description: 'Open-source diagnostic toolkit for resource-constrained settings' },
+      { id: 'pow-6', userId: 'user-5', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'paper', title: 'MobilePathNet: Lightweight Pathology on Edge', url: '#', description: 'Published at NeurIPS 2023'},
+      { id: 'pow-7', userId: 'user-5', source: 'GitHub', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'github', title: 'LowCostDiag', url: 'https://github.com/priyasharma/lowcostdiag', description: 'Open-source diagnostic toolkit for resource-constrained settings'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }, { type: 'organization', label: 'Company Verified', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -416,7 +416,7 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-8', institution: 'University of Wisconsin-Madison', degree: 'MS', field: 'Agricultural Engineering', startDate: '2017-09', endDate: '2019-05', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-8', type: 'prototype', title: 'SoilSense v1', url: '#', description: 'IoT soil moisture monitoring system deployed on 3 farms' },
+      { id: 'pow-8', userId: 'user-6', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'prototype', title: 'SoilSense v1', url: '#', description: 'IoT soil moisture monitoring system deployed on 3 farms'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'organization', label: 'Organization Verified: Fanuc', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -513,7 +513,7 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-12', institution: 'Cairo University', degree: 'BSc', field: 'Computer Engineering', startDate: '2017-09', endDate: '2022-06', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-9', type: 'paper', title: 'Multi-Modal Sensor Fusion for Adverse Weather', url: '#', description: 'Published at CVPR 2024' },
+      { id: 'pow-9', userId: 'user-8', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'paper', title: 'Multi-Modal Sensor Fusion for Adverse Weather', url: '#', description: 'Published at CVPR 2024'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -561,7 +561,7 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-13', institution: 'UT Austin', degree: 'BBA', field: 'Marketing', startDate: '2015-08', endDate: '2019-05', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-10', type: 'website', title: 'Growth Playbook Blog', url: 'https://rachels.blog', description: 'Weekly essays on B2B growth — 15k subscribers' },
+      { id: 'pow-10', userId: 'user-9', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'website', title: 'Growth Playbook Blog', url: 'https://rachels.blog', description: 'Weekly essays on B2B growth — 15k subscribers'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'organization', label: 'Organization Verified: Fanuc', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -610,8 +610,8 @@ export const SEED_USERS: UserProfile[] = [
       { id: 'edu-14', institution: 'Stanford University', degree: 'PhD', field: 'Bioengineering', startDate: '2017-09', endDate: '2022-06', current: false },
     ],
     proofOfWork: [
-      { id: 'pow-11', type: 'paper', title: 'Sub-Dollar Diagnostic Test Platform', url: '#', description: '12 publications in Nature Biomedical Engineering' },
-      { id: 'pow-12', type: 'prototype', title: 'PaperDx', url: '#', description: 'Paper-based diagnostic platform prototype' },
+      { id: 'pow-11', userId: 'user-10', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'paper', title: 'Sub-Dollar Diagnostic Test Platform', url: '#', description: '12 publications in Nature Biomedical Engineering'},
+      { id: 'pow-12', userId: 'user-10', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'prototype', title: 'PaperDx', url: '#', description: 'Paper-based diagnostic platform prototype'}
     ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }],
     profileVisibility: 'public',
@@ -769,7 +769,9 @@ export const SEED_USERS: UserProfile[] = [
     intents: ['research', 'collaborator'], availability: '10hrs_week',
     collaborationPreferences: ['remote'], preferredTeamSize: '2-5',
     experience: [], education: [{ id: 'edu-20', institution: 'Princeton University', degree: 'PhD', field: 'Computer Science - NLP', startDate: '2021-09', endDate: null, current: true }],
-    proofOfWork: [{ id: 'pow-13', type: 'paper', title: 'FairLM: Measuring Bias in LLMs', url: '#', description: 'ACL 2024 Best Paper Nominee' }],
+    proofOfWork: [
+      { id: 'pow-13', userId: 'user-16', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'paper', title: 'FairLM: Measuring Bias in LLMs', url: '#', description: 'ACL 2024 Best Paper Nominee' }
+    ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }], profileVisibility: 'public',
     searchVisibility: true, onlineStatus: 'online', completionPercentage: 88,
     joinedAt: '2024-05-10T09:00:00Z', updatedAt: '2024-09-18T14:00:00Z',
@@ -872,7 +874,9 @@ export const SEED_USERS: UserProfile[] = [
     collaborationPreferences: ['remote'], preferredTeamSize: '2-5',
     experience: [],
     education: [{ id: 'edu-24', institution: 'Carnegie Mellon University', degree: 'BS', field: 'Computer Science', startDate: '2022-08', endDate: null, current: true }],
-    proofOfWork: [{ id: 'pow-14', type: 'github', title: 'GitHub Profile', url: 'https://github.com/avachen', description: '200+ contributions in 2024. Active in React and ML communities.' }],
+    proofOfWork: [
+      { id: 'pow-14', userId: 'user-20', source: 'GitHub', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'github', title: 'GitHub Profile', url: 'https://github.com/avachen', description: '200+ contributions in 2024. Active in React and ML communities.' }
+    ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }], profileVisibility: 'public',
     searchVisibility: true, onlineStatus: 'online', completionPercentage: 72,
     joinedAt: '2024-06-01T08:00:00Z', updatedAt: '2024-09-22T12:00:00Z',
@@ -1001,7 +1005,9 @@ export const SEED_USERS: UserProfile[] = [
     collaborationPreferences: ['hybrid', 'in-person'], preferredTeamSize: '3-10',
     experience: [{ id: 'exp-25', title: 'Professor', company: 'UC Berkeley', location: 'Berkeley, CA', startDate: '2015-09', endDate: null, current: true, description: 'Teaching and research in AI for social impact.' }],
     education: [{ id: 'edu-29', institution: 'Stanford University', degree: 'PhD', field: 'Computer Science', startDate: '2009-09', endDate: '2014-06', current: false }],
-    proofOfWork: [{ id: 'pow-15', type: 'website', title: 'Berkeley AI for Impact Lab', url: 'https://ai4impact.berkeley.edu', description: 'Lab website with 100+ publications and 20+ ongoing projects' }],
+    proofOfWork: [
+      { id: 'pow-15', userId: 'user-25', source: 'External', skills: ['Python', 'React', 'TypeScript'], verificationStatus: 'evidence_found', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', type: 'website', title: 'Berkeley AI for Impact Lab', url: 'https://ai4impact.berkeley.edu', description: 'Lab website with 100+ publications and 20+ ongoing projects' }
+    ],
     verifications: [{ type: 'email', label: 'Email Verified', verifiedAt: '2024-01-01T00:00:00Z' }, { type: 'university', label: 'University Verified: MIT', verifiedAt: '2024-01-02T00:00:00Z' }], profileVisibility: 'public',
     searchVisibility: true, onlineStatus: 'online', completionPercentage: 90,
     joinedAt: '2024-01-10T10:00:00Z', updatedAt: '2024-09-20T11:00:00Z',

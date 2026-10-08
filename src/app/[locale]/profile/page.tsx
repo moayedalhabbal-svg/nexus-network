@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { AddProofDialog } from "@/components/profile/add-proof-dialog";
 
 export default function ProfilePage() {
   const { user, isAuthenticated, loginAsDemo, updateProfile } = useAuth();
@@ -226,29 +227,55 @@ export default function ProfilePage() {
             </Card>
 
             {/* Proof of Work */}
-            {user.proofOfWork.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <LinkIcon className="h-5 w-5 text-primary" /> Proof of Work
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {user.proofOfWork.map(pow => (
-                    <div key={pow.id} className="flex items-start gap-4 p-3 rounded-lg border hover:border-primary/30 transition-colors">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <LinkIcon className="h-5 w-5 text-primary" /> Proof of Work
+                </CardTitle>
+                <AddProofDialog />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {user.proofOfWork && user.proofOfWork.length > 0 ? (
+                  user.proofOfWork.map(pow => (
+                    <div key={pow.id} className="flex gap-4 pb-6 border-b last:border-0 last:pb-0">
                       <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                         <ExternalLink className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium text-sm">{pow.title}</h4>
-                        <p className="text-xs text-muted-foreground mt-0.5">{pow.description}</p>
-                        <Badge variant="outline" className="mt-2 text-[10px] capitalize">{pow.type}</Badge>
+                        <h4 className="font-medium text-sm flex items-center justify-between">
+                          {pow.title}
+                          <Badge variant="outline" className="text-[10px] capitalize bg-muted text-muted-foreground">
+                            {pow.source || pow.type}
+                          </Badge>
+                        </h4>
+                        <p className="text-sm text-muted-foreground mt-1">{pow.description}</p>
+                        
+                        {pow.skills && pow.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {pow.skills.map((s: string) => (
+                              <Badge key={s} variant="secondary" className="text-[10px] bg-primary/5 text-primary border-primary/20">
+                                {s}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {pow.url && pow.url !== '#' && (
+                          <a href={pow.url} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1 mt-2">
+                            <ExternalLink className="h-3 w-3" /> View Evidence
+                          </a>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+                  ))
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground border-2 border-dashed rounded-lg">
+                    <p className="text-sm mb-2">Build your Proof of Work</p>
+                    <p className="text-xs mb-4">Connect GitHub, add projects, or link research to back up your skills.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}
@@ -274,10 +301,20 @@ export default function ProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {user.skills.map(skill => (
-                    <Badge key={skill.id} variant="outline" className="text-xs">{skill.name}</Badge>
-                  ))}
+                <div className="flex flex-col gap-4">
+                  {user.skills.map(skill => {
+                    const evidenceCount = user.proofOfWork?.filter(pow => pow.skills?.includes(skill.name)).length || 0;
+                    return (
+                      <div key={skill.id} className="border-b last:border-0 pb-3 last:pb-0">
+                        <span className="font-medium text-sm">{skill.name}</span>
+                        {evidenceCount > 0 ? (
+                          <div className="text-xs text-primary flex items-center gap-1 mt-1">
+                            <Check className="h-3 w-3" /> Evidence found · {evidenceCount}
+                          </div>
+                        ) : null}
+                      </div>
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
