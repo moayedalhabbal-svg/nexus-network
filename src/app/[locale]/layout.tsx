@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   description: "The intelligent professional network that connects people through the projects, ideas, research and opportunities they care about.",
 };
 
+export function generateStaticParams() {
+  return [{ locale: 'en' }, { locale: 'fr' }, { locale: 'ar' }];
+}
+
 export default async function RootLayout({
   children,
   params
