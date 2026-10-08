@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Globe, Check } from 'lucide-react';
@@ -10,6 +10,7 @@ export function LanguageSelector() {
   const [isPending, startTransition] = useTransition();
   const locale = useLocale();
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const locales = [
@@ -20,8 +21,16 @@ export function LanguageSelector() {
 
   const handleLanguageChange = (newLocale: string) => {
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    
+    // Replace the first segment (the old locale) with the new locale
+    const segments = pathname.split('/');
+    if (segments.length > 1) {
+      segments[1] = newLocale;
+    }
+    const newPath = segments.join('/') + window.location.search;
+    
     startTransition(() => {
-      router.refresh();
+      router.push(newPath);
     });
     setIsOpen(false);
   };
