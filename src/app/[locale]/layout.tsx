@@ -17,6 +17,28 @@ import { MobileNavWrapper } from "@/components/layout/mobile-nav-wrapper";
 export const metadata: Metadata = {
   title: "NEXUS | Build what's next",
   description: "The intelligent professional network that connects people through the projects, ideas, research and opportunities they care about.",
+  openGraph: {
+    title: "NEXUS | Build what's next",
+    description: "Find the people, projects, and opportunities to build what comes next. Where ideas find teams.",
+    url: "https://nexus.app",
+    siteName: "NEXUS",
+    images: [
+      {
+        url: "https://nexus.app/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "NEXUS Network",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NEXUS | Build what's next",
+    description: "The intelligent professional network for builders.",
+    images: ["https://nexus.app/og.jpg"],
+  },
 };
 
 export function generateStaticParams() {
