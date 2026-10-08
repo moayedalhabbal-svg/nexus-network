@@ -474,67 +474,118 @@ export function findPeopleForProject(project: Project, limit = 10): (UserProfile
 
 // ─── Natural Language Search (Demo) ─────────────────────────────────
 
-export function semanticSearch(query: string, type: 'people' | 'projects' | 'all' = 'all'): {
-  people: (UserProfile & { relevance: number })[];
-  projects: (Project & { relevance: number })[];
-} {
+export interface UnifiedSearchResult {
+  id: string;
+  type: 'people' | 'projects' | 'research' | 'startups' | 'opportunities' | 'mentors';
+  data: any;
+  score: number;
+  reason: string;
+}
+
+export function semanticSearch(query: string, requestedType: 'all' | 'people' | 'projects' | 'research' | 'startups' | 'opportunities' | 'mentors' = 'all'): UnifiedSearchResult[] {
   const queryLower = query.toLowerCase();
-  const queryTerms = queryLower.split(/\s+/).filter(t => t.length > 2);
+  
+  // 1. Semantic Entity Extraction
+  let targetType = requestedType;
+  if (requestedType === 'all') {
+    if (queryLower.includes('people') || queryLower.includes('someone') || queryLower.includes('engineers') || queryLower.includes('founders') || queryLower.includes('designers')) {
+      targetType = 'people';
+    } else if (queryLower.includes('research')) {
+      targetType = 'research';
+    } else if (queryLower.includes('mentor') || queryLower.includes('advice')) {
+      targetType = 'mentors';
+    } else if (queryLower.includes('startup') || queryLower.includes('startups')) {
+      targetType = 'startups';
+    } else if (queryLower.includes('opportunit') || queryLower.includes('jobs')) {
+      targetType = 'opportunities';
+    } else if (queryLower.includes('project')) {
+      targetType = 'projects';
+    }
+  }
 
-  const people = type === 'projects' ? [] : SEED_USERS
-    .map(user => {
-      let relevance = 0;
-      const searchableText = [
-        user.name, user.headline, user.bio,
-        ...user.skills.map(s => s.name),
-        ...user.interests.map(i => i.name),
-        user.location,
-        ...user.roles,
-        ...user.intents,
-      ].join(' ').toLowerCase();
+  // 2. Keyword Extraction
+  const queryTerms = queryLower.split(/\s+/).filter(t => t.length > 2 && !['find', 'looking', 'for', 'who', 'want', 'to', 'in', 'and', 'with', 'have'].includes(t));
+  
+  const results: UnifiedSearchResult[] = [];
 
-      queryTerms.forEach(term => {
-        if (searchableText.includes(term)) relevance += 10;
-      });
+  // Helper to calculate score and reason
+  const evaluate = (entityText: string, exactMatches: string[], baseScore = 0): { score: number, reason: string } => {
+    let score = baseScore;
+    let matchedKeywords: string[] = [];
+    
+    queryTerms.forEach(term => {
+      if (entityText.includes(term)) {
+        score += 10;
+        matchedKeywords.push(term);
+      }
+    });
 
-      // Boost for exact skill matches
-      user.skills.forEach(skill => {
-        if (queryLower.includes(skill.name.toLowerCase())) relevance += 20;
-      });
+    exactMatches.forEach(match => {
+      if (queryLower.includes(match.toLowerCase())) {
+        score += 25;
+        matchedKeywords.push(match.toLowerCase());
+      }
+    });
 
-      // Boost for interest matches
-      user.interests.forEach(interest => {
-        if (queryLower.includes(interest.name.toLowerCase())) relevance += 15;
-      });
+    const uniqueMatches = Array.from(new Set(matchedKeywords));
+    let reason = "Matched based on general relevance.";
+    if (uniqueMatches.length > 0) {
+      reason = `Recommended because of relevance to: ${uniqueMatches.slice(0, 3).join(', ')}.`;
+    }
+    return { score, reason };
+  };
 
-      return { ...user, relevance };
-    })
-    .filter(u => u.relevance > 0)
-    .sort((a, b) => b.relevance - a.relevance);
+  // ── People
+  if (targetType === 'all' || targetType === 'people') {
+    SEED_USERS.forEach(user => {
+      const text = [user.name, user.headline, user.bio, ...user.skills.map(s => s.name), ...user.interests.map(i => i.name), user.location, ...user.roles, ...user.intents].join(' ').toLowerCase();
+      const exact = [...user.skills.map(s => s.name), ...user.interests.map(i => i.name)];
+      const { score, reason } = evaluate(text, exact);
+      if (score > 0) results.push({ id: user.id, type: 'people', data: user, score, reason });
+    });
+  }
 
-  const projects = type === 'people' ? [] : SEED_PROJECTS
-    .map(project => {
-      let relevance = 0;
-      const searchableText = [
-        project.title, project.pitch, project.problem, project.solution,
-        project.description, ...project.technologies,
-        ...project.categories, project.location,
-        ...project.needs.flatMap(n => [...n.requiredSkills, n.role]),
-      ].join(' ').toLowerCase();
+  // ── Projects & Startups
+  if (targetType === 'all' || targetType === 'projects' || targetType === 'startups') {
+    SEED_PROJECTS.forEach(project => {
+      if (targetType === 'startups' && project.stage === 'idea') return; // basic heuristic
+      const text = [project.title, project.pitch, project.problem, project.solution, project.description, ...project.technologies, ...project.categories, project.location, ...project.needs.flatMap(n => [...n.requiredSkills, n.role])].join(' ').toLowerCase();
+      const exact = [...project.technologies, ...project.categories];
+      const { score, reason } = evaluate(text, exact);
+      if (score > 0) results.push({ id: project.id, type: 'projects', data: project, score, reason });
+    });
+  }
 
-      queryTerms.forEach(term => {
-        if (searchableText.includes(term)) relevance += 10;
-      });
+  // ── Research
+  if (targetType === 'all' || targetType === 'research') {
+    SEED_RESEARCH.forEach(research => {
+      const text = [research.title, research.problem, research.researchQuestion, research.institution, ...research.skillsNeeded, ...research.methods].join(' ').toLowerCase();
+      const exact = [...research.skillsNeeded];
+      const { score, reason } = evaluate(text, exact);
+      if (score > 0) results.push({ id: research.id, type: 'research', data: research, score, reason });
+    });
+  }
 
-      // Boost for technology matches
-      project.technologies.forEach(tech => {
-        if (queryLower.includes(tech.toLowerCase())) relevance += 20;
-      });
+  // ── Mentors
+  if (targetType === 'all' || targetType === 'mentors') {
+    SEED_MENTORS.forEach(mentor => {
+      const text = [mentor.name, mentor.headline, mentor.expertise.join(' '), mentor.bio, ...mentor.industries].join(' ').toLowerCase();
+      const exact = [...mentor.expertise, ...mentor.industries];
+      const { score, reason } = evaluate(text, exact);
+      if (score > 0) results.push({ id: mentor.id, type: 'mentors', data: mentor, score, reason });
+    });
+  }
 
-      return { ...project, relevance };
-    })
-    .filter(p => p.relevance > 0)
-    .sort((a, b) => b.relevance - a.relevance);
+  // ── Opportunities
+  if (targetType === 'all' || targetType === 'opportunities') {
+    SEED_OPPORTUNITIES.forEach(opp => {
+      const text = [opp.title, opp.organization, opp.description, ...opp.categories, opp.location].join(' ').toLowerCase();
+      const exact = [...opp.categories];
+      const { score, reason } = evaluate(text, exact);
+      if (score > 0) results.push({ id: opp.id, type: 'opportunities', data: opp, score, reason });
+    });
+  }
 
-  return { people, projects };
+  // Return ranked results
+  return results.sort((a, b) => b.score - a.score);
 }
