@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Target, Users, Zap, Search, Bot } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/layout/navbar";
 
-export default function Home() {
-  const t = useTranslations("landing");
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const { setRequestLocale } = await import('next-intl/server');
+  setRequestLocale(locale);
+  const t = await getTranslations("landing");
 
   return (
     <>
