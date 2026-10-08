@@ -225,21 +225,72 @@ export interface ProjectNeed {
 
 export interface ProjectMilestone {
   id: string;
+  projectId: string;
   title: string;
-  description: string;
-  targetDate: string;
-  completed: boolean;
-  completedAt: string | null;
+  description?: string;
+  status: 'Todo' | 'In Progress' | 'Done';
+  targetDate?: string;
+  ownerId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectTask {
+  id: string;
+  projectId: string;
+  milestoneId?: string;
+  title: string;
+  description?: string;
+  status: 'Todo' | 'In Progress' | 'Blocked' | 'Done';
+  priority: 'Low' | 'Medium' | 'High';
+  assigneeId?: string;
+  creatorId: string;
+  dueDate?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ProjectUpdate {
   id: string;
+  projectId: string;
   authorId: string;
-  authorName: string;
-  authorAvatar: string;
+  milestoneId?: string;
   content: string;
-  type: 'update' | 'milestone' | 'build_log' | 'question' | 'opportunity';
+  type?: 'update' | 'milestone' | 'build_log' | 'question' | 'opportunity';
+  progressIndicator?: number;
   createdAt: string;
+  
+  // Optional frontend-joined fields
+  authorName?: string;
+  authorAvatar?: string;
+}
+
+export interface ProjectDiscussion {
+  id: string;
+  projectId: string;
+  authorId: string;
+  content: string;
+  parentId?: string;
+  createdAt: string;
+  
+  // Optional frontend-joined fields
+  authorName?: string;
+  authorAvatar?: string;
+  replies?: ProjectDiscussion[];
+}
+
+export interface ProjectFile {
+  id: string;
+  projectId: string;
+  uploaderId: string;
+  fileName: string;
+  fileType: string;
+  fileUrl: string;
+  description?: string;
+  uploadedAt: string;
+  
+  // Optional frontend-joined fields
+  uploaderName?: string;
 }
 
 export interface ProjectMember {

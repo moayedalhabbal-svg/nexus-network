@@ -1184,13 +1184,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'tm-1', userId: 'user-1', name: 'Elena Vasquez', avatar: '/avatars/elena.jpg', role: 'Founder & Robotics Lead', joinedAt: '2024-01-15T10:00:00Z' },
     ],
     milestones: [
-      { id: 'ms-1', title: 'First prototype', description: 'Complete working prototype with basic navigation', targetDate: '2024-06-01', completed: true, completedAt: '2024-05-28T10:00:00Z' },
-      { id: 'ms-2', title: 'CV module integration', description: 'Integrate panel inspection computer vision model', targetDate: '2024-09-01', completed: true, completedAt: '2024-08-30T10:00:00Z' },
-      { id: 'ms-3', title: 'Field trial', description: 'Deploy prototype at partner solar farm for 30-day trial', targetDate: '2024-12-01', completed: false, completedAt: null },
-      { id: 'ms-4', title: 'Seed round', description: 'Raise $500K seed round', targetDate: '2025-03-01', completed: false, completedAt: null },
+      { id: 'ms-1', title: 'First prototype', description: 'Complete working prototype with basic navigation', targetDate: '2024-06-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'ms-2', title: 'CV module integration', description: 'Integrate panel inspection computer vision model', targetDate: '2024-09-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'ms-3', title: 'Field trial', description: 'Deploy prototype at partner solar farm for 30-day trial', targetDate: '2024-12-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'ms-4', title: 'Seed round', description: 'Raise $500K seed round', targetDate: '2025-03-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [
-      { id: 'upd-1', authorId: 'user-1', authorName: 'Elena Vasquez', authorAvatar: '/avatars/elena.jpg', content: 'Just completed our second prototype! The robot can now navigate between solar panel rows autonomously and detect 4 types of panel defects with 94% accuracy.', type: 'milestone', createdAt: '2024-09-15T10:00:00Z' },
+      { id: 'upd-1', projectId: 'proj-1', authorId: 'user-1', authorName: 'Elena Vasquez', authorAvatar: '/avatars/elena.jpg', content: 'Just completed our second prototype! The robot can now navigate between solar panel rows autonomously and detect 4 types of panel defects with 94% accuracy.', type: 'milestone', createdAt: '2024-09-15T10:00:00Z' },
     ],
     links: [{ label: 'GitHub', url: 'https://github.com/solarbot' }],
     whatExists: 'Working prototype that can navigate solar panel rows. Computer vision model trained on 10,000+ panel images. Basic monitoring dashboard.',
@@ -1230,8 +1230,8 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'tm-3', userId: 'user-5', name: 'Priya Sharma', avatar: '/avatars/priya.jpg', role: 'ML Research Lead', joinedAt: '2024-03-10T10:00:00Z' },
     ],
     milestones: [
-      { id: 'ms-5', title: 'MVP app', description: 'Working mobile app with basic test analysis', targetDate: '2024-07-01', completed: true, completedAt: '2024-06-28T10:00:00Z' },
-      { id: 'ms-6', title: 'Field pilot', description: '100 patient pilot in rural clinic', targetDate: '2024-11-01', completed: false, completedAt: null },
+      { id: 'ms-5', title: 'MVP app', description: 'Working mobile app with basic test analysis', targetDate: '2024-07-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'ms-6', title: 'Field pilot', description: '100 patient pilot in rural clinic', targetDate: '2024-11-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [],
     links: [],
@@ -1272,11 +1272,11 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'tm-4', userId: 'user-6', name: 'James Kowalski', avatar: '/avatars/james.jpg', role: 'Founder & Lead Engineer', joinedAt: '2024-03-05T14:00:00Z' },
     ],
     milestones: [
-      { id: 'ms-7', title: 'Sensor v1', description: 'First prototype soil sensor deployed', targetDate: '2024-05-01', completed: true, completedAt: '2024-04-25T10:00:00Z' },
-      { id: 'ms-8', title: 'Farmer pilot', description: 'Deploy on 10 farms in Wisconsin', targetDate: '2024-10-01', completed: false, completedAt: null },
+      { id: 'ms-7', title: 'Sensor v1', description: 'First prototype soil sensor deployed', targetDate: '2024-05-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'ms-8', title: 'Farmer pilot', description: 'Deploy on 10 farms in Wisconsin', targetDate: '2024-10-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [
-      { id: 'upd-2', authorId: 'user-6', authorName: 'James Kowalski', authorAvatar: '/avatars/james.jpg', content: 'We just got our first soil sensor prototype working! Measuring moisture, temperature, pH, and nutrient levels. Battery lasts 6 months on a single charge.', type: 'build_log', createdAt: '2024-09-01T10:00:00Z' },
+      { id: 'upd-2', projectId: 'proj-1', authorId: 'user-6', authorName: 'James Kowalski', authorAvatar: '/avatars/james.jpg', content: 'We just got our first soil sensor prototype working! Measuring moisture, temperature, pH, and nutrient levels. Battery lasts 6 months on a single charge.', type: 'build_log', createdAt: '2024-09-01T10:00:00Z' },
     ],
     links: [],
     whatExists: 'Working soil sensor prototype. Basic data pipeline. Crop model for corn and soybeans.',
@@ -1316,7 +1316,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'tm-5', userId: 'user-12', name: 'Alex Petrov', avatar: '/avatars/alex.jpg', role: 'Founder & CEO', joinedAt: '2024-05-01T14:00:00Z' },
     ],
     milestones: [
-      { id: 'ms-9', title: 'Launch beta', description: 'Launch beta with 3 university courses', targetDate: '2024-11-01', completed: false, completedAt: null },
+      { id: 'ms-9', title: 'Launch beta', description: 'Launch beta with 3 university courses', targetDate: '2024-11-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [],
     links: [{ label: 'Demo', url: 'https://learnloop.demo' }],
@@ -1356,8 +1356,8 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'tm-6', userId: 'user-3', name: 'Aisha Okafor', avatar: '/avatars/aisha.jpg', role: 'Principal Researcher', joinedAt: '2024-01-20T09:00:00Z' },
     ],
     milestones: [
-      { id: 'ms-10', title: 'Published baseline model', description: 'Publish model architecture and benchmark results', targetDate: '2024-08-01', completed: true, completedAt: '2024-07-15T10:00:00Z' },
-      { id: 'ms-11', title: 'Public API', description: 'Launch public beta API for battery health prediction', targetDate: '2025-01-01', completed: false, completedAt: null },
+      { id: 'ms-10', title: 'Published baseline model', description: 'Publish model architecture and benchmark results', targetDate: '2024-08-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
+      { id: 'ms-11', title: 'Public API', description: 'Launch public beta API for battery health prediction', targetDate: '2025-01-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [],
     links: [],
@@ -1426,7 +1426,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'tm-9', userId: 'user-9', name: 'Rachel Wright', avatar: '/avatars/rachel.jpg', role: 'Head of Growth', joinedAt: '2024-06-01T10:00:00Z' },
     ],
     milestones: [
-      { id: 'ms-12', title: '10 paying customers', description: 'Reach 10 enterprise clients', targetDate: '2024-12-01', completed: false, completedAt: null },
+      { id: 'ms-12', title: '10 paying customers', description: 'Reach 10 enterprise clients', targetDate: '2024-12-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [],
     links: [{ label: 'Website', url: 'https://carbontrack.io' }],
@@ -1897,7 +1897,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 4, createdAt: '2024-09-01T10:00:00Z',
   },
   {
-    id: 'post-3', authorId: 'user-3', authorName: 'Aisha Okafor', authorAvatar: '/avatars/aisha.jpg',
+    id: 'post-3', authorId: 'user-5', authorName: 'Aisha Okafor', authorAvatar: '/avatars/aisha.jpg',
     authorHeadline: 'Energy Engineer & Battery Research Scientist',
     projectId: 'proj-5', projectTitle: 'BatteryLens',
     type: 'research_update',
@@ -1907,7 +1907,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 11, createdAt: '2024-08-20T10:00:00Z',
   },
   {
-    id: 'post-4', authorId: 'user-5', authorName: 'Priya Sharma', authorAvatar: '/avatars/priya.jpg',
+    id: 'post-4', authorId: 'user-13', authorName: 'Priya Sharma', authorAvatar: '/avatars/priya.jpg',
     authorHeadline: 'ML Engineer & Healthcare AI Researcher',
     projectId: 'proj-8', projectTitle: 'NeuralAccess',
     type: 'question',
@@ -1917,7 +1917,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 15, createdAt: '2024-09-10T10:00:00Z',
   },
   {
-    id: 'post-5', authorId: 'user-12', authorName: 'Alex Petrov', authorAvatar: '/avatars/alex.jpg',
+    id: 'post-5', authorId: 'user-2', authorName: 'Alex Petrov', authorAvatar: '/avatars/alex.jpg',
     authorHeadline: 'Serial Entrepreneur & EdTech Builder',
     projectId: 'proj-4', projectTitle: 'LearnLoop',
     type: 'opportunity',
@@ -2078,3 +2078,30 @@ export function getUserById(id: string): UserProfile | undefined {
 export function getProjectById(id: string): Project | undefined {
   return SEED_PROJECTS.find(p => p.id === id);
 }
+
+
+// ─── Workspace Seed Data ─────────────────────────────────────────────
+export const SEED_WORKSPACE_MILESTONES = [
+  { id: 'ms-1', projectId: 'proj-1', title: 'Research & Planning', status: 'Done', targetDate: '2024-09-01', ownerId: 'user-1', createdAt: '2024-08-01T10:00:00Z', updatedAt: '2024-09-01T10:00:00Z' },
+  { id: 'ms-2', projectId: 'proj-1', title: 'Hardware Prototype v1', status: 'In Progress', targetDate: '2024-11-15', ownerId: 'user-14', createdAt: '2024-09-02T10:00:00Z', updatedAt: '2024-09-02T10:00:00Z' },
+  { id: 'ms-3', projectId: 'proj-1', title: 'Software MVP', status: 'Todo', targetDate: '2024-12-01', ownerId: 'user-1', createdAt: '2024-09-02T10:00:00Z', updatedAt: '2024-09-02T10:00:00Z' },
+];
+
+export const SEED_WORKSPACE_TASKS = [
+  { id: 'task-1', projectId: 'proj-1', milestoneId: 'ms-1', title: 'Compile literature on PV dust accumulation', status: 'Done', priority: 'Medium', creatorId: 'user-1', assigneeId: 'user-6', dueDate: '2024-08-15', createdAt: '2024-08-01T10:00:00Z', updatedAt: '2024-08-15T10:00:00Z' },
+  { id: 'task-2', projectId: 'proj-1', milestoneId: 'ms-2', title: 'Select main microcontroller', status: 'Done', priority: 'High', creatorId: 'user-1', assigneeId: 'user-14', dueDate: '2024-09-10', createdAt: '2024-09-02T10:00:00Z', updatedAt: '2024-09-10T10:00:00Z' },
+  { id: 'task-3', projectId: 'proj-1', milestoneId: 'ms-2', title: 'Design motor driver circuit', status: 'In Progress', priority: 'High', creatorId: 'user-14', assigneeId: 'user-14', dueDate: '2024-10-15', createdAt: '2024-09-15T10:00:00Z', updatedAt: '2024-09-15T10:00:00Z' },
+  { id: 'task-4', projectId: 'proj-1', milestoneId: 'ms-3', title: 'Setup basic React Native skeleton', status: 'Todo', priority: 'Medium', creatorId: 'user-1', assigneeId: 'user-2', dueDate: '2024-11-01', createdAt: '2024-10-01T10:00:00Z', updatedAt: '2024-10-01T10:00:00Z' },
+  { id: 'task-5', projectId: 'proj-1', milestoneId: 'ms-2', title: 'Order battery samples', status: 'Blocked', priority: 'Medium', creatorId: 'user-14', assigneeId: 'user-14', dueDate: '2024-10-20', createdAt: '2024-10-05T10:00:00Z', updatedAt: '2024-10-05T10:00:00Z' },
+];
+
+export const SEED_WORKSPACE_FILES = [
+  { id: 'file-1', projectId: 'proj-1', uploaderId: 'user-1', fileName: 'System_Architecture_v1.pdf', fileType: 'application/pdf', fileUrl: '#', description: 'Initial high level architecture block diagram.', uploadedAt: '2024-09-05T10:00:00Z' },
+  { id: 'file-2', projectId: 'proj-1', uploaderId: 'user-14', fileName: 'motor_specs.xlsx', fileType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', fileUrl: '#', description: 'Comparison of 5 candidate stepper motors.', uploadedAt: '2024-09-10T10:00:00Z' },
+];
+
+export const SEED_WORKSPACE_DISCUSSIONS = [
+  { id: 'disc-1', projectId: 'proj-1', authorId: 'user-1', content: 'Should we use ESP32 or STM32 for the main controller?', createdAt: '2024-09-06T10:00:00Z' },
+  { id: 'disc-2', projectId: 'proj-1', authorId: 'user-14', parentId: 'disc-1', content: 'ESP32 gives us OTA updates and WiFi out of the box, which is huge for MVP.', createdAt: '2024-09-06T11:00:00Z' },
+  { id: 'disc-3', projectId: 'proj-1', authorId: 'user-1', parentId: 'disc-1', content: "Good point. Let's go with ESP32-S3.", createdAt: '2024-09-06T12:00:00Z' },
+];
