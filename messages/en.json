@@ -1,0 +1,30 @@
+{
+  "navigation": {
+    "network": "Network",
+    "discover": "Discover",
+    "feed": "Feed",
+    "opportunities": "Opportunities",
+    "create_project": "Create Project",
+    "login": "Log in",
+    "signup": "Sign up",
+    "search_placeholder": "Search projects, people..."
+  },
+  "landing": {
+    "badge": "The Network for Builders",
+    "headline": "Build what's next.",
+    "subheadline": "Find the people who should be building it with you.",
+    "description": "An intelligent professional network that connects people through the projects, ideas, research and opportunities they care about.",
+    "join_btn": "Join the Network",
+    "explore_btn": "Explore Projects",
+    "features_title": "A Network Built for Action",
+    "features_desc": "Move beyond static resumes and noisy feeds. NEXUS focuses on what you can build, the skills you have, and the impact you want to make.",
+    "f1_title": "Intent-Based Matching",
+    "f1_desc": "Our AI semantic search understands what you want to build and connects you with the exact skills you're missing.",
+    "f2_title": "Project First",
+    "f2_desc": "Don't just list where you worked. Showcase what you're building right now and find collaborators in real-time.",
+    "f3_title": "Signal Over Noise",
+    "f3_desc": "A curated feed focused on milestones, product launches, and deep-tech research, not corporate posturing.",
+    "f4_title": "Global Opportunities",
+    "f4_desc": "Find specialized funding, research grants, and technical co-founders across the world without traditional gatekeepers."
+  }
+}

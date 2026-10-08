@@ -11,26 +11,29 @@ import {
   Sparkles, Search, FolderKanban, Users, MessageSquare,
   Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert
 } from "lucide-react";
+import { LanguageSelector } from "./language-selector";
+import { useTranslations } from "next-intl";
 
 export function Navbar() {
   const { user, isAuthenticated, loginAsDemo, logout } = useAuth();
   const pathname = usePathname();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
+  const t = useTranslations("navigation");
 
   const navLinks = isAuthenticated
     ? [
-        { href: "/feed", label: "Feed", icon: Sparkles },
-        { href: "/discover", label: "Search", icon: Search },
-        { href: "/projects", label: "Projects", icon: FolderKanban },
-        { href: "/network", label: "Network", icon: Users },
+        { href: "/feed", label: t("feed"), icon: Sparkles },
+        { href: "/discover", label: t("discover"), icon: Search },
+        { href: "/projects", label: t("create_project"), icon: FolderKanban },
+        { href: "/network", label: t("network"), icon: Users },
         { href: "/messages", label: "Messages", icon: MessageSquare },
-        { href: "/opportunities", label: "Opportunities", icon: Sparkles },
+        { href: "/opportunities", label: t("opportunities"), icon: Sparkles },
       ]
     : [
-        { href: "/discover", label: "Search", icon: Search },
-        { href: "/projects", label: "Projects", icon: FolderKanban },
-        { href: "/network", label: "Network", icon: Users },
+        { href: "/discover", label: t("discover"), icon: Search },
+        { href: "/projects", label: t("create_project"), icon: FolderKanban },
+        { href: "/network", label: t("network"), icon: Users },
       ];
 
   const isActive = (href: string) => pathname === href;
@@ -131,10 +134,12 @@ export function Navbar() {
                 <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Log In</Button>
               </Link>
               <Link href="/onboarding">
-                <Button size="sm">Join the Network</Button>
+                <Button size="sm">{t("signup")}</Button>
               </Link>
             </>
           )}
+
+          <LanguageSelector />
 
           {/* Mobile menu toggle */}
           <Button

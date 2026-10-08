@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Target, Users, Zap, Search, Bot } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/layout/navbar";
 
 export default function Home() {
+  const t = useTranslations("landing");
+
   return (
     <>
       <Navbar />
@@ -18,28 +21,28 @@ export default function Home() {
           
           <div className="container relative z-10 mx-auto px-4 text-center">
             <Badge variant="secondary" className="mb-6 mx-auto animate-fade-in">
-              <Sparkles className="mr-2 h-3 w-3 text-primary" />
-              The Network for Builders
+              <Sparkles className="mx-2 h-3 w-3 text-primary" />
+              {t("badge")}
             </Badge>
             
             <h1 className="max-w-4xl mx-auto text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl mb-6 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-              Build what's next.<br />
-              <span className="text-muted-foreground">Find the people who should be building it with you.</span>
+              {t("headline")}<br />
+              <span className="text-muted-foreground">{t("subheadline")}</span>
             </h1>
             
             <p className="max-w-2xl mx-auto text-lg text-muted-foreground mb-10 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-              An intelligent professional network that connects people through the projects, ideas, research and opportunities they care about.
+              {t("description")}
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
               <Link href="/login">
                 <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base shadow-lg shadow-primary/25">
-                  Join the Network <ArrowRight className="ml-2 h-4 w-4" />
+                  {t("join_btn")} <ArrowRight className="mx-2 h-4 w-4 rtl:rotate-180" />
                 </Button>
               </Link>
               <Link href="/discover">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto h-12 px-8 text-base">
-                  Explore Projects
+                  {t("explore_btn")}
                 </Button>
               </Link>
             </div>

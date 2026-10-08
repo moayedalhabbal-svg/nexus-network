@@ -1,17 +1,19 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import createIntlMiddleware from 'next-intl/middleware';
+
+const intlMiddleware = createIntlMiddleware({
+  locales: ['en', 'fr', 'ar'],
+  defaultLocale: 'en',
+  localePrefix: 'never' // SEO-friendly: don't prefix the default locale, just use cookies to manage it, or use 'as-needed'
+});
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+  // 1. Run Internationalization Middleware
+  let response = intlMiddleware(request);
 
   // If in demo mode, skip Supabase auth middleware
   if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'demo' || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
-    // Basic route protection for demo mode using a mock cookie or simply allowing it
-    // In demo mode, auth is handled strictly via client-side context
     return response;
   }
 

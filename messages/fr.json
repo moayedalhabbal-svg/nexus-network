@@ -1,0 +1,30 @@
+{
+  "navigation": {
+    "network": "Réseau",
+    "discover": "Découvrir",
+    "feed": "Fil d'actualité",
+    "opportunities": "Opportunités",
+    "create_project": "Créer un projet",
+    "login": "Se connecter",
+    "signup": "S'inscrire",
+    "search_placeholder": "Rechercher projets, personnes..."
+  },
+  "landing": {
+    "badge": "Le Réseau des Bâtisseurs",
+    "headline": "Construisez l'avenir.",
+    "subheadline": "Trouvez les personnes qui le construiront avec vous.",
+    "description": "Un réseau professionnel intelligent qui connecte les individus à travers les projets, idées, recherches et opportunités qui les passionnent.",
+    "join_btn": "Rejoindre le réseau",
+    "explore_btn": "Explorer les projets",
+    "features_title": "Un Réseau Conçu pour l'Action",
+    "features_desc": "Allez au-delà des CV statiques et des flux d'actualité bruyants. NEXUS se concentre sur ce que vous pouvez construire, vos compétences et l'impact que vous souhaitez créer.",
+    "f1_title": "Mise en Relation par l'Intention",
+    "f1_desc": "Notre recherche sémantique par IA comprend ce que vous voulez construire et vous connecte avec les compétences exactes qui vous manquent.",
+    "f2_title": "Les Projets d'Abord",
+    "f2_desc": "Ne vous contentez pas de lister vos expériences. Montrez ce que vous construisez actuellement et trouvez des collaborateurs en temps réel.",
+    "f3_title": "Le Signal Plutôt que le Bruit",
+    "f3_desc": "Un fil d'actualité soigné, centré sur les étapes clés, les lancements de produits et la recherche approfondie (deep-tech).",
+    "f4_title": "Opportunités Mondiales",
+    "f4_desc": "Trouvez des financements spécialisés, des bourses de recherche et des co-fondateurs techniques à travers le monde, sans les obstacles traditionnels."
+  }
+}
