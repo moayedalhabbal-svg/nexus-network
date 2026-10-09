@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -11,7 +12,7 @@ import { SEED_USERS, SEED_PROJECTS } from "@/lib/seed-data";
 import { Heart, MessageSquare, Share2, Sparkles, Image as ImageIcon, Link as LinkIcon, Bookmark, ChevronRight, MoreHorizontal, X, Repeat2, Send } from "lucide-react";
 import Link from "next/link";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
-import { fetchFeedAction, createPostAction, likePostAction, savePostAction, fetchCommentsAction, createCommentAction, likeCommentAction, uploadMediaAction } from "@/app/actions/feed";
+import { fetchFeedAction, createPostAction, likePostAction, savePostAction, fetchCommentsAction, createCommentAction, likeCommentAction, uploadMediaAction, fetchMyProjectsAction, deletePostAction, editPostAction } from "@/app/actions/feed";
 import Image from "next/image";
 
 const DEMO_POSTS = [
@@ -52,6 +53,11 @@ export default function FeedPage() {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
+  const [myProjects, setMyProjects] = useState<any[]>([]);
+  const [linkedProject, setLinkedProject] = useState("");
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [menuOpenForId, setMenuOpenForId] = useState<string | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [expandedComments, setExpandedComments] = useState<Record<string, any[]>>({});
@@ -73,8 +79,17 @@ export default function FeedPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     loadPosts();
+    
+    // Fetch user projects
+    if (user) {
+      fetchMyProjectsAction().then(res => {
+        if (res.success && res.projects) {
+          setMyProjects(res.projects);
+        }
+      });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0 || mediaUrls.length >= 4) return;
@@ -93,14 +108,37 @@ export default function FeedPage() {
   const handlePost = async () => {
     if (!newPost.trim() || !user || isPosting) return;
     setIsPosting(true);
-    const { success } = await createPostAction(newPost, postType, null, null, mediaUrls);
+    const projRef = linkedProject === "" ? null : linkedProject;
+    const { success } = await createPostAction(newPost, postType, projRef, null, mediaUrls);
     if (success) {
       setNewPost("");
       setPostType("general");
       setMediaUrls([]);
+      setLinkedProject("");
       loadPosts();
     }
     setIsPosting(false);
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    setMenuOpenForId(null);
+    setPosts(prev => prev.filter(p => p.id !== postId));
+    if (!postId.startsWith('demo-')) {
+      await deletePostAction(postId);
+    }
+  };
+
+  const handleEditPost = async (postId: string) => {
+    if (!editContent.trim()) {
+      setEditingPostId(null);
+      return;
+    }
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, content: editContent } : p));
+    setEditingPostId(null);
+    if (!postId.startsWith('demo-')) {
+      await editPostAction(postId, editContent);
+    }
   };
 
   const handleLike = async (postId: string) => {
@@ -277,7 +315,7 @@ export default function FeedPage() {
                 </div>
                 
                 {newPost.length > 0 && (
-                  <div className="px-16 pb-3">
+                  <div className="px-16 pb-3 flex gap-2 flex-wrap">
                     <select 
                       className="text-xs border border-zinc-700 rounded-md px-3 py-1.5 bg-zinc-800 text-zinc-200 outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer"
                       value={postType}
@@ -290,6 +328,19 @@ export default function FeedPage() {
                       <option value="technical_discussion">Technical Discussion</option>
                       <option value="achievement">Achievement</option>
                     </select>
+
+                    {myProjects.length > 0 && (
+                      <select 
+                        className="text-xs border border-zinc-700 rounded-md px-3 py-1.5 bg-zinc-800 text-zinc-200 outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer max-w-[200px]"
+                        value={linkedProject}
+                        onChange={e => setLinkedProject(e.target.value)}
+                      >
+                        <option value="">Link Project (Optional)</option>
+                        {myProjects.map(proj => (
+                          <option key={proj.id} value={proj.id}>{proj.title}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                 )}
                 
@@ -365,20 +416,66 @@ export default function FeedPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 relative">
                           {post.post_type && post.post_type !== 'general' && (
                             <Badge variant="outline" className="text-[10px] uppercase font-semibold border-zinc-700 text-zinc-400 tracking-wider bg-transparent">
                               {post.post_type.replace(/_/g, ' ')}
                             </Badge>
                           )}
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"><MoreHorizontal className="h-4 w-4" /></Button>
+                          {(user?.id === author.id && !isDemo) && (
+                            <>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                                onClick={() => setMenuOpenForId(menuOpenForId === post.id ? null : post.id)}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                              
+                              {menuOpenForId === post.id && (
+                                <div className="absolute right-0 top-10 w-32 bg-zinc-800 border border-zinc-700 rounded-md shadow-xl py-1 z-10 overflow-hidden">
+                                  <button 
+                                    className="w-full text-left px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+                                    onClick={() => {
+                                      setEditingPostId(post.id);
+                                      setEditContent(post.content);
+                                      setMenuOpenForId(null);
+                                    }}
+                                  >
+                                    Edit Post
+                                  </button>
+                                  <button 
+                                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                                    onClick={() => handleDeletePost(post.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </>
+                          )}
                         </div>
                       </div>
 
-                      <div className="text-[15px] whitespace-pre-wrap leading-relaxed text-zinc-200 mb-4">
-                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        {post.content.split(' ').map((word: any, i: number) => word.startsWith('#') ? <span key={i} className="text-blue-400 hover:text-blue-300 font-medium cursor-pointer">{word} </span> : `${word} `)}
-                      </div>
+                      {editingPostId === post.id ? (
+                        <div className="mb-4 space-y-3">
+                          <textarea 
+                            value={editContent}
+                            onChange={e => setEditContent(e.target.value)}
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-md p-3 text-[15px] text-zinc-100 outline-none focus:ring-1 focus:ring-blue-500/50 resize-none min-h-[100px]"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => setEditingPostId(null)} className="text-zinc-400 hover:text-zinc-300">Cancel</Button>
+                            <Button size="sm" onClick={() => handleEditPost(post.id)} className="bg-blue-600 hover:bg-blue-500 text-white">Save Changes</Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-[15px] whitespace-pre-wrap leading-relaxed text-zinc-200 mb-4">
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          {post.content.split(' ').map((word: any, i: number) => word.startsWith('#') ? <span key={i} className="text-blue-400 hover:text-blue-300 font-medium cursor-pointer">{word} </span> : `${word} `)}
+                        </div>
+                      )}
 
                       {/* Image Gallery */}
                       {mediaList.length > 0 && (
@@ -426,6 +523,26 @@ export default function FeedPage() {
                             </div>
                           </div>
                           <Button variant="ghost" className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 text-xs h-7 px-3">Review Match</Button>
+                        </div>
+                      )}
+
+                      {/* Opportunity Embed */}
+                      {opportunity && (
+                        <div className="mt-5 rounded-xl border border-zinc-700/50 overflow-hidden bg-zinc-950/50 hover:bg-zinc-900 transition-colors">
+                          <div className="p-4">
+                            <Badge className="bg-purple-900/40 text-purple-300 mb-3 hover:bg-purple-900/60 text-xs font-medium border-purple-800/50">Opportunity</Badge>
+                            <h4 className="font-bold text-lg text-zinc-100">{opportunity.title}</h4>
+                            <p className="text-[14px] text-zinc-400 mt-1.5 leading-relaxed line-clamp-2">{opportunity.description}</p>
+                            <div className="flex gap-2 mt-4">
+                              {opportunity.location && <Badge variant="outline" className="text-[10px] bg-zinc-800/50 border-zinc-700 text-zinc-300">{opportunity.location}</Badge>}
+                              {opportunity.type && <Badge variant="outline" className="text-[10px] bg-zinc-800/50 border-zinc-700 text-zinc-300">{opportunity.type.replace('_', ' ')}</Badge>}
+                            </div>
+                          </div>
+                          <div className="bg-zinc-900/80 px-4 py-3 flex gap-3 border-t border-zinc-800">
+                            <Link href={`/opportunities/${opportunity.id}`} className="flex-1">
+                              <Button className="w-full h-8 text-xs bg-zinc-100 text-zinc-900 hover:bg-white">View Details</Button>
+                            </Link>
+                          </div>
                         </div>
                       )}
                     </div>

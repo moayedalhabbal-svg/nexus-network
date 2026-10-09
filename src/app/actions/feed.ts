@@ -213,3 +213,61 @@ export async function uploadMediaAction(formData: FormData) {
 
   return { success: true, url: publicUrlData.publicUrl };
 }
+
+export async function deletePostAction(postId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: "Unauthorized" };
+
+  // Note: RLS should already prevent deleting someone else's post, but we can double check
+  const { error } = await supabase
+    .from('posts')
+    .delete()
+    .eq('id', postId)
+    .eq('author_id', user.id);
+
+  if (error) {
+    console.error("Delete post error:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/feed');
+  return { success: true };
+}
+
+export async function editPostAction(postId: string, content: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: "Unauthorized" };
+
+  const { error } = await supabase
+    .from('posts')
+    .update({ content })
+    .eq('id', postId)
+    .eq('author_id', user.id);
+
+  if (error) {
+    console.error("Edit post error:", error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/feed');
+  return { success: true };
+}
+
+export async function fetchMyProjectsAction() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: true, projects: [] };
+
+  const { data, error } = await supabase
+    .from('projects')
+    .select('id, title')
+    .eq('owner_id', user.id);
+    
+  if (error) {
+    return { success: false, error: error.message };
+  }
+  
+  return { success: true, projects: data || [] };
+}
