@@ -59,18 +59,31 @@ export async function ensureProfileAction() {
     .single();
 
   if (!profile) {
-    // Create admin client to bypass RLS for insert
-    const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
-    const adminSupabase = createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    
-    await adminSupabase.from('profiles').insert({
+    // Try with authenticated client first (works if RLS policy allows it)
+    const { error: insertError } = await supabase.from('profiles').insert({
       id: user.id,
       full_name: user.user_metadata?.full_name || 'NEXUS User',
       search_visibility: true,
     });
+
+    if (insertError) {
+      // Fallback: Create admin client to bypass RLS for insert if service key is available
+      if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+        const adminSupabase = createSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.SUPABASE_SERVICE_ROLE_KEY
+        );
+        
+        await adminSupabase.from('profiles').insert({
+          id: user.id,
+          full_name: user.user_metadata?.full_name || 'NEXUS User',
+          search_visibility: true,
+        });
+      } else {
+        console.error("Failed to ensure profile: RLS blocked insert and no service key available.");
+      }
+    }
   }
 
   return { success: true };
