@@ -6,8 +6,9 @@ const analyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
@@ -18,6 +19,19 @@ const nextConfig = {
         as: "*.css",
       },
     },
+  },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'images.unsplash.com',
+      },
+      {
+        hostname: 'i.pravatar.cc',
+      },
+      {
+        hostname: 'ui-avatars.com',
+      }
+    ],
   },
   async headers() {
     return [

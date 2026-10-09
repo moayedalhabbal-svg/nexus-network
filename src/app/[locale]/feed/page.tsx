@@ -25,6 +25,7 @@ const DEMO_POSTS = [
     likes_count: 34,
     comments_count: 5,
     project: SEED_PROJECTS.find(p => p.id === "proj-1"),
+    media_urls: ["https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800"]
   },
   {
     id: "demo-2",
@@ -36,6 +37,27 @@ const DEMO_POSTS = [
     comments_count: 18,
     project: SEED_PROJECTS.find(p => p.id === "proj-3"),
     media_urls: ["https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800"]
+  },
+  {
+    id: "demo-3",
+    author: SEED_USERS.find(u => u.id === "user-3"), // Aisha Okafor
+    content: "Thrilled to share that our research on novel materials for efficient battery storage has been accepted! This marks a huge milestone for our lab. Special thanks to the entire team. #Research #EnergyTech",
+    post_type: "achievement",
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+    likes_count: 242,
+    comments_count: 31,
+    media_urls: ["https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&q=80&w=800"]
+  },
+  {
+    id: "demo-4",
+    author: SEED_USERS.find(u => u.id === "user-4"), // Wei Chen
+    content: "We're expanding our research team. If you're a post-doc with experience in quantum computing and material science, we'd love to chat. This is a fully funded 2-year position with a chance to work with state-of-the-art facilities.",
+    post_type: "looking_for_collaborators",
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
+    likes_count: 89,
+    comments_count: 12,
+    project: SEED_PROJECTS.find(p => p.id === "proj-2"),
+    media_urls: ["https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800"]
   }
 ];
 
