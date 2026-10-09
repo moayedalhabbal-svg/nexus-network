@@ -13,19 +13,20 @@ import { Avatar } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit" | "analytics" | "liquidity">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "projects" | "moderation" | "audit" | "analytics" | "liquidity">("overview");
   const [reports] = useState(SEED_REPORTS);
   const [logs] = useState(SEED_AUDIT_LOGS);
   
   const router = useRouter();
   const [realUsers, setRealUsers] = useState<any[]>([]);
+  const [realProjects, setRealProjects] = useState<any[]>([]);
   const [stats, setStats] = useState({ totalUsers: 0, totalProjects: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { getAdminUsersAction, getAdminStatsAction } = await import("@/app/actions/admin");
+        const { getAdminUsersAction, getAdminProjectsAction, getAdminStatsAction } = await import("@/app/actions/admin");
         
         const statsRes = await getAdminStatsAction();
         if (!statsRes.success) {
@@ -38,6 +39,11 @@ export default function AdminDashboardPage() {
         const usersRes = await getAdminUsersAction();
         if (usersRes.success && usersRes.users) {
           setRealUsers(usersRes.users);
+        }
+
+        const projRes = await getAdminProjectsAction();
+        if (projRes.success && projRes.projects) {
+          setRealProjects(projRes.projects);
         }
       } catch (err) {
         console.error(err);
@@ -57,6 +63,21 @@ export default function AdminDashboardPage() {
         setRealUsers(realUsers.filter(u => u.id !== userId));
       } else {
         alert("Failed to delete user: " + res.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    if (!confirm("Are you sure you want to completely delete this project? This cannot be undone.")) return;
+    try {
+      const { deleteProjectAction } = await import("@/app/actions/admin");
+      const res = await deleteProjectAction(projectId);
+      if (res.success) {
+        setRealProjects(realProjects.filter(p => p.id !== projectId));
+      } else {
+        alert("Failed to delete project: " + res.error);
       }
     } catch (err) {
       console.error(err);
@@ -92,6 +113,14 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Users className="h-4 w-4" /> Manage Users
+            </button>
+            <button 
+              onClick={() => setActiveTab("projects")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "projects" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+              }`}
+            >
+              <FolderKanban className="h-4 w-4" /> Manage Projects
             </button>
             <button 
               onClick={() => setActiveTab("moderation")}
@@ -271,6 +300,57 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="px-6 py-4 text-end">
                             <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleDeleteUser(user.id)}>Delete</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === "projects" && (
+            <div className="space-y-6 animate-fade-in">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight mb-2">Manage Projects</h1>
+                <p className="text-muted-foreground">View and moderate all created projects on the platform.</p>
+              </div>
+
+              <Card>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-start">
+                    <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b">
+                      <tr>
+                        <th className="px-6 py-4 font-medium">Project</th>
+                        <th className="px-6 py-4 font-medium">Owner</th>
+                        <th className="px-6 py-4 font-medium">Stage</th>
+                        <th className="px-6 py-4 font-medium">Created</th>
+                        <th className="px-6 py-4 font-medium text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {realProjects.length === 0 && loading && (
+                        <tr><td colSpan={5} className="px-6 py-4 text-center">Loading projects...</td></tr>
+                      )}
+                      {realProjects.map(project => (
+                        <tr key={project.id} className="border-b hover:bg-muted/20 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="font-semibold">{project.title}</div>
+                            <div className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">{project.pitch}</div>
+                          </td>
+                          <td className="px-6 py-4 flex items-center gap-2">
+                            <Avatar size="sm" alt={project.profiles?.full_name} src={project.profiles?.avatar_url} />
+                            <span className="text-xs">{project.profiles?.full_name}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <Badge variant="secondary" className="capitalize">{project.stage}</Badge>
+                          </td>
+                          <td className="px-6 py-4 text-muted-foreground">
+                            {formatDate(project.created_at)}
+                          </td>
+                          <td className="px-6 py-4 text-end">
+                            <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleDeleteProject(project.id)}>Delete</Button>
                           </td>
                         </tr>
                       ))}
