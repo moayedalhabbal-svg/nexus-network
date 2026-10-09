@@ -10,8 +10,22 @@ import { Badge } from "@/components/ui/badge";
 import { SEED_PROJECTS, SEED_USERS } from "@/lib/seed-data";
 import { Avatar } from "@/components/ui/avatar";
 import { motion, Variants } from "framer-motion";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
+import { useEffect } from "react";
 
 export function HomeClient() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const locale = useLocale();
+
+  useEffect(() => {
+    if (user) {
+      router.push(`/${locale}/feed`);
+    }
+  }, [user, router, locale]);
+
   const featuredProjects = SEED_PROJECTS.slice(0, 3);
   const featuredUsers = SEED_USERS.slice(0, 4);
 

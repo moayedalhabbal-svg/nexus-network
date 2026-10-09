@@ -9,10 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { SEED_USERS, SEED_PROJECTS } from "@/lib/seed-data";
-import { Heart, MessageSquare, Share2, Sparkles, Image as ImageIcon, Link as LinkIcon, Bookmark, ChevronRight, MoreHorizontal, X, Repeat2, Send } from "lucide-react";
+import { Heart, MessageSquare, Share2, Sparkles, Image as ImageIcon, Link as LinkIcon, Bookmark, ChevronRight, MoreHorizontal, X, Repeat2, Send, Users } from "lucide-react";
 import Link from "next/link";
 import { formatDate, formatRelativeTime } from "@/lib/utils";
 import { fetchFeedAction, createPostAction, likePostAction, savePostAction, fetchCommentsAction, createCommentAction, likeCommentAction, uploadMediaAction, fetchMyProjectsAction, deletePostAction, editPostAction } from "@/app/actions/feed";
+import { computeMatchesAction } from "@/app/actions/compute-matches";
 import Image from "next/image";
 
 const DEMO_POSTS = [
@@ -76,6 +77,10 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
   const [myProjects, setMyProjects] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [aiMatches, setAiMatches] = useState<any>({ projectMatches: [], peopleMatches: [] });
+  const [loadingMatches, setLoadingMatches] = useState(false);
+  
   const [linkedProject, setLinkedProject] = useState("");
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -102,12 +107,23 @@ export default function FeedPage() {
     setMounted(true);
     loadPosts();
     
-    // Fetch user projects
+    // Fetch user projects & AI Matches
     if (user) {
       fetchMyProjectsAction().then(res => {
         if (res.success && res.projects) {
           setMyProjects(res.projects);
         }
+      });
+      
+      setLoadingMatches(true);
+      computeMatchesAction().then(res => {
+        if (res.success) {
+          setAiMatches({
+            projectMatches: res.projectMatches?.slice(0, 2) || [],
+            peopleMatches: res.peopleMatches?.slice(0, 3) || []
+          });
+        }
+        setLoadingMatches(false);
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -284,10 +300,28 @@ export default function FeedPage() {
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">89</span>
                   </Link>
                 </div>
-                <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-2">
-                  <Link href="/projects/manage" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1">
-                    <Bookmark className="h-4 w-4" /> Saved Items
-                  </Link>
+                <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-4">
+                  <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">My Activity</div>
+                  
+                  {myProjects.length > 0 ? (
+                    myProjects.slice(0,3).map(proj => (
+                      <Link key={proj.id} href={`/projects/${proj.id}/workspace`} className="flex flex-col gap-1 text-sm group cursor-pointer border-l-2 border-transparent hover:border-blue-500 pl-2 -ml-2 transition-all">
+                        <span className="font-medium text-zinc-300 group-hover:text-zinc-100">{proj.title}</span>
+                        <span className="text-xs text-zinc-500">Active Workspace</span>
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-xs text-zinc-500">No active projects yet.</span>
+                  )}
+                  
+                  <div className="pt-2 space-y-2">
+                    <Link href="/projects/manage" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1 mt-2">
+                      <Bookmark className="h-4 w-4" /> Saved Items
+                    </Link>
+                    <Link href="/network" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1">
+                      <Users className="h-4 w-4" /> 2 Pending Requests
+                    </Link>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -689,6 +723,39 @@ export default function FeedPage() {
                   </Button>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-zinc-800 bg-zinc-900/50 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500" />
+            <CardHeader className="pb-4 border-b border-zinc-800/50">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-zinc-100">
+                <Sparkles className="h-4 w-4 text-blue-400" /> Recommended Projects
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-5">
+              {loadingMatches ? (
+                <div className="text-xs text-zinc-500 text-center py-4">Analyzing network...</div>
+              ) : (
+                <>
+                  {aiMatches.projectMatches.length > 0 ? (
+                    <div className="space-y-3">
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      {aiMatches.projectMatches.map((m: any) => (
+                        <div key={m.project.id} className="flex flex-col gap-1 p-2 -mx-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
+                          <Link href={`/projects/${m.project.id}`} className="font-semibold text-[13px] text-zinc-200 hover:text-blue-400 truncate">{m.project.title}</Link>
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="text-zinc-400 line-clamp-1">{m.match.reasons[0]}</span>
+                            <span className="text-blue-400 font-medium ml-2">{m.match.score}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-zinc-500 text-center py-2">Update your profile to get personalized recommendations.</div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
           

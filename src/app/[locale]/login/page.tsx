@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 export default function LoginPage() {
   const { login, loginAsDemo } = useAuth();
   const router = useRouter();
+  const locale = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,7 +40,7 @@ export default function LoginPage() {
         // We still call the client login to populate the mock UI state 
         // since we haven't stripped out SEED_USERS yet
         await login(email, password);
-        router.push("/discover");
+    router.push(`/${locale}/feed`);
       } else {
         setError(result.error || "Failed to login.");
       }
@@ -51,7 +53,7 @@ export default function LoginPage() {
 
   const handleDemoLogin = (userId: string) => {
     loginAsDemo(userId);
-    router.push("/discover");
+    router.push(`/${locale}/feed`);
   };
 
   return (
