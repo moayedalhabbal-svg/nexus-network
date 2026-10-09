@@ -196,10 +196,21 @@ export default function OnboardingPage() {
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     trackEvent('onboarding_completed', { role: data.roles?.[0] || 'unknown', goals: data.intents?.length || 0 });
-    loginAsDemo("user-1");
-    router.push("/discover");
+    
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL !== 'demo') {
+      try {
+        const { completeOnboardingAction } = await import("@/app/actions/profile");
+        await completeOnboardingAction(data);
+      } catch (e) {
+        console.error("Failed to save onboarding data:", e);
+      }
+    } else {
+      loginAsDemo("user-1");
+    }
+    
+    router.push(`/${locale}/feed`);
   };
 
   const progress = (step / STEPS.length) * 100;

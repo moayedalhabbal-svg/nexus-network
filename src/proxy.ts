@@ -64,19 +64,42 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Route Protection Logic
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup');
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register') || request.nextUrl.pathname.startsWith('/signup');
+  const isVerificationRoute = request.nextUrl.pathname.startsWith('/verify-email');
+  
   const isProtectedRoute = 
     request.nextUrl.pathname.startsWith('/settings') ||
     request.nextUrl.pathname.startsWith('/messages') ||
     request.nextUrl.pathname.startsWith('/admin') ||
-    request.nextUrl.pathname === '/projects/manage' ||
-    request.nextUrl.pathname === '/projects/new';
+    request.nextUrl.pathname.startsWith('/projects/manage') ||
+    request.nextUrl.pathname.startsWith('/projects/new') ||
+    request.nextUrl.pathname.startsWith('/feed') ||
+    request.nextUrl.pathname.startsWith('/discover') ||
+    request.nextUrl.pathname.startsWith('/network') ||
+    request.nextUrl.pathname.startsWith('/opportunities') ||
+    request.nextUrl.pathname.startsWith('/bounties') ||
+    request.nextUrl.pathname.startsWith('/onboarding') ||
+    request.nextUrl.pathname.startsWith('/profile');
   
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
+  // Handle unverified users (email not confirmed)
+  const isUnverified = user && !user.email_confirmed_at;
+  
+  if (isUnverified && isProtectedRoute) {
+    return NextResponse.redirect(new URL('/verify-email', request.url));
+  }
+
   if (user && isAuthRoute) {
+    if (isUnverified) {
+      return NextResponse.redirect(new URL('/verify-email', request.url));
+    }
+    return NextResponse.redirect(new URL('/feed', request.url));
+  }
+
+  if (user && !isUnverified && isVerificationRoute) {
     return NextResponse.redirect(new URL('/feed', request.url));
   }
 

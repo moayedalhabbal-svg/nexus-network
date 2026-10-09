@@ -86,7 +86,12 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Password</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">Password</label>
+                  <Link href={`/${locale}/forgot-password`} className="text-xs text-primary hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
                 <Input
                   type="password"
                   placeholder="••••••••"
@@ -106,7 +111,7 @@ export default function LoginPage() {
           <CardFooter className="flex-col gap-4 border-t pt-6">
             <p className="text-xs text-muted-foreground text-center">
               Don't have an account?{" "}
-              <Link href="/onboarding" className="text-primary hover:underline font-medium">
+              <Link href={`/${locale}/register`} className="text-primary hover:underline font-medium">
                 Join the Network
               </Link>
             </p>
