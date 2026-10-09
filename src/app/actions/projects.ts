@@ -33,6 +33,10 @@ export async function createProjectAction(formData: FormData) {
       return { success: false, error: "Unauthorized" };
     }
 
+    // Ensure profile exists to avoid foreign key violation
+    const { ensureProfileAction } = await import("./profile");
+    await ensureProfileAction();
+
     // Insert project
     const { data: project, error } = await supabase
       .from("projects")
