@@ -9,21 +9,32 @@ import { extractSkillsFromEvidenceAction } from "./evidence";
 const GITHUB_API_BASE = "https://api.github.com";
 
 export async function checkGithubConnectionAction() {
+  const isOAuthConfigured = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
+  
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { connected: false };
+  if (!user) return { connected: false, isOAuthConfigured };
 
   // For testing purposes, we check if the user is connected via user_providers
   const { data, error } = await supabase
     .from('user_providers')
-    .select('provider_username, last_synced_at')
+    .select('provider_username, last_synced_at, access_token')
     .eq('user_id', user.id)
     .eq('provider', 'github')
     .single();
 
-  if (error || !data) return { connected: false };
+  if (error || !data) return { connected: false, isOAuthConfigured };
 
-  return { connected: true, username: data.provider_username, lastSyncedAt: data.last_synced_at };
+  // If the user was connected when OAuth wasn't configured, they lack an access_token.
+  const isVerifiedConnection = !!data.access_token;
+  
+  return { 
+    connected: true, 
+    username: data.provider_username, 
+    lastSyncedAt: data.last_synced_at,
+    isOAuthConfigured,
+    isVerifiedConnection
+  };
 }
 
 export async function connectGithubMockAction(username: string) {
@@ -38,6 +49,14 @@ export async function connectGithubMockAction(username: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Unauthorized" };
 
+  const isOAuthConfigured = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET);
+  if (isOAuthConfigured) {
+    // Return a message that OAuth should be used, or we could initiate the OAuth URL here.
+    // For this implementation, we would typically redirect to GitHub OAuth login.
+    const oauthUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_APP_URL}/api/auth/github/callback&scope=read:user,repo`;
+    return { success: true, redirectUrl: oauthUrl };
+  }
+
   try {
     // Verify user exists on GitHub
     const res = await fetch(`\${GITHUB_API_BASE}/users/\${username}`);
@@ -49,7 +68,8 @@ export async function connectGithubMockAction(username: string) {
       provider: 'github',
       provider_user_id: String(ghUser.id),
       provider_username: ghUser.login,
-      last_synced_at: new Date().toISOString()
+      last_synced_at: new Date().toISOString(),
+      access_token: null // explicitly null to mark as unverified
     }, { onConflict: 'user_id, provider' });
 
     if (error) throw error;
@@ -85,7 +105,7 @@ export async function fetchGithubRepositoriesAction() {
 
   const { data: providerData } = await supabase
     .from('user_providers')
-    .select('provider_username')
+    .select('provider_username, access_token')
     .eq('user_id', user.id)
     .eq('provider', 'github')
     .single();
@@ -94,7 +114,16 @@ export async function fetchGithubRepositoriesAction() {
 
   try {
     // Fetch public repos. In a real OAuth flow with repo scopes, this would pass the access_token
-    const res = await fetch(`\${GITHUB_API_BASE}/users/\${providerData.provider_username}/repos?sort=updated&per_page=30`);
+    const headers: Record<string, string> = {
+      'Accept': 'application/vnd.github.v3+json'
+    };
+    if (providerData.access_token) {
+      headers['Authorization'] = `token ${providerData.access_token}`;
+    }
+
+    const res = await fetch(`\${GITHUB_API_BASE}/users/\${providerData.provider_username}/repos?sort=updated&per_page=30`, {
+      headers
+    });
     if (!res.ok) throw new Error("Failed to fetch repositories");
     
     const repos = await res.json();
@@ -126,6 +155,16 @@ export async function addGithubEvidenceAction(repositories: any[]) {
   if (!user) return { success: false, error: "Unauthorized" };
 
   try {
+    const { data: providerData } = await supabase
+      .from('user_providers')
+      .select('access_token')
+      .eq('user_id', user.id)
+      .eq('provider', 'github')
+      .single();
+
+    const isVerifiedConnection = !!providerData?.access_token;
+    const verificationStatus = isVerifiedConnection ? 'verified' : 'unverified_lookup';
+    
     const proofs = [];
     
     for (const repo of repositories) {
@@ -145,7 +184,7 @@ export async function addGithubEvidenceAction(repositories: any[]) {
         role: role
       };
 
-      const { data, error } = await supabase.from('proof_of_work').insert({
+      const { data, error } = await supabase.from('proof_of_work').upsert({
         user_id: user.id,
         title: repo.name,
         type: type,
@@ -153,11 +192,11 @@ export async function addGithubEvidenceAction(repositories: any[]) {
         description: repo.description || 'GitHub Repository',
         source: 'GitHub',
         skills: skills || [],
-        verification_status: 'verified', // It came from a secured API connection
+        verification_status: verificationStatus,
         provider: 'github',
-        provider_id: repo.id,
+        provider_id: String(repo.id),
         metadata: metadata
-      }).select().single();
+      }, { onConflict: 'user_id, provider, provider_id' }).select().single();
 
       if (error) throw error;
       proofs.push(data);

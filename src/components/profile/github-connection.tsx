@@ -20,6 +20,8 @@ export function GithubConnection({ onComplete }: { onComplete: () => void }) {
   const [connected, setConnected] = useState(false);
   const [username, setUsername] = useState("");
   const [inputUsername, setInputUsername] = useState("");
+  const [isOAuthConfigured, setIsOAuthConfigured] = useState(false);
+  const [isVerifiedConnection, setIsVerifiedConnection] = useState(false);
   
   const [repos, setRepos] = useState<any[]>([]);
   const [fetchingRepos, setFetchingRepos] = useState(false);
@@ -29,9 +31,11 @@ export function GithubConnection({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     async function checkConnection() {
       const res = await checkGithubConnectionAction();
+      setIsOAuthConfigured(res.isOAuthConfigured || false);
       if (res.connected) {
         setConnected(true);
         setUsername(res.username || "");
+        setIsVerifiedConnection(res.isVerifiedConnection || false);
         loadRepos();
       }
       setLoading(false);
@@ -42,10 +46,17 @@ export function GithubConnection({ onComplete }: { onComplete: () => void }) {
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const res = await connectGithubMockAction(inputUsername);
+    const res = await connectGithubMockAction(inputUsername || 'oauth-trigger');
+    
+    if (res.redirectUrl) {
+      window.location.href = res.redirectUrl;
+      return;
+    }
+
     if (res.success) {
       setConnected(true);
       setUsername(res.username || "");
+      setIsVerifiedConnection(false); // mock action always means unverified fallback
       loadRepos();
     } else {
       alert("Failed to connect GitHub: " + res.error);
@@ -122,11 +133,22 @@ export function GithubConnection({ onComplete }: { onComplete: () => void }) {
         </div>
         
         <form onSubmit={handleConnect} className="space-y-3 pt-4 border-t">
-          <p className="text-sm">Since real OAuth secrets are not configured in this environment, simply enter your GitHub username to securely fetch your public repositories.</p>
-          <div className="flex gap-2">
-            <Input required value={inputUsername} onChange={e => setInputUsername(e.target.value)} placeholder="GitHub username" />
-            <Button type="submit">Connect</Button>
-          </div>
+          {isOAuthConfigured ? (
+            <div className="space-y-2">
+              <p className="text-sm text-zinc-400">Securely connect your GitHub account using OAuth to verify ownership.</p>
+              <Button type="submit" className="w-full sm:w-auto">Connect with GitHub OAuth</Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-sm text-amber-500/90 bg-amber-500/10 p-2 rounded">
+                OAuth is not configured in this environment. This is an unverified fallback. Enter a GitHub username to simulate connection.
+              </p>
+              <div className="flex gap-2">
+                <Input required value={inputUsername} onChange={e => setInputUsername(e.target.value)} placeholder="GitHub username" />
+                <Button type="submit">Lookup</Button>
+              </div>
+            </div>
+          )}
         </form>
       </div>
     );
@@ -134,14 +156,14 @@ export function GithubConnection({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+      <div className={`flex items-center justify-between p-4 rounded-lg border ${isVerifiedConnection ? 'bg-green-500/10 border-green-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
         <div className="flex items-center gap-3">
-          <GitBranch className="h-6 w-6 text-green-500" />
+          <GitBranch className={`h-6 w-6 ${isVerifiedConnection ? 'text-green-500' : 'text-amber-500'}`} />
           <div>
-            <h3 className="font-semibold text-green-500 flex items-center gap-2">
+            <h3 className={`font-semibold flex items-center gap-2 ${isVerifiedConnection ? 'text-green-500' : 'text-amber-500'}`}>
               GitHub connected <CheckCircle2 className="h-4 w-4" />
             </h3>
-            <p className="text-xs text-muted-foreground">@{username}</p>
+            <p className="text-xs text-muted-foreground">@{username} {isVerifiedConnection ? '(Verified)' : '(Unverified Fallback)'}</p>
           </div>
         </div>
         <div className="flex gap-2">

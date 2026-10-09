@@ -59,6 +59,12 @@ You are the AI Matchmaker for NEXUS, a platform connecting founders, researchers
 Explain to the user why they matched with "${targetName}".
 Be concise, enthusiastic, and professional. 
 
+When discussing skills, distinguish between:
+- Self-reported skills
+- Repository-derived skill signals (from GitHub)
+- Owner-confirmed contributions (from completed bounties)
+- Other independently verified evidence
+
 Here is the raw match data:
 Reasons: ${JSON.stringify(reasons)}
 Gaps: ${JSON.stringify(gaps)}
