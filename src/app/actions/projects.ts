@@ -217,3 +217,18 @@ export async function getMyProjectsAction() {
   
   return { success: true, projects: data || [] };
 }
+
+export async function getAllProjectsAction() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*, profiles!owner_id(full_name, avatar_url)')
+    .eq('is_private', false)
+    .order('created_at', { ascending: false });
+    
+  if (error) {
+    return { success: false, error: error.message };
+  }
+  
+  return { success: true, projects: data || [] };
+}

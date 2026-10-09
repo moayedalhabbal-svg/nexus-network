@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { useAuth } from "@/lib/auth-context";
@@ -30,17 +30,43 @@ export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStage, setSelectedStage] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [realProjects, setRealProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = SEED_PROJECTS.filter(p => {
-    if (selectedCategory !== "all" && !p.categories.includes(selectedCategory as ProjectCategory)) return false;
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const { getAllProjectsAction } = await import("@/app/actions/projects");
+        const res = await getAllProjectsAction();
+        if (res.success && res.projects) {
+          setRealProjects(res.projects);
+        }
+      } catch (err) {
+        console.error("Failed to load projects", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  const baseProjects = realProjects.length > 0 ? realProjects : (!loading ? SEED_PROJECTS : []);
+
+  const filtered = baseProjects.filter(p => {
+    // Handle differences between DB structure and SEED_PROJECTS
+    const cats = p.categories || (p.category ? [p.category] : []);
+    const techs = p.technologies || [];
+    
+    if (selectedCategory !== "all" && !cats.includes(selectedCategory as ProjectCategory)) return false;
     if (selectedStage !== "all" && p.stage !== selectedStage) return false;
     if (query.trim()) {
       const q = query.toLowerCase();
       return (
-        p.title.toLowerCase().includes(q) ||
-        p.pitch.toLowerCase().includes(q) ||
-        p.technologies.some(t => t.toLowerCase().includes(q)) ||
-        p.categories.some(c => c.includes(q))
+        p.title?.toLowerCase().includes(q) ||
+        p.pitch?.toLowerCase().includes(q) ||
+        techs.some((t: string) => t.toLowerCase().includes(q)) ||
+        cats.some((c: string) => c.includes(q))
       );
     }
     return true;
@@ -148,7 +174,7 @@ export default function ProjectsPage() {
                 <Card className="flex flex-col h-full hover:border-primary/50 transition-all cursor-pointer group hover:shadow-lg">
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start mb-3">
-                      <Badge variant="outline" className="capitalize text-xs">{project.category.replace("_", " ")}</Badge>
+                      <Badge variant="outline" className="capitalize text-xs">{(project.category || (project.categories && project.categories[0]) || 'Project').replace("_", " ")}</Badge>
                       <div className="flex items-center gap-2">
                         <Badge className={`${getStageColor(project.stage)} border-transparent capitalize text-xs`}>
                           {project.stage}
@@ -169,20 +195,21 @@ export default function ProjectsPage() {
 
                   <CardContent className="flex-1 pb-4 space-y-4">
                     <div className="flex flex-wrap gap-1.5">
-                      {project.technologies.slice(0, 4).map(tech => (
+                      {(project.technologies || []).slice(0, 4).map((tech: string) => (
                         <Badge key={tech} variant="secondary" className="text-[10px]">{tech}</Badge>
                       ))}
-                      {project.technologies.length > 4 && (
-                        <Badge variant="secondary" className="text-[10px] border-dashed">+{project.technologies.length - 4}</Badge>
+                      {(project.technologies || []).length > 4 && (
+                        <Badge variant="secondary" className="text-[10px] border-dashed">+{(project.technologies || []).length - 4}</Badge>
                       )}
                     </div>
 
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Open Roles</p>
                       <div className="flex flex-wrap gap-1.5">
-                        {project.needs.filter(n => !n.filled).map(need => (
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {(project.needs || []).filter((n: any) => !n.filled).map((need: any) => (
                           <Badge key={need.id} variant="outline" className="text-xs bg-primary/5 border-primary/20">
-                            {need.role}
+                            {need.role || need.role_title}
                           </Badge>
                         ))}
                       </div>
@@ -191,16 +218,16 @@ export default function ProjectsPage() {
 
                   <CardFooter className="border-t pt-4 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <Avatar size="sm" alt={project.ownerName} />
-                      <span className="text-xs text-muted-foreground">{project.ownerName}</span>
+                      <Avatar size="sm" alt={project.profiles?.full_name || project.ownerName || "Owner"} src={project.profiles?.avatar_url} />
+                      <span className="text-xs text-muted-foreground">{project.profiles?.full_name || project.ownerName || "Anonymous"}</span>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Users className="h-3 w-3" /> {project.team.length}
+                        <Users className="h-3 w-3" /> {project.team ? project.team.length : 1}
                       </span>
                       <span className="flex items-center gap-1">
-                        {project.remote ? <Globe className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
-                        {project.remote ? "Remote" : project.location}
+                        {project.remote !== false ? <Globe className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
+                        {project.remote !== false ? "Remote" : (project.location || "On-site")}
                       </span>
                     </div>
                   </CardFooter>
