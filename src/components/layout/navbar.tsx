@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import {
   Sparkles, Search, FolderKanban, Users, MessageSquare,
-  Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert
+  Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert, Trophy
 } from "lucide-react";
 import { LanguageSelector } from "./language-selector";
 import { ThemeToggle } from "../theme-toggle";
@@ -26,6 +26,7 @@ export function Navbar() {
     ? [
         { href: "/feed", label: t("feed"), icon: Sparkles },
         { href: "/discover", label: t("discover"), icon: Search },
+        { href: "/bounties", label: "Bounties", icon: Trophy },
         { href: "/projects", label: t("create_project"), icon: FolderKanban },
         { href: "/network", label: t("network"), icon: Users },
         { href: "/messages", label: "Messages", icon: MessageSquare },
@@ -33,6 +34,7 @@ export function Navbar() {
       ]
     : [
         { href: "/discover", label: t("discover"), icon: Search },
+        { href: "/bounties", label: "Bounties", icon: Trophy },
         { href: "/projects", label: t("create_project"), icon: FolderKanban },
         { href: "/network", label: t("network"), icon: Users },
       ];

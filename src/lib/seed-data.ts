@@ -2105,3 +2105,59 @@ export const SEED_WORKSPACE_DISCUSSIONS = [
   { id: 'disc-2', projectId: 'proj-1', authorId: 'user-14', parentId: 'disc-1', content: 'ESP32 gives us OTA updates and WiFi out of the box, which is huge for MVP.', createdAt: '2024-09-06T11:00:00Z' },
   { id: 'disc-3', projectId: 'proj-1', authorId: 'user-1', parentId: 'disc-1', content: "Good point. Let's go with ESP32-S3.", createdAt: '2024-09-06T12:00:00Z' },
 ];
+
+export const SEED_BOUNTIES = [
+  {
+    id: 'bounty-1',
+    project_id: 'proj-1',
+    owner_id: 'user-1',
+    title: 'Implement OTA Update Module for ESP32',
+    description: 'We need a robust Over-The-Air (OTA) update module for our ESP32-S3 controller. It must handle rollback on failure and verify firmware signatures.',
+    skills_required: ['C++', 'FreeRTOS', 'ESP-IDF'],
+    category: 'Firmware Engineering',
+    expected_deliverables: 'A pull request with the OTA module, unit tests, and documentation on how to flash and update.',
+    acceptance_criteria: 'Code compiles without warnings. OTA succeeds with test firmware. Failed OTA gracefully rolls back.',
+    estimated_effort: '10-15 hours',
+    deadline: '2026-11-15T00:00:00Z',
+    contributors_needed: 1,
+    reward_type: 'cash',
+    reward_details: '$500 on successful PR merge.',
+    cash_currency: 'USD',
+    cash_amount_range: '500',
+    cash_is_negotiable: false,
+    status: 'open',
+    created_at: '2026-10-01T10:00:00Z',
+    updated_at: '2026-10-01T10:00:00Z',
+    applications: [],
+    submissions: []
+  },
+  {
+    id: 'bounty-2',
+    project_id: 'proj-3',
+    owner_id: 'user-2',
+    title: 'Design Landing Page for Open Climate Data API',
+    description: 'We are launching our Open Climate Data API and need a clean, responsive landing page to explain the endpoints and showcase some data visualization.',
+    skills_required: ['React', 'Next.js', 'Tailwind CSS', 'Figma'],
+    category: 'Frontend Development',
+    expected_deliverables: 'A Next.js page component with styling based on our brand guidelines.',
+    acceptance_criteria: 'Responsive on mobile and desktop. 90+ Lighthouse score.',
+    estimated_effort: '20 hours',
+    deadline: '2026-10-25T00:00:00Z',
+    contributors_needed: 1,
+    reward_type: 'non_cash',
+    reward_details: 'Public recognition on our contributors page, open-source portfolio credit, and a recommendation on your profile.',
+    status: 'open',
+    created_at: '2026-10-05T10:00:00Z',
+    updated_at: '2026-10-05T10:00:00Z',
+    applications: [
+      {
+        id: 'app-1',
+        applicant_id: 'user-4',
+        message: 'I have designed several API documentation sites before. Would love to help!',
+        status: 'pending',
+        created_at: '2026-10-06T10:00:00Z'
+      }
+    ],
+    submissions: []
+  }
+];
