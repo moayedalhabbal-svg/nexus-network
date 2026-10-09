@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +12,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit" | "analytics">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit" | "analytics" | "liquidity">("overview");
   const [reports] = useState(SEED_REPORTS);
   const [logs] = useState(SEED_AUDIT_LOGS);
 
@@ -73,6 +74,14 @@ export default function AdminDashboardPage() {
               }`}
             >
               <LineChart className="h-4 w-4" /> Product Analytics
+            </button>
+            <button 
+              onClick={() => setActiveTab("liquidity")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "liquidity" ? "bg-primary/10 text-primary" : "hover:bg-muted"
+              }`}
+            >
+              <Activity className="h-4 w-4" /> Network Liquidity
             </button>
           </nav>
         </aside>
@@ -387,9 +396,140 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           )}
-          
+
+          {activeTab === "liquidity" && (
+            <div className="space-y-6 animate-fade-in">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight mb-2">Network Liquidity</h1>
+                <p className="text-muted-foreground">Monitor marketplace health: supply, demand, and match conversion.</p>
+              </div>
+              <NetworkLiquidityDashboard />
+            </div>
+          )}
         </main>
       </div>
+    </div>
+  );
+}
+
+// Subcomponent to fetch and render the liquidity data
+function NetworkLiquidityDashboard() {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    import("@/app/actions/liquidity").then(module => {
+      module.getNetworkLiquidityStats().then(res => {
+        if (res.success) {
+          setStats(res.data);
+        }
+        setLoading(false);
+      });
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-muted-foreground">
+        <Activity className="h-8 w-8 animate-spin text-primary mb-4" />
+        <p>Analyzing network liquidity...</p>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <Card className="border-dashed border-2 bg-muted/30">
+        <CardContent className="flex flex-col items-center justify-center p-12 text-center">
+          <AlertTriangle className="h-8 w-8 text-destructive mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Failed to load data</h3>
+          <p className="text-muted-foreground max-w-md">
+            The liquidity data could not be retrieved from the database.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {stats.note && (
+        <div className="bg-yellow-500/10 text-yellow-600 p-4 rounded-md text-sm border border-yellow-500/20 flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4" /> {stats.note}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Unfilled Project Roles</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{stats.unfilledRolesCount}</div>
+            <p className="text-xs text-muted-foreground mt-1">Active recruiting requests</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Invitations Sent</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{stats.invitations.total}</div>
+            <p className="text-xs text-muted-foreground mt-1">Across all projects</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Invitation Conversion</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{stats.invitations.conversionRate}%</div>
+            <p className="text-xs text-muted-foreground mt-1">{stats.invitations.accepted} accepted</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Skill Supply vs Demand</CardTitle>
+          <CardDescription>Most requested skills and the number of users who possess them.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!stats.skillGaps ? (
+            <div className="text-center p-8 text-muted-foreground">
+              <Sparkles className="h-8 w-8 mx-auto mb-3 opacity-50" />
+              <p>No active skill requests to analyze.</p>
+            </div>
+          ) : (
+            <div className="space-y-6 mt-4">
+              {stats.skillGaps.map((gap: any, i: number) => {
+                const ratio = gap.available > 0 ? gap.count / gap.available : gap.count;
+                const isCritical = ratio > 2 && gap.available < 5;
+                
+                return (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{gap.name}</span>
+                        {isCritical && <Badge variant="destructive" className="text-[10px]">Supply Shortage</Badge>}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {gap.count} requests • {gap.available} eligible users
+                      </p>
+                    </div>
+                    
+                    <div className="w-32 h-2 bg-muted rounded-full overflow-hidden flex">
+                      <div className="bg-primary h-full" style={{ width: `${Math.min(100, (gap.available / Math.max(gap.count, 1)) * 100)}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

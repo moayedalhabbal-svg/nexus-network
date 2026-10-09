@@ -258,6 +258,42 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
 
             {/* Sidebar */}
             <div className="space-y-8">
+
+              {/* Project Readiness Indicator */}
+              {(() => {
+                let score = 0;
+                let steps = 0;
+                if (project.problem && project.problem.length > 50) { score++; steps++; } else { steps++; }
+                if (project.solution && project.solution.length > 50) { score++; steps++; } else { steps++; }
+                if (project.description && project.description.length > 100) { score++; steps++; } else { steps++; }
+                if (project.needs && project.needs.length > 0) { score++; steps++; } else { steps++; }
+                if (project.milestones && project.milestones.length > 0) { score++; steps++; } else { steps++; }
+                
+                const readinessPercentage = (score / steps) * 100;
+                
+                return (
+                  <section>
+                    <Card className="border-primary/20 bg-primary/5">
+                      <CardContent className="p-5">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="text-sm font-semibold flex items-center gap-2">
+                            <ShieldCheck className="h-4 w-4 text-primary" /> Project Readiness
+                          </h3>
+                          <span className="text-sm font-bold text-primary">{Math.round(readinessPercentage)}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-3">
+                          <div className="bg-primary h-full" style={{ width: `${readinessPercentage}%` }} />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {readinessPercentage >= 80 ? "Well-defined goals and active recruitment." : 
+                           readinessPercentage >= 40 ? "Getting started, some details may be missing." : 
+                           "Early stage idea, needs more definition."}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </section>
+                );
+              })()}
               
               {/* Collaboration Requirements */}
               {(project.preferredCommitmentHours || (project.workStyles && project.workStyles.length > 0) || (project.collaborationTypes && project.collaborationTypes.length > 0)) && (

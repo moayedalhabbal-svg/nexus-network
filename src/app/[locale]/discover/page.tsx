@@ -231,16 +231,42 @@ export default function DiscoverPage() {
               {results.map(renderResultCard)}
             </div>
           ) : (
-            <div className="py-24 flex flex-col items-center justify-center text-center">
-              <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-4">
+            <div className="py-20 flex flex-col items-center justify-center text-center">
+              <div className="h-16 w-16 bg-muted/50 rounded-full flex items-center justify-center mb-6">
                 <Search className="h-8 w-8 text-muted-foreground/50" />
               </div>
-              <h3 className="text-lg font-bold mb-2">No results found</h3>
-              <p className="text-muted-foreground max-w-sm">
-                We couldn't find any {activeTab === 'all' ? 'matches' : activeTab} for "{query}". Try adjusting your keywords.
+              <h3 className="text-xl font-bold mb-3">No exact matches found</h3>
+              <p className="text-muted-foreground max-w-md mb-8">
+                We couldn't find any {activeTab === 'all' ? 'matches' : activeTab} exactly matching "{query}" in the current network. 
+                NEXUS is growing every day.
               </p>
-              <Button variant="outline" className="mt-6" onClick={() => setQuery("")}>
-                Clear Search
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+                <Card className="hover:border-primary/50 transition-colors bg-background">
+                  <CardContent className="p-6 text-left">
+                    <Rocket className="h-6 w-6 text-primary mb-3" />
+                    <h4 className="font-semibold mb-1">Create a Project</h4>
+                    <p className="text-sm text-muted-foreground mb-4">Start your own project and let collaborators find you.</p>
+                    <Button asChild variant="outline" className="w-full">
+                      <Link href={`/${locale}/projects/new`}>Publish Project</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card className="hover:border-primary/50 transition-colors bg-background">
+                  <CardContent className="p-6 text-left">
+                    <User className="h-6 w-6 text-primary mb-3" />
+                    <h4 className="font-semibold mb-1">Invite Collaborators</h4>
+                    <p className="text-sm text-muted-foreground mb-4">Know someone perfect for NEXUS? Bring them in.</p>
+                    <Button asChild variant="outline" className="w-full">
+                      <Link href={`/${locale}/network`}>Invite to Network</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <Button variant="ghost" className="mt-8 text-muted-foreground" onClick={() => setQuery("")}>
+                Clear search and view all
               </Button>
             </div>
           )}

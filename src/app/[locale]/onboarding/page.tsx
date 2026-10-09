@@ -13,8 +13,9 @@ import { SKILLS_DATABASE, INTERESTS_DATABASE } from "@/lib/seed-data";
 import { trackEvent } from "@/lib/analytics";
 import {
   ArrowRight, ArrowLeft, Check, User, Target, Zap, MapPin,
-  Briefcase, GraduationCap, Heart, Clock, Sparkles,
+  Briefcase, GraduationCap, Heart, Clock, Sparkles, Rocket
 } from "lucide-react";
+import { useLocale } from "next-intl";
 
 type OnboardingData = {
   name: string;
@@ -134,6 +135,7 @@ const EXPECTATIONS = [
 ];
 
 export default function OnboardingPage() {
+  const locale = useLocale();
   const { loginAsDemo } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -669,19 +671,39 @@ export default function OnboardingPage() {
                       that align with your skills and intent.
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center py-4">
-                    <div className="p-3 rounded-lg bg-muted/50">
-                      <div className="text-2xl font-bold text-primary">{data.skills.length}</div>
-                      <div className="text-xs text-muted-foreground">Skills</div>
-                    </div>
-                    <div className="p-3 rounded-lg bg-muted/50">
-                      <div className="text-2xl font-bold text-primary">{data.interests.length}</div>
-                      <div className="text-xs text-muted-foreground">Interests</div>
-                    </div>
-                    <div className="p-3 rounded-lg bg-muted/50">
-                      <div className="text-2xl font-bold text-primary">{data.intents.length}</div>
-                      <div className="text-xs text-muted-foreground">Intents</div>
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left py-4">
+                    <Card className="hover:border-primary/50 transition-colors">
+                      <CardContent className="p-5">
+                        <Rocket className="h-5 w-5 text-primary mb-2" />
+                        <h4 className="font-semibold mb-1 text-sm">Create a Project</h4>
+                        <p className="text-xs text-muted-foreground mb-3">Start your own initiative and recruit collaborators.</p>
+                        <Button asChild variant="outline" size="sm" className="w-full">
+                          <Link href={`/${locale}/projects/new`} onClick={() => loginAsDemo("user-1")}>Start Building</Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="hover:border-primary/50 transition-colors">
+                      <CardContent className="p-5">
+                        <Target className="h-5 w-5 text-primary mb-2" />
+                        <h4 className="font-semibold mb-1 text-sm">Find Collaborators</h4>
+                        <p className="text-xs text-muted-foreground mb-3">Discover people who match your exact skills.</p>
+                        <Button asChild variant="outline" size="sm" className="w-full">
+                          <Link href={`/${locale}/discover?tab=people`} onClick={() => loginAsDemo("user-1")}>Explore Network</Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="hover:border-primary/50 transition-colors sm:col-span-2 lg:col-span-1">
+                      <CardContent className="p-5">
+                        <User className="h-5 w-5 text-primary mb-2" />
+                        <h4 className="font-semibold mb-1 text-sm">Complete Profile</h4>
+                        <p className="text-xs text-muted-foreground mb-3">Add Proof of Work to stand out.</p>
+                        <Button asChild variant="outline" size="sm" className="w-full">
+                          <Link href={`/${locale}/profile`} onClick={() => loginAsDemo("user-1")}>View Profile</Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
                   </div>
                 </div>
               )}
