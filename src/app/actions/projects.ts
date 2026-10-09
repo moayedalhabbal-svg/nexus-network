@@ -199,3 +199,21 @@ export async function acceptApplicationAction(applicationId: string, role: strin
 
   return { success: true };
 }
+
+export async function getMyProjectsAction() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: true, projects: [] };
+
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('owner_id', user.id)
+    .order('created_at', { ascending: false });
+    
+  if (error) {
+    return { success: false, error: error.message };
+  }
+  
+  return { success: true, projects: data || [] };
+}

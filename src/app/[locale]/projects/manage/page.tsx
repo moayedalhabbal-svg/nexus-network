@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { useAuth } from "@/lib/auth-context";
@@ -22,6 +22,32 @@ export default function ManageProjectsPage() {
   const { user, isAuthenticated, loginAsDemo } = useAuth();
   const [apps, setApps] = useState(MOCK_APPLICATIONS);
   const [showReminder, setShowReminder] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [realProjects, setRealProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real projects from Supabase on mount
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false);
+      return;
+    }
+    const fetchProjects = async () => {
+      try {
+        const { getMyProjectsAction } = await import("@/app/actions/projects");
+        const res = await getMyProjectsAction();
+        if (res.success && res.projects) {
+          setRealProjects(res.projects);
+        }
+      } catch (err) {
+        console.error("Failed to load projects", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, [isAuthenticated, user]);
 
   if (!isAuthenticated || !user) {
     return (
@@ -41,11 +67,10 @@ export default function ManageProjectsPage() {
     );
   }
 
-  // Find projects owned by the user
-  const myProjects = SEED_PROJECTS.filter(p => p.ownerId === user.id);
-  
-  // For demo, if they don't own any, we just show proj-1 to give them a taste of the UI
-  const displayProjects = myProjects.length > 0 ? myProjects : [SEED_PROJECTS[0]];
+  // Use real projects, fallback to mock demo project if they have none yet
+  const displayProjects = realProjects.length > 0 
+    ? realProjects 
+    : (!loading ? [SEED_PROJECTS[0]] : []);
 
   const handleAction = (appId: string, action: "accept" | "reject") => {
     trackEvent(action === 'accept' ? 'application_accepted' : 'application_rejected', { application_id: appId });
@@ -80,7 +105,7 @@ export default function ManageProjectsPage() {
                     <div className="flex justify-between items-center text-xs">
                       <Badge variant="secondary" className="bg-background">{project.stage}</Badge>
                       <span className="text-muted-foreground flex items-center gap-1">
-                        <Users className="h-3 w-3" /> {project.team.length}
+                        <Users className="h-3 w-3" /> {project.team ? project.team.length : 1}
                       </span>
                     </div>
                   </CardContent>
