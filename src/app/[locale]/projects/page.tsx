@@ -83,6 +83,7 @@ export default function ProjectsPage() {
     
     return {
       ...p,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       matchScore: user ? matchUserToProject(user as any, safeProject as any).score : null,
     };
   }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,52 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "moderation" | "audit" | "analytics" | "liquidity">("overview");
   const [reports] = useState(SEED_REPORTS);
   const [logs] = useState(SEED_AUDIT_LOGS);
+  
+  const router = useRouter();
+  const [realUsers, setRealUsers] = useState<any[]>([]);
+  const [stats, setStats] = useState({ totalUsers: 0, totalProjects: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { getAdminUsersAction, getAdminStatsAction } = await import("@/app/actions/admin");
+        
+        const statsRes = await getAdminStatsAction();
+        if (!statsRes.success) {
+          router.push("/"); // Redirect if unauthorized
+          return;
+        }
+        
+        setStats(statsRes.stats || { totalUsers: 0, totalProjects: 0 });
+
+        const usersRes = await getAdminUsersAction();
+        if (usersRes.success && usersRes.users) {
+          setRealUsers(usersRes.users);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [router]);
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm("Are you sure you want to completely delete this user? This cannot be undone.")) return;
+    try {
+      const { deleteUserAction } = await import("@/app/actions/admin");
+      const res = await deleteUserAction(userId);
+      if (res.success) {
+        setRealUsers(realUsers.filter(u => u.id !== userId));
+      } else {
+        alert("Failed to delete user: " + res.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-muted/10">
@@ -102,7 +149,7 @@ export default function AdminDashboardPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground mb-1">Total Users</p>
-                        <h3 className="text-3xl font-bold">{SEED_USERS.length + 1240}</h3>
+                        <h3 className="text-3xl font-bold">{loading ? "..." : stats.totalUsers}</h3>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
                         <Users className="h-5 w-5 text-blue-500" />
@@ -118,7 +165,7 @@ export default function AdminDashboardPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground mb-1">Active Projects</p>
-                        <h3 className="text-3xl font-bold">{SEED_PROJECTS.length + 342}</h3>
+                        <h3 className="text-3xl font-bold">{loading ? "..." : stats.totalProjects}</h3>
                       </div>
                       <div className="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center">
                         <FolderKanban className="h-5 w-5 text-purple-500" />
@@ -201,27 +248,29 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {SEED_USERS.map(user => (
+                      {realUsers.length === 0 && loading && (
+                        <tr><td colSpan={5} className="px-6 py-4 text-center">Loading users...</td></tr>
+                      )}
+                      {realUsers.map(user => (
                         <tr key={user.id} className="border-b hover:bg-muted/20 transition-colors">
                           <td className="px-6 py-4 flex items-center gap-3">
-                            <Avatar size="sm" alt={user.name} />
+                            <Avatar size="sm" alt={user.full_name} src={user.avatar_url} />
                             <div>
-                              <div className="font-semibold">{user.name}</div>
-                              <div className="text-xs text-muted-foreground">{user.email}</div>
+                              <div className="font-semibold">{user.full_name}</div>
+                              <div className="text-xs text-muted-foreground">{user.username}</div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <Badge variant="outline">{user.roles?.[0] || 'User'}</Badge>
+                            <Badge variant="outline">{user.is_admin ? 'Admin' : 'User'}</Badge>
                           </td>
                           <td className="px-6 py-4 text-muted-foreground">
-                            Mar 2024
+                            {formatDate(user.created_at)}
                           </td>
                           <td className="px-6 py-4">
                             <Badge className="bg-green-500/10 text-green-500 border-green-200/20">Active</Badge>
                           </td>
                           <td className="px-6 py-4 text-end">
-                            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Edit</Button>
-                            <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10">Suspend</Button>
+                            <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleDeleteUser(user.id)}>Delete</Button>
                           </td>
                         </tr>
                       ))}
