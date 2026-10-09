@@ -97,7 +97,7 @@ export function Navbar() {
                 {showUserMenu && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-full sm:w-64 rounded-xl border bg-card shadow-xl z-50 p-2 animate-fade-in max-w-[calc(100vw-32px)]">
+                    <div className="absolute right-0 top-full mt-2 w-full sm:w-64 rounded-xl border bg-background shadow-xl z-50 p-2 animate-fade-in max-w-[calc(100vw-32px)]">
                       <div className="px-3 py-3 border-b mb-2">
                         <p className="font-semibold text-sm">{user.name}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{user.headline}</p>
