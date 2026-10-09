@@ -285,9 +285,13 @@ export default function FeedPage() {
             <Card className="overflow-hidden border-zinc-800 bg-zinc-900/50 backdrop-blur-sm shadow-xl">
               <div className="h-20 bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-purple-900/40" />
               <CardContent className="p-5 pt-0 relative">
-                <Avatar size="lg" alt={user.name} className="h-20 w-20 border-4 border-zinc-900 absolute -top-10 left-5 shadow-2xl" />
-                <div className="mt-12">
-                  <h3 className="font-bold text-lg text-zinc-100">{user.name}</h3>
+                <Link href="/profile" className="block absolute -top-10 left-5 z-10 cursor-pointer">
+                  <Avatar src={user.avatar} size="lg" alt={user.name} className="h-20 w-20 border-4 border-zinc-900 shadow-2xl hover:border-zinc-700 transition-colors" />
+                </Link>
+                <div className="pt-14">
+                  <h3 className="font-bold text-lg text-zinc-100">
+                    <Link href="/profile" className="hover:underline">{user.name}</Link>
+                  </h3>
                   <p className="text-xs text-zinc-400 line-clamp-2 mt-1 font-medium">{user.headline}</p>
                 </div>
                 <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-4">
