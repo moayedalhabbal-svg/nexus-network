@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 
 export async function saveMatchFeedbackAction(
   matchId: string, 
@@ -49,8 +49,8 @@ export async function explainMatchAction(
 ) {
   try {
     // Check if we have an API key, fallback to local generation if not
-    if (!process.env.OPENAI_API_KEY) {
-      console.log("No OPENAI_API_KEY found, falling back to local generation");
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      console.log("No GOOGLE_GENERATIVE_AI_API_KEY found, falling back to local generation");
       return fallbackExplainMatch(targetName, reasons, gaps);
     }
 
@@ -73,7 +73,7 @@ Format the output in clean Markdown. Use bullet points for strengths and potenti
 `;
 
     const { text } = await generateText({
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-1.5-flash"),
       prompt,
     });
 

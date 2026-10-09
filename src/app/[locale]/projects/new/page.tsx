@@ -124,7 +124,7 @@ export default function NewProjectPage() {
       
       if (result.success) {
         trackEvent('project_created', { category, stage });
-        router.push("/projects");
+        router.push("/projects/manage");
       } else {
         alert("Failed to create project: " + result.error);
       }

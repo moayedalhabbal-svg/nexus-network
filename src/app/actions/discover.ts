@@ -9,7 +9,7 @@ export async function semanticSearchAction(
   targetType: "all" | "people" | "projects" | "research" | "startups" | "opportunities" | "mentors"
 ): Promise<UnifiedSearchResult[]> {
   // 1. Fallback for empty or very short queries
-  if (!query || query.length < 5 || !process.env.OPENAI_API_KEY) {
+  if (!query || query.length < 5 || !process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     return localSemanticSearch(query, targetType);
   }
 

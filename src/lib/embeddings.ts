@@ -1,22 +1,22 @@
 import { embed } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 
 export async function generateTextEmbedding(text: string): Promise<number[]> {
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn("OPENAI_API_KEY is not set. Generating mock embedding (zeros).");
-    return new Array(1536).fill(0);
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    console.warn("GOOGLE_GENERATIVE_AI_API_KEY is not set. Generating mock embedding (zeros).");
+    return new Array(768).fill(0);
   }
 
   try {
     const { embedding } = await embed({
-      model: openai.embedding("text-embedding-3-small"),
+      model: google.textEmbeddingModel("text-embedding-004"),
       value: text,
     });
     return embedding;
   } catch (error) {
     console.error("Error generating embedding:", error);
     // Return zeros as a fallback to avoid crashing entirely, though ideally we'd queue a retry
-    return new Array(1536).fill(0);
+    return new Array(768).fill(0);
   }
 }
 

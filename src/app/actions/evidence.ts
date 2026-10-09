@@ -2,13 +2,13 @@
 
 import { SKILLS_DATABASE } from "@/lib/seed-data";
 import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
 export async function extractSkillsFromEvidenceAction(title: string, description: string, url: string) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       // Fallback: simple keyword matching
       const text = `${title} ${description} ${url}`.toLowerCase();
       const extracted = SKILLS_DATABASE.filter(s => text.includes(s.name.toLowerCase()));
@@ -16,7 +16,7 @@ export async function extractSkillsFromEvidenceAction(title: string, description
     }
 
     const { object } = await generateObject({
-      model: openai("gpt-4o-mini"),
+      model: google("gemini-1.5-flash"),
       schema: z.object({
         skills: z.array(z.string()).describe("List of exact skill names extracted from the evidence. Must match known technologies or domain areas.")
       }),
