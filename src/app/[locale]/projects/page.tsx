@@ -72,10 +72,20 @@ export default function ProjectsPage() {
     return true;
   });
 
-  const projectsWithMatch = filtered.map(p => ({
-    ...p,
-    matchScore: user ? matchUserToProject(user, p).score : null,
-  })).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+  const projectsWithMatch = filtered.map(p => {
+    // Safely coerce DB structure into what matchUserToProject expects
+    const safeProject = {
+      ...p,
+      technologies: p.technologies || [],
+      needs: p.needs || [],
+      categories: p.categories || (p.category ? [p.category] : [])
+    };
+    
+    return {
+      ...p,
+      matchScore: user ? matchUserToProject(user as any, safeProject as any).score : null,
+    };
+  }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
 
   const getStageColor = (stage: string) => {
     const colors: Record<string, string> = {
