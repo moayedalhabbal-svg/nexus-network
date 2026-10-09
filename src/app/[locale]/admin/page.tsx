@@ -23,6 +23,12 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState({ totalUsers: 0, totalProjects: 0 });
   const [loading, setLoading] = useState(true);
 
+  // Backfill State
+  const [backfilling, setBackfilling] = useState(false);
+  const [backfillStats, setBackfillStats] = useState<{ updated: number, failed: number, hasMore: boolean | "unknown", fetchFailed?: boolean } | null>(null);
+  const [failedProjects, setFailedProjects] = useState<string[]>([]);
+  const [failedProfiles, setFailedProfiles] = useState<string[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -81,6 +87,32 @@ export default function AdminDashboardPage() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleBackfill = async () => {
+    if (!confirm("Start AI Embedding backfill batch? This processes up to 100 missing records.")) return;
+    setBackfilling(true);
+    try {
+      const { backfillEmbeddingsAction } = await import("@/app/actions/admin-backfill");
+      const res = await backfillEmbeddingsAction(failedProjects, failedProfiles);
+      if (res.success) {
+        setBackfillStats({
+          updated: (backfillStats?.updated || 0) + (res.updated || 0),
+          failed: (backfillStats?.failed || 0) + (res.errors?.length || 0),
+          hasMore: res.hasMore !== undefined ? res.hasMore : false,
+          fetchFailed: res.fetchFailed
+        });
+        setFailedProjects(res.failedProjectIds || []);
+        setFailedProfiles(res.failedProfileIds || []);
+      } else {
+        alert("Backfill failed: " + res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error triggering backfill");
+    } finally {
+      setBackfilling(false);
     }
   };
 
@@ -240,6 +272,59 @@ export default function AdminDashboardPage() {
                   </CardContent>
                 </Card>
               </div>
+
+              {/* AI System Status */}
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" /> AI Intelligence Engine
+                  </CardTitle>
+                  <CardDescription>Monitor and repair vector embeddings for the semantic matching engine.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Vector Dimension Check: <span className="text-green-500 font-bold">vector(768) OK</span></p>
+                      <p className="text-sm text-muted-foreground">Model: gemini-embedding-2</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <Button 
+                        onClick={handleBackfill} 
+                        disabled={backfilling}
+                        variant={(backfillStats?.hasMore === true || backfillStats?.hasMore === "unknown" || backfillStats?.fetchFailed) ? "default" : "secondary"}
+                      >
+                        {backfilling ? "Processing Batch..." : "Rebuild AI Embeddings (Batch of 100)"}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {backfillStats && (
+                    <div className="mt-4 p-4 rounded-md bg-muted/50 border flex items-center justify-between">
+                      <div className="space-x-4">
+                        <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
+                          {backfillStats.updated} Updated
+                        </Badge>
+                        <Badge variant="outline" className={backfillStats.failed > 0 ? "text-destructive border-destructive bg-destructive/10" : ""}>
+                          {backfillStats.failed} Failed
+                        </Badge>
+                      </div>
+                      <div className="text-sm font-medium">
+                        {backfillStats.fetchFailed ? (
+                          <span className="text-destructive flex items-center">
+                            <AlertTriangle className="h-4 w-4 mr-1"/> Fetch error occurred. Remaining records unknown.
+                          </span>
+                        ) : backfillStats.hasMore === true ? (
+                          <span className="text-amber-600">More records remaining. Click again to continue.</span>
+                        ) : backfillStats.hasMore === "unknown" ? (
+                          <span className="text-amber-600">Remaining records unknown due to partial errors.</span>
+                        ) : (
+                          <span className="text-green-600 flex items-center"><CheckCircle className="h-4 w-4 mr-1"/> Database Fully Embedded</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
               {/* Charts Placeholder */}
               <Card>

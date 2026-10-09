@@ -16,7 +16,7 @@ export async function extractSkillsFromEvidenceAction(title: string, description
     }
 
     const { object } = await generateObject({
-      model: google("gemini-1.5-flash"),
+      model: google("gemini-3.8-flash"),
       schema: z.object({
         skills: z.array(z.string()).describe("List of exact skill names extracted from the evidence. Must match known technologies or domain areas.")
       }),

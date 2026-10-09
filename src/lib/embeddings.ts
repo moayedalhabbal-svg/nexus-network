@@ -9,8 +9,13 @@ export async function generateTextEmbedding(text: string): Promise<number[]> {
 
   try {
     const { embedding } = await embed({
-      model: google.textEmbeddingModel("text-embedding-004"),
+      model: google.embedding("gemini-embedding-2"),
       value: text,
+      providerOptions: {
+        google: {
+          outputDimensionality: 768
+        }
+      }
     });
     return embedding;
   } catch (error) {
