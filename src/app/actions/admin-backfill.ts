@@ -42,7 +42,7 @@ export async function backfillEmbeddingsAction(
     // 1. Process Projects
     let projectsQuery = adminClient
       .from("projects")
-      .select("id, title, pitch, technologies, needs")
+      .select("id, title, pitch, description, project_needs(role_title)")
       .is("embedding", null);
 
     if (ignoredProjectIds.length > 0) {
@@ -58,9 +58,8 @@ export async function backfillEmbeddingsAction(
     if (missingProjects && missingProjects.length > 0) {
       for (const project of missingProjects) {
         try {
-          const techs = project.technologies || [];
-          const needs = project.needs || [];
-          const textToEmbed = `${project.title} ${project.pitch} ${techs.join(" ")} ${needs.join(" ")}`;
+          const needs = project.project_needs?.map((n: { role_title: string }) => n.role_title) || [];
+          const textToEmbed = `${project.title} ${project.pitch} ${project.description || ""} ${needs.join(" ")}`;
           
           const embedding = await generateTextEmbedding(textToEmbed);
           const timestamp = new Date().toISOString();
@@ -91,7 +90,7 @@ export async function backfillEmbeddingsAction(
     // 2. Process Profiles
     let profilesQuery = adminClient
       .from("profiles")
-      .select("id, full_name, bio, skills, interests")
+      .select("id, full_name, bio, user_skills(skill_name), user_interests(interest_name)")
       .is("embedding", null);
 
     if (ignoredProfileIds.length > 0) {
@@ -107,8 +106,8 @@ export async function backfillEmbeddingsAction(
     if (missingProfiles && missingProfiles.length > 0) {
       for (const prof of missingProfiles) {
         try {
-          const skills = prof.skills || [];
-          const interests = prof.interests || [];
+          const skills = prof.user_skills?.map((s: { skill_name: string }) => s.skill_name) || [];
+          const interests = prof.user_interests?.map((i: { interest_name: string }) => i.interest_name) || [];
           const textToEmbed = `${prof.full_name} ${prof.bio || ""} ${skills.join(" ")} ${interests.join(" ")}`;
           
           const embedding = await generateTextEmbedding(textToEmbed);
