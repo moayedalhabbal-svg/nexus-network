@@ -98,18 +98,20 @@ export default function ManageProjectsPage() {
             <div className="lg:col-span-1 space-y-4">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">Your Projects</h3>
               {displayProjects.map(project => (
-                <Card key={project.id} className="border-primary bg-primary/5 shadow-sm">
-                  <CardContent className="p-4">
-                    <h4 className="font-semibold text-sm mb-1">{project.title}</h4>
-                    <p className="text-xs text-muted-foreground line-clamp-1 mb-3">{project.pitch}</p>
-                    <div className="flex justify-between items-center text-xs">
-                      <Badge variant="secondary" className="bg-background">{project.stage}</Badge>
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <Users className="h-3 w-3" /> {project.team ? project.team.length : 1}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Link key={project.id} href={`/projects/${project.id}/workspace`}>
+                  <Card className="border-primary bg-primary/5 shadow-sm hover:bg-primary/10 transition-colors cursor-pointer">
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold text-sm mb-1 group-hover:text-primary transition-colors">{project.title}</h4>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mb-3">{project.pitch}</p>
+                      <div className="flex justify-between items-center text-xs">
+                        <Badge variant="secondary" className="bg-background">{project.stage}</Badge>
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          <Users className="h-3 w-3" /> {project.team ? project.team.length : 1}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
 
