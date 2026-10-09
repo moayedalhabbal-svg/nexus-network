@@ -152,6 +152,9 @@ export async function applyToBountyAction(bountyId: string, message: string) {
 
   const bounty = DEMO_BOUNTIES.find(b => b.id === bountyId);
   if (bounty) {
+    const existing = bounty.applications.find((a: any) => a.applicant_id === user.id);
+    if (existing) return { success: false, error: "Already applied" };
+
     const newApp = {
       id: uuidv4(),
       applicant_id: user.id,
@@ -285,22 +288,34 @@ export async function addBountyToPoWAction(bountyId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Unauthorized" };
 
-  const bounty = DEMO_BOUNTIES.find(b => b.id === bountyId);
-  if (!bounty) return { success: false, error: "Bounty not found" };
+  let bounty: any = null;
+  try {
+    const { data, error } = await supabase.from('bounties').select('*').eq('id', bountyId).single();
+    if (!error && data) {
+      bounty = data;
+    }
+  } catch(e) {}
 
+  if (!bounty) {
+    bounty = DEMO_BOUNTIES.find(b => b.id === bountyId);
+  }
+
+  if (!bounty) return { success: false, error: "Bounty not found" };
   if (bounty.status !== 'completed') return { success: false, error: "Bounty not completed" };
 
   try {
-    const { error } = await supabase.from('proof_of_work').insert({
+    const { error } = await supabase.from('proof_of_work').upsert({
       user_id: user.id,
       title: bounty.title,
       type: 'bounty',
       url: `/bounties/${bounty.id}`,
       description: `Completed NEXUS Bounty: ${bounty.description}`,
       source: 'NEXUS Network',
-      skills: bounty.skills_required,
-      verification_status: 'owner_confirmed'
-    });
+      skills: bounty.skills_required || [],
+      verification_status: 'owner_confirmed',
+      provider: 'nexus_bounty',
+      provider_id: bounty.id
+    }, { onConflict: 'user_id, provider, provider_id' });
     if (!error) return { success: true };
   } catch (e) {}
 
