@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (authUser) {
         // Fetch profile
-        const { data: profile } = await supabase
+        let { data: profile } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', authUser.id)
@@ -44,50 +44,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .eq('user_id', authUser.id)
           .order('created_at', { ascending: false });
 
-        if (profile) {
-          setUser({
-            id: authUser.id,
-            email: authUser.email || '',
-            name: profile.full_name,
-            headline: profile.headline || '',
-            bio: profile.bio || '',
-            avatar: profile.avatar_url || '',
-            location: profile.location || 'Remote',
-            timezone: profile.timezone || '',
-            roles: [],
-            skills: [],
-            interests: [],
-            intents: [],
-            availability: 'flexible',
-            collaborationPreferences: [],
-            preferredTeamSize: '',
-            experience: [],
-            education: [],
-            proofOfWork: powData ? powData.map((p: any) => ({
-              id: p.id,
-              userId: p.user_id,
-              type: p.type,
-              title: p.title,
-              url: p.url,
-              description: p.description,
-              source: p.source,
-              skills: p.skills || [],
-              verificationStatus: p.verification_status,
-              createdAt: p.created_at,
-              updatedAt: p.updated_at
-            })) : [],
-            verifications: [],
-            profileVisibility: 'public',
-            searchVisibility: profile.search_visibility,
-            onlineStatus: 'online',
-            completionPercentage: 100,
-            joinedAt: profile.created_at,
-            updatedAt: profile.updated_at
-          });
-          setIsDemoMode(false);
-          setLoading(false);
-          return true;
-        }
+          if (!profile) {
+            // Profile missing (migration skipped or trigger failed)
+            const { ensureProfileAction } = await import("@/app/actions/profile");
+            await ensureProfileAction();
+            
+            // Re-fetch profile
+            const { data: retryProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', authUser.id)
+              .single();
+              
+            if (retryProfile) {
+              profile = retryProfile;
+            } else {
+              // Create a dummy profile object for the session to work
+              profile = {
+                full_name: authUser.user_metadata?.full_name || 'NEXUS User',
+                search_visibility: true,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              };
+            }
+          }
+
+          if (profile) {
+            setUser({
+              id: authUser.id,
+              email: authUser.email || '',
+              name: profile.full_name,
+              headline: profile.headline || '',
+              bio: profile.bio || '',
+              avatar: profile.avatar_url || '',
+              location: profile.location || 'Remote',
+              timezone: profile.timezone || '',
+              roles: [],
+              skills: [],
+              interests: [],
+              intents: [],
+              availability: 'flexible',
+              collaborationPreferences: [],
+              preferredTeamSize: '',
+              experience: [],
+              education: [],
+              proofOfWork: powData ? powData.map((p: any) => ({
+                id: p.id,
+                userId: p.user_id,
+                type: p.type,
+                title: p.title,
+                url: p.url,
+                description: p.description,
+                source: p.source,
+                skills: p.skills || [],
+                verificationStatus: p.verification_status,
+                createdAt: p.created_at,
+                updatedAt: p.updated_at
+              })) : [],
+              verifications: [],
+              profileVisibility: 'public',
+              searchVisibility: profile.search_visibility,
+              onlineStatus: 'online',
+              completionPercentage: 100,
+              joinedAt: profile.created_at,
+              updatedAt: profile.updated_at
+            });
+            setIsDemoMode(false);
+            setLoading(false);
+            return true;
+          }
       }
     } catch (e) {
       console.error("Auth context error:", e);

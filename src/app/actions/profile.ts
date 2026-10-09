@@ -38,3 +38,40 @@ export async function completeOnboardingAction(data: Record<string, unknown>) {
   revalidatePath("/");
   return { success: true };
 }
+
+export async function ensureProfileAction() {
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL === "demo" || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return { success: true };
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  // Check if profile exists
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile) {
+    // Create admin client to bypass RLS for insert
+    const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+    const adminSupabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    
+    await adminSupabase.from('profiles').insert({
+      id: user.id,
+      full_name: user.user_metadata?.full_name || 'NEXUS User',
+      search_visibility: true,
+    });
+  }
+
+  return { success: true };
+}
