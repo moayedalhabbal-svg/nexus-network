@@ -127,7 +127,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Elena Vasquez',
     headline: 'Robotics Engineer & Climate Tech Founder',
     bio: 'Building autonomous systems for renewable energy infrastructure. Previously at Boston Dynamics. MIT Mechanical Engineering PhD candidate researching AI-driven robotic maintenance for solar farms. Passionate about using robotics to accelerate the energy transition.',
-    avatar: '/avatars/elena.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=elena',
     location: 'Boston, MA',
     timezone: 'EST',
     roles: ['researcher', 'founder'],
@@ -199,7 +199,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Marcus Chen',
     headline: 'Full-Stack Engineer & AI Startup Builder',
     bio: 'Shipping products that matter. Stanford CS, previously at Stripe. Building AI tools that help small businesses compete with enterprise. Interested in the intersection of AI, fintech, and accessibility.',
-    avatar: '/avatars/marcus.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=marcus',
     location: 'San Francisco, CA',
     timezone: 'PST',
     roles: ['professional', 'founder'],
@@ -268,7 +268,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Aisha Okafor',
     headline: 'Energy Engineer & Battery Research Scientist',
     bio: 'Dedicated to making clean energy storage affordable and accessible. Currently leading battery degradation research at Imperial College London. Published 8 papers on lithium-ion battery health prediction using machine learning. Looking for collaborators to commercialize our research.',
-    avatar: '/avatars/aisha.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=aisha',
     location: 'London, UK',
     timezone: 'GMT',
     roles: ['researcher'],
@@ -338,7 +338,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Kai Nakamura',
     headline: 'Product Designer & Design Systems Architect',
     bio: 'Design is how it works. Previously at Figma and Airbnb. I create design systems and user experiences that scale. Currently exploring how AI can enhance design workflows. Looking for early-stage projects where design is a core differentiator.',
-    avatar: '/avatars/kai.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=kai',
     location: 'Tokyo, Japan',
     timezone: 'JST',
     roles: ['professional'],
@@ -406,7 +406,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Priya Sharma',
     headline: 'ML Engineer & Healthcare AI Researcher',
     bio: 'Using AI to make healthcare accessible in underserved communities. IIT Bombay alumna. Currently building diagnostic tools that work offline on low-cost devices. Published in NeurIPS and MICCAI. Seeking collaborators who understand both the technical and social dimensions of healthcare AI.',
-    avatar: '/avatars/priya.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=priya',
     location: 'Mumbai, India',
     timezone: 'IST',
     roles: ['researcher', 'professional'],
@@ -476,7 +476,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'James Kowalski',
     headline: 'Agricultural Engineer & IoT Specialist',
     bio: 'Third-generation farmer turned engineer. Building the future of precision agriculture with IoT sensors and AI-driven crop management. Currently prototyping autonomous soil monitoring robots. Looking for co-founders and embedded systems engineers.',
-    avatar: '/avatars/james.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=james',
     location: 'Madison, WI',
     timezone: 'CST',
     roles: ['founder', 'professional'],
@@ -542,7 +542,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Sofia Martinez',
     headline: 'Climate Tech Investor & Former Energy Engineer',
     bio: 'Partner at CleanTech Ventures. Previously spent 8 years in energy engineering before moving to investing. We back founders working on climate solutions from pre-seed to Series A. Particularly interested in energy storage, carbon capture, and sustainable agriculture.',
-    avatar: '/avatars/sofia.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=sofia',
     location: 'New York, NY',
     timezone: 'EST',
     roles: ['investor'],
@@ -604,7 +604,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Omar Hassan',
     headline: 'Autonomous Systems Researcher & Mobility Innovator',
     bio: 'PhD researcher at TU Munich working on autonomous vehicle perception. Previously interned at Waymo. Passionate about making self-driving technology safer and more accessible for developing countries. Seeking collaborators in computer vision and sensor fusion.',
-    avatar: '/avatars/omar.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=omar',
     location: 'Munich, Germany',
     timezone: 'CET',
     roles: ['researcher', 'student'],
@@ -669,7 +669,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'Rachel Wright',
     headline: 'Growth Marketer & Startup Operator',
     bio: 'Took two B2B SaaS products from zero to $1M ARR. Expert in content marketing, SEO, and community-led growth. Looking for technical founders who need a growth partner. I turn great products into great businesses.',
-    avatar: '/avatars/rachel.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=rachel',
     location: 'Austin, TX',
     timezone: 'CST',
     roles: ['professional'],
@@ -717,7 +717,7 @@ export const SEED_USERS: UserProfile[] = [
     name: 'David Kim',
     headline: 'Biomedical Engineer & Diagnostics Researcher',
     bio: 'Building point-of-care diagnostic devices that cost under $5 to manufacture. Postdoc at Johns Hopkins. My lab develops paper-based biosensors for infectious disease detection in low-resource settings. Interested in partnerships with ML engineers to digitize test results.',
-    avatar: '/avatars/david.jpg',
+    avatar: 'https://i.pravatar.cc/150?u=david',
     location: 'Baltimore, MD',
     timezone: 'EST',
     roles: ['researcher'],
@@ -766,7 +766,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-11', email: 'lena.berg@ethz.ch', name: 'Lena Berg',
     headline: 'Carbon Capture Researcher & Chemical Engineer',
     bio: 'Developing next-generation direct air capture systems at ETH Zurich. Passionate about making carbon removal economically viable.',
-    avatar: '/avatars/lena.jpg', location: 'Zurich, Switzerland', timezone: 'CET',
+    avatar: 'https://i.pravatar.cc/150?u=lena', location: 'Zurich, Switzerland', timezone: 'CET',
     roles: ['researcher'], skills: [
       { id: 'sk-energy', name: 'Energy Systems', category: 'technical' },
       { id: 'sk-python', name: 'Python', category: 'technical' },
@@ -788,7 +788,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-12', email: 'alex.petrov@startup.io', name: 'Alex Petrov',
     headline: 'Serial Entrepreneur & EdTech Builder',
     bio: 'Founded two education companies. Currently building an AI-powered personalized learning platform. Looking for engineers and learning scientists.',
-    avatar: '/avatars/alex.jpg', location: 'Berlin, Germany', timezone: 'CET',
+    avatar: 'https://i.pravatar.cc/150?u=alex', location: 'Berlin, Germany', timezone: 'CET',
     roles: ['founder'], skills: [
       { id: 'sk-pm', name: 'Product Management', category: 'business' },
       { id: 'sk-strategy', name: 'Business Strategy', category: 'business' },
@@ -813,7 +813,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-13', email: 'nina.williams@fintech.co', name: 'Nina Williams',
     headline: 'Backend Engineer & FinTech Specialist',
     bio: 'Building scalable financial systems. Previously at Plaid and Square. Expert in distributed systems, payment processing, and regulatory compliance.',
-    avatar: '/avatars/nina.jpg', location: 'Chicago, IL', timezone: 'CST',
+    avatar: 'https://i.pravatar.cc/150?u=nina', location: 'Chicago, IL', timezone: 'CST',
     roles: ['professional'], skills: [
       { id: 'sk-go', name: 'Go', category: 'technical' },
       { id: 'sk-python', name: 'Python', category: 'technical' },
@@ -838,7 +838,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-14', email: 'yuki.tanaka@robotics.jp', name: 'Yuki Tanaka',
     headline: 'Mechatronics Engineer & Hardware Builder',
     bio: 'Building robots that work alongside humans. Experience with industrial robots at Fanuc and consumer robotics at Sony. Seeking climate-focused hardware projects.',
-    avatar: '/avatars/yuki.jpg', location: 'Osaka, Japan', timezone: 'JST',
+    avatar: 'https://i.pravatar.cc/150?u=yuki', location: 'Osaka, Japan', timezone: 'JST',
     roles: ['professional'], skills: [
       { id: 'sk-robotics', name: 'Robotics', category: 'technical' },
       { id: 'sk-embedded', name: 'Embedded Systems', category: 'technical' },
@@ -866,7 +866,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-15', email: 'carlos.rivera@sustainable.org', name: 'Carlos Rivera',
     headline: 'Sustainability Consultant & Clean Energy Advocate',
     bio: 'Helping businesses and cities transition to clean energy. 10 years in energy consulting. Mentoring first-time climate founders.',
-    avatar: '/avatars/carlos.jpg', location: 'Mexico City, Mexico', timezone: 'CST',
+    avatar: 'https://i.pravatar.cc/150?u=carlos', location: 'Mexico City, Mexico', timezone: 'CST',
     roles: ['mentor', 'professional'], skills: [
       { id: 'sk-energy', name: 'Energy Systems', category: 'technical' },
       { id: 'sk-strategy', name: 'Business Strategy', category: 'business' },
@@ -893,7 +893,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-16', email: 'sarah.mitchell@cs.princeton.edu', name: 'Sarah Mitchell',
     headline: 'NLP Researcher & AI Ethics Advocate',
     bio: 'Working on bias detection and fairness in language models. Princeton NLP group. Published at ACL, EMNLP. Looking for collaborative research opportunities.',
-    avatar: '/avatars/sarah.jpg', location: 'Princeton, NJ', timezone: 'EST',
+    avatar: 'https://i.pravatar.cc/150?u=sarah', location: 'Princeton, NJ', timezone: 'EST',
     roles: ['researcher'], skills: [
       { id: 'sk-nlp', name: 'NLP', category: 'technical' },
       { id: 'sk-python', name: 'Python', category: 'technical' },
@@ -920,7 +920,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-17', email: 'tom.anderson@devops.cloud', name: 'Tom Anderson',
     headline: 'DevOps Engineer & Cloud Architect',
     bio: 'Scaling startups to millions of users. AWS certified. Expert in Kubernetes, Terraform, and CI/CD. Looking for early-stage startups that need infrastructure done right from day one.',
-    avatar: '/avatars/tom.jpg', location: 'Seattle, WA', timezone: 'PST',
+    avatar: 'https://i.pravatar.cc/150?u=tom', location: 'Seattle, WA', timezone: 'PST',
     roles: ['professional'], skills: [
       { id: 'sk-aws', name: 'AWS', category: 'technical' },
       { id: 'sk-kubernetes', name: 'Kubernetes', category: 'technical' },
@@ -946,7 +946,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-18', email: 'maya.johnson@solar.energy', name: 'Maya Johnson',
     headline: 'Solar Energy Engineer & Community Organizer',
     bio: 'Making solar accessible to underserved communities. Civil engineer turned clean energy advocate. Running community solar projects across the American South.',
-    avatar: '/avatars/maya.jpg', location: 'Atlanta, GA', timezone: 'EST',
+    avatar: 'https://i.pravatar.cc/150?u=maya', location: 'Atlanta, GA', timezone: 'EST',
     roles: ['professional', 'founder'], skills: [
       { id: 'sk-energy', name: 'Energy Systems', category: 'technical' },
       { id: 'sk-proj-mgmt', name: 'Project Management', category: 'leadership' },
@@ -971,7 +971,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-19', email: 'ben.goldstein@vc.fund', name: 'Ben Goldstein',
     headline: 'Deep Tech Investor & Former CTO',
     bio: 'Partner at Horizon Ventures. Former CTO of a Series C AI company. Investing in AI, robotics, and computational biology. $50M AUM.',
-    avatar: '/avatars/ben.jpg', location: 'Palo Alto, CA', timezone: 'PST',
+    avatar: 'https://i.pravatar.cc/150?u=ben', location: 'Palo Alto, CA', timezone: 'PST',
     roles: ['investor'], skills: [
       { id: 'sk-strategy', name: 'Business Strategy', category: 'business' },
       { id: 'sk-fundraising', name: 'Fundraising', category: 'business' },
@@ -996,7 +996,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-20', email: 'ava.chen@cs.cmu.edu', name: 'Ava Chen',
     headline: 'CS Student & Open Source Contributor',
     bio: 'Junior at CMU studying CS. Active open source contributor. Building a portfolio of side projects in web development and ML. Looking for my first startup experience.',
-    avatar: '/avatars/ava.jpg', location: 'Pittsburgh, PA', timezone: 'EST',
+    avatar: 'https://i.pravatar.cc/150?u=ava', location: 'Pittsburgh, PA', timezone: 'EST',
     roles: ['student'], skills: [
       { id: 'sk-python', name: 'Python', category: 'technical' },
       { id: 'sk-javascript', name: 'JavaScript', category: 'technical' },
@@ -1025,7 +1025,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-21', email: 'robert.foster@quantum.tech', name: 'Robert Foster',
     headline: 'Quantum Computing Researcher & Physicist',
     bio: 'Exploring quantum advantage for optimization problems. Published 15 papers. Ex-IBM Quantum. Seeking industry collaborations.',
-    avatar: '/avatars/robert.jpg', location: 'Cambridge, UK', timezone: 'GMT',
+    avatar: 'https://i.pravatar.cc/150?u=robert', location: 'Cambridge, UK', timezone: 'GMT',
     roles: ['researcher', 'professional'], skills: [
       { id: 'sk-python', name: 'Python', category: 'technical' },
       { id: 'sk-research-methods', name: 'Research Methods', category: 'research' },
@@ -1049,7 +1049,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-22', email: 'isabella.rossi@biomedical.it', name: 'Isabella Rossi',
     headline: 'Biomedical Researcher & Wearable Tech Developer',
     bio: 'Building wearable health monitoring devices. Politecnico di Milano. Expertise in biosensors and signal processing.',
-    avatar: '/avatars/isabella.jpg', location: 'Milan, Italy', timezone: 'CET',
+    avatar: 'https://i.pravatar.cc/150?u=isabella', location: 'Milan, Italy', timezone: 'CET',
     roles: ['researcher', 'founder'], skills: [
       { id: 'sk-embedded', name: 'Embedded Systems', category: 'technical' },
       { id: 'sk-python', name: 'Python', category: 'technical' },
@@ -1075,7 +1075,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-23', email: 'daniel.park@mobility.kr', name: 'Daniel Park',
     headline: 'Smart Mobility Engineer & Urban Planner',
     bio: 'Creating smarter cities through connected transportation. KAIST graduate. Working on vehicle-to-infrastructure communication for Seoul Metropolitan Government.',
-    avatar: '/avatars/daniel.jpg', location: 'Seoul, South Korea', timezone: 'KST',
+    avatar: 'https://i.pravatar.cc/150?u=daniel', location: 'Seoul, South Korea', timezone: 'KST',
     roles: ['professional'], skills: [
       { id: 'sk-iot', name: 'IoT', category: 'technical' },
       { id: 'sk-python', name: 'Python', category: 'technical' },
@@ -1099,7 +1099,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-24', email: 'emma.taylor@creative.studio', name: 'Emma Taylor',
     headline: 'Creative Technologist & XR Designer',
     bio: 'Bridging art and technology. Creating immersive experiences using AR/VR. Previously at Magic Leap. Looking for projects at the intersection of creativity and impact.',
-    avatar: '/avatars/emma.jpg', location: 'Los Angeles, CA', timezone: 'PST',
+    avatar: 'https://i.pravatar.cc/150?u=emma', location: 'Los Angeles, CA', timezone: 'PST',
     roles: ['professional'], skills: [
       { id: 'sk-3d', name: '3D Modeling', category: 'creative' },
       { id: 'sk-ux', name: 'UX Design', category: 'creative' },
@@ -1125,7 +1125,7 @@ export const SEED_USERS: UserProfile[] = [
     id: 'user-25', email: 'prof.chen@berkeley.edu', name: 'Prof. Wei Chen',
     headline: 'Professor of Computer Science & AI Lab Director',
     bio: 'UC Berkeley CS faculty. Directing the Berkeley AI for Impact Lab. Looking for motivated graduate researchers. 100+ publications in top-tier venues.',
-    avatar: '/avatars/prof_chen.jpg', location: 'Berkeley, CA', timezone: 'PST',
+    avatar: 'https://i.pravatar.cc/150?u=prof_chen', location: 'Berkeley, CA', timezone: 'PST',
     roles: ['researcher', 'mentor'], skills: [
       { id: 'sk-ml', name: 'Machine Learning', category: 'technical' },
       { id: 'sk-dl', name: 'Deep Learning', category: 'technical' },
@@ -1181,7 +1181,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-3', role: 'Frontend Developer', count: 1, requiredSkills: ['React', 'TypeScript'], preferredSkills: ['Data Visualization', 'WebSocket'], experience: '1+ years', commitment: '5hrs_week', collaboration: 'remote', compensation: 'equity', filled: false },
     ],
     team: [
-      { id: 'tm-1', userId: 'user-1', name: 'Elena Vasquez', avatar: '/avatars/elena.jpg', role: 'Founder & Robotics Lead', joinedAt: '2024-01-15T10:00:00Z' },
+      { id: 'tm-1', userId: 'user-1', name: 'Elena Vasquez', avatar: 'https://i.pravatar.cc/150?u=elena', role: 'Founder & Robotics Lead', joinedAt: '2024-01-15T10:00:00Z' },
     ],
     milestones: [
       { id: 'ms-1', title: 'First prototype', description: 'Complete working prototype with basic navigation', targetDate: '2024-06-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
@@ -1190,7 +1190,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'ms-4', title: 'Seed round', description: 'Raise $500K seed round', targetDate: '2025-03-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [
-      { id: 'upd-1', projectId: 'proj-1', authorId: 'user-1', authorName: 'Elena Vasquez', authorAvatar: '/avatars/elena.jpg', content: 'Just completed our second prototype! The robot can now navigate between solar panel rows autonomously and detect 4 types of panel defects with 94% accuracy.', type: 'milestone', createdAt: '2024-09-15T10:00:00Z' },
+      { id: 'upd-1', projectId: 'proj-1', authorId: 'user-1', authorName: 'Elena Vasquez', authorAvatar: 'https://i.pravatar.cc/150?u=elena', content: 'Just completed our second prototype! The robot can now navigate between solar panel rows autonomously and detect 4 types of panel defects with 94% accuracy.', type: 'milestone', createdAt: '2024-09-15T10:00:00Z' },
     ],
     links: [{ label: 'GitHub', url: 'https://github.com/solarbot' }],
     whatExists: 'Working prototype that can navigate solar panel rows. Computer vision model trained on 10,000+ panel images. Basic monitoring dashboard.',
@@ -1199,7 +1199,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-1',
     ownerName: 'Elena Vasquez',
-    ownerAvatar: '/avatars/elena.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=elena',
     createdAt: '2024-03-01T10:00:00Z',
     updatedAt: '2024-09-15T10:00:00Z',
   },
@@ -1226,8 +1226,8 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-5', role: 'ML Engineer', count: 1, requiredSkills: ['Machine Learning', 'Computer Vision'], preferredSkills: ['Edge ML', 'Quantization'], experience: '1+ years', commitment: '5hrs_week', collaboration: 'remote', compensation: 'research_collaborator', filled: false },
     ],
     team: [
-      { id: 'tm-2', userId: 'user-10', name: 'David Kim', avatar: '/avatars/david.jpg', role: 'Principal Investigator', joinedAt: '2024-01-25T10:00:00Z' },
-      { id: 'tm-3', userId: 'user-5', name: 'Priya Sharma', avatar: '/avatars/priya.jpg', role: 'ML Research Lead', joinedAt: '2024-03-10T10:00:00Z' },
+      { id: 'tm-2', userId: 'user-10', name: 'David Kim', avatar: 'https://i.pravatar.cc/150?u=david', role: 'Principal Investigator', joinedAt: '2024-01-25T10:00:00Z' },
+      { id: 'tm-3', userId: 'user-5', name: 'Priya Sharma', avatar: 'https://i.pravatar.cc/150?u=priya', role: 'ML Research Lead', joinedAt: '2024-03-10T10:00:00Z' },
     ],
     milestones: [
       { id: 'ms-5', title: 'MVP app', description: 'Working mobile app with basic test analysis', targetDate: '2024-07-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
@@ -1241,7 +1241,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-10',
     ownerName: 'David Kim',
-    ownerAvatar: '/avatars/david.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=david',
     createdAt: '2024-02-15T10:00:00Z',
     updatedAt: '2024-09-10T10:00:00Z',
   },
@@ -1269,14 +1269,14 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-8', role: 'Growth Lead', count: 1, requiredSkills: ['Marketing', 'Growth'], preferredSkills: ['Agriculture', 'Emerging Markets'], experience: '3+ years', commitment: 'full_time', collaboration: 'remote', compensation: 'cofounder', filled: false },
     ],
     team: [
-      { id: 'tm-4', userId: 'user-6', name: 'James Kowalski', avatar: '/avatars/james.jpg', role: 'Founder & Lead Engineer', joinedAt: '2024-03-05T14:00:00Z' },
+      { id: 'tm-4', userId: 'user-6', name: 'James Kowalski', avatar: 'https://i.pravatar.cc/150?u=james', role: 'Founder & Lead Engineer', joinedAt: '2024-03-05T14:00:00Z' },
     ],
     milestones: [
       { id: 'ms-7', title: 'Sensor v1', description: 'First prototype soil sensor deployed', targetDate: '2024-05-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
       { id: 'ms-8', title: 'Farmer pilot', description: 'Deploy on 10 farms in Wisconsin', targetDate: '2024-10-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
     ],
     updates: [
-      { id: 'upd-2', projectId: 'proj-1', authorId: 'user-6', authorName: 'James Kowalski', authorAvatar: '/avatars/james.jpg', content: 'We just got our first soil sensor prototype working! Measuring moisture, temperature, pH, and nutrient levels. Battery lasts 6 months on a single charge.', type: 'build_log', createdAt: '2024-09-01T10:00:00Z' },
+      { id: 'upd-2', projectId: 'proj-1', authorId: 'user-6', authorName: 'James Kowalski', authorAvatar: 'https://i.pravatar.cc/150?u=james', content: 'We just got our first soil sensor prototype working! Measuring moisture, temperature, pH, and nutrient levels. Battery lasts 6 months on a single charge.', type: 'build_log', createdAt: '2024-09-01T10:00:00Z' },
     ],
     links: [],
     whatExists: 'Working soil sensor prototype. Basic data pipeline. Crop model for corn and soybeans.',
@@ -1285,7 +1285,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-6',
     ownerName: 'James Kowalski',
-    ownerAvatar: '/avatars/james.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=james',
     createdAt: '2024-04-01T10:00:00Z',
     updatedAt: '2024-09-01T10:00:00Z',
   },
@@ -1313,7 +1313,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-11', role: 'Product Designer', count: 1, requiredSkills: ['UX Design', 'UI Design'], preferredSkills: ['Education', 'Figma'], experience: '3+ years', commitment: '10hrs_week', collaboration: 'remote', compensation: 'equity', filled: false },
     ],
     team: [
-      { id: 'tm-5', userId: 'user-12', name: 'Alex Petrov', avatar: '/avatars/alex.jpg', role: 'Founder & CEO', joinedAt: '2024-05-01T14:00:00Z' },
+      { id: 'tm-5', userId: 'user-12', name: 'Alex Petrov', avatar: 'https://i.pravatar.cc/150?u=alex', role: 'Founder & CEO', joinedAt: '2024-05-01T14:00:00Z' },
     ],
     milestones: [
       { id: 'ms-9', title: 'Launch beta', description: 'Launch beta with 3 university courses', targetDate: '2024-11-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
@@ -1326,7 +1326,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-12',
     ownerName: 'Alex Petrov',
-    ownerAvatar: '/avatars/alex.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=alex',
     createdAt: '2024-05-15T10:00:00Z',
     updatedAt: '2024-09-12T10:00:00Z',
   },
@@ -1353,7 +1353,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-13', role: 'Data Scientist', count: 1, requiredSkills: ['Machine Learning', 'Python', 'Statistical Analysis'], preferredSkills: ['Time Series', 'Energy Systems'], experience: 'Graduate+', commitment: '10hrs_week', collaboration: 'remote', compensation: 'research_collaborator', filled: false },
     ],
     team: [
-      { id: 'tm-6', userId: 'user-3', name: 'Aisha Okafor', avatar: '/avatars/aisha.jpg', role: 'Principal Researcher', joinedAt: '2024-01-20T09:00:00Z' },
+      { id: 'tm-6', userId: 'user-3', name: 'Aisha Okafor', avatar: 'https://i.pravatar.cc/150?u=aisha', role: 'Principal Researcher', joinedAt: '2024-01-20T09:00:00Z' },
     ],
     milestones: [
       { id: 'ms-10', title: 'Published baseline model', description: 'Publish model architecture and benchmark results', targetDate: '2024-08-01', status: 'Done', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
@@ -1367,7 +1367,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-3',
     ownerName: 'Aisha Okafor',
-    ownerAvatar: '/avatars/aisha.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=aisha',
     createdAt: '2024-02-01T10:00:00Z',
     updatedAt: '2024-09-05T10:00:00Z',
   },
@@ -1389,7 +1389,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-14', role: 'Research Engineer', count: 2, requiredSkills: ['Computer Vision', 'Deep Learning', 'Python'], preferredSkills: ['Lidar Processing', 'Sensor Fusion'], experience: 'Graduate+', commitment: '10hrs_week', collaboration: 'remote', compensation: 'research_collaborator', filled: false },
     ],
     team: [
-      { id: 'tm-7', userId: 'user-8', name: 'Omar Hassan', avatar: '/avatars/omar.jpg', role: 'Lead Researcher', joinedAt: '2024-04-01T09:00:00Z' },
+      { id: 'tm-7', userId: 'user-8', name: 'Omar Hassan', avatar: 'https://i.pravatar.cc/150?u=omar', role: 'Lead Researcher', joinedAt: '2024-04-01T09:00:00Z' },
     ],
     milestones: [],
     updates: [],
@@ -1400,7 +1400,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-8',
     ownerName: 'Omar Hassan',
-    ownerAvatar: '/avatars/omar.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=omar',
     createdAt: '2024-04-15T10:00:00Z',
     updatedAt: '2024-09-08T10:00:00Z',
   },
@@ -1422,8 +1422,8 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-15', role: 'Senior Frontend Engineer', count: 1, requiredSkills: ['React', 'TypeScript', 'Next.js'], preferredSkills: ['Data Visualization', 'GraphQL'], experience: '4+ years', commitment: 'full_time', collaboration: 'hybrid', compensation: 'paid', filled: false },
     ],
     team: [
-      { id: 'tm-8', userId: 'user-18', name: 'Maya Johnson', avatar: '/avatars/maya.jpg', role: 'CEO', joinedAt: '2024-05-15T10:00:00Z' },
-      { id: 'tm-9', userId: 'user-9', name: 'Rachel Wright', avatar: '/avatars/rachel.jpg', role: 'Head of Growth', joinedAt: '2024-06-01T10:00:00Z' },
+      { id: 'tm-8', userId: 'user-18', name: 'Maya Johnson', avatar: 'https://i.pravatar.cc/150?u=maya', role: 'CEO', joinedAt: '2024-05-15T10:00:00Z' },
+      { id: 'tm-9', userId: 'user-9', name: 'Rachel Wright', avatar: 'https://i.pravatar.cc/150?u=rachel', role: 'Head of Growth', joinedAt: '2024-06-01T10:00:00Z' },
     ],
     milestones: [
       { id: 'ms-12', title: '10 paying customers', description: 'Reach 10 enterprise clients', targetDate: '2024-12-01', status: 'Todo', projectId: 'mock-proj', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z' },
@@ -1436,7 +1436,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-18',
     ownerName: 'Maya Johnson',
-    ownerAvatar: '/avatars/maya.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=maya',
     createdAt: '2024-05-20T10:00:00Z',
     updatedAt: '2024-09-18T10:00:00Z',
   },
@@ -1459,7 +1459,7 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-17', role: 'UX Researcher', count: 1, requiredSkills: ['UX Design', 'Research Methods'], preferredSkills: ['Accessibility', 'User Testing'], experience: '1+ years', commitment: '5hrs_week', collaboration: 'remote', compensation: 'volunteer', filled: false },
     ],
     team: [
-      { id: 'tm-10', userId: 'user-5', name: 'Priya Sharma', avatar: '/avatars/priya.jpg', role: 'Technical Lead', joinedAt: '2024-02-15T06:00:00Z' },
+      { id: 'tm-10', userId: 'user-5', name: 'Priya Sharma', avatar: 'https://i.pravatar.cc/150?u=priya', role: 'Technical Lead', joinedAt: '2024-02-15T06:00:00Z' },
     ],
     milestones: [],
     updates: [],
@@ -1470,7 +1470,7 @@ export const SEED_PROJECTS: Project[] = [
     remote: true,
     ownerId: 'user-5',
     ownerName: 'Priya Sharma',
-    ownerAvatar: '/avatars/priya.jpg',
+    ownerAvatar: 'https://i.pravatar.cc/150?u=priya',
     createdAt: '2024-03-10T10:00:00Z',
     updatedAt: '2024-09-14T10:00:00Z',
   },
@@ -1493,13 +1493,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-18', role: 'Quantum Algorithm Researcher', count: 1, requiredSkills: ['Python', 'Machine Learning'], preferredSkills: ['Quantum Computing', 'Optimization'], experience: 'PhD+', commitment: '5hrs_week', collaboration: 'remote', compensation: 'research_collaborator', filled: false },
     ],
     team: [
-      { id: 'tm-11', userId: 'user-21', name: 'Robert Foster', avatar: '/avatars/robert.jpg', role: 'Principal Investigator', joinedAt: '2024-04-05T10:00:00Z' },
+      { id: 'tm-11', userId: 'user-21', name: 'Robert Foster', avatar: 'https://i.pravatar.cc/150?u=robert', role: 'Principal Investigator', joinedAt: '2024-04-05T10:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'Proof-of-concept quantum optimization algorithm with 15% improvement over classical MILP solvers on small instances.',
     whatNeeded: 'Researchers to extend algorithms to real-world problem sizes.',
     location: 'Cambridge, UK', remote: true,
-    ownerId: 'user-21', ownerName: 'Robert Foster', ownerAvatar: '/avatars/robert.jpg',
+    ownerId: 'user-21', ownerName: 'Robert Foster', ownerAvatar: 'https://i.pravatar.cc/150?u=robert',
     createdAt: '2024-04-20T10:00:00Z', updatedAt: '2024-09-10T10:00:00Z',
   },
   {
@@ -1521,13 +1521,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-20', role: 'Mobile Developer', count: 1, requiredSkills: ['Flutter', 'Mobile Development'], preferredSkills: ['BLE', 'Health APIs'], experience: '2+ years', commitment: '10hrs_week', collaboration: 'remote', compensation: 'equity', filled: false },
     ],
     team: [
-      { id: 'tm-12', userId: 'user-22', name: 'Isabella Rossi', avatar: '/avatars/isabella.jpg', role: 'Founder & Hardware Lead', joinedAt: '2024-05-20T09:00:00Z' },
+      { id: 'tm-12', userId: 'user-22', name: 'Isabella Rossi', avatar: 'https://i.pravatar.cc/150?u=isabella', role: 'Founder & Hardware Lead', joinedAt: '2024-05-20T09:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'Wearable prototype with PPG and ECG sensors. Preliminary clinical accuracy data. Bluetooth data streaming.',
     whatNeeded: 'Signal processing expert for noise reduction. Mobile developer for companion app.',
     location: 'Milan, Italy', remote: true,
-    ownerId: 'user-22', ownerName: 'Isabella Rossi', ownerAvatar: '/avatars/isabella.jpg',
+    ownerId: 'user-22', ownerName: 'Isabella Rossi', ownerAvatar: 'https://i.pravatar.cc/150?u=isabella',
     createdAt: '2024-06-01T10:00:00Z', updatedAt: '2024-09-15T10:00:00Z',
   },
   {
@@ -1548,13 +1548,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-21', role: 'Full-Stack Developer', count: 2, requiredSkills: ['React', 'TypeScript', 'PostgreSQL'], preferredSkills: ['Next.js', 'NLP'], experience: '1+ years', commitment: '10hrs_week', collaboration: 'remote', compensation: 'equity', filled: false },
     ],
     team: [
-      { id: 'tm-13', userId: 'user-25', name: 'Prof. Wei Chen', avatar: '/avatars/prof_chen.jpg', role: 'Advisor', joinedAt: '2024-01-10T10:00:00Z' },
+      { id: 'tm-13', userId: 'user-25', name: 'Prof. Wei Chen', avatar: 'https://i.pravatar.cc/150?u=prof_chen', role: 'Advisor', joinedAt: '2024-01-10T10:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'Product requirements. Academic advisory board. Domain expertise.',
     whatNeeded: 'Technical co-founders to build the platform.',
     location: 'Berkeley, CA', remote: true,
-    ownerId: 'user-25', ownerName: 'Prof. Wei Chen', ownerAvatar: '/avatars/prof_chen.jpg',
+    ownerId: 'user-25', ownerName: 'Prof. Wei Chen', ownerAvatar: 'https://i.pravatar.cc/150?u=prof_chen',
     createdAt: '2024-07-01T10:00:00Z', updatedAt: '2024-09-01T10:00:00Z',
   },
   {
@@ -1575,14 +1575,14 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-22', role: 'Energy Systems Engineer', count: 1, requiredSkills: ['Energy Systems', 'Python'], preferredSkills: ['Power Systems', 'Optimization'], experience: '3+ years', commitment: '10hrs_week', collaboration: 'remote', compensation: 'research_collaborator', filled: false },
     ],
     team: [
-      { id: 'tm-14', userId: 'user-11', name: 'Lena Berg', avatar: '/avatars/lena.jpg', role: 'Lead Researcher', joinedAt: '2024-04-15T08:00:00Z' },
-      { id: 'tm-15', userId: 'user-3', name: 'Aisha Okafor', avatar: '/avatars/aisha.jpg', role: 'ML Advisor', joinedAt: '2024-05-01T09:00:00Z' },
+      { id: 'tm-14', userId: 'user-11', name: 'Lena Berg', avatar: 'https://i.pravatar.cc/150?u=lena', role: 'Lead Researcher', joinedAt: '2024-04-15T08:00:00Z' },
+      { id: 'tm-15', userId: 'user-3', name: 'Aisha Okafor', avatar: 'https://i.pravatar.cc/150?u=aisha', role: 'ML Advisor', joinedAt: '2024-05-01T09:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'Solar generation forecasting model with 92% accuracy. Historical dataset from 50 European grid nodes.',
     whatNeeded: 'Energy systems engineer with grid operations experience.',
     location: 'Zurich, Switzerland', remote: true,
-    ownerId: 'user-11', ownerName: 'Lena Berg', ownerAvatar: '/avatars/lena.jpg',
+    ownerId: 'user-11', ownerName: 'Lena Berg', ownerAvatar: 'https://i.pravatar.cc/150?u=lena',
     createdAt: '2024-05-01T10:00:00Z', updatedAt: '2024-09-12T10:00:00Z',
   },
   {
@@ -1603,13 +1603,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-23', role: 'Backend Engineer', count: 1, requiredSkills: ['Go', 'PostgreSQL'], preferredSkills: ['gRPC', 'Distributed Systems'], experience: '3+ years', commitment: '20hrs_week', collaboration: 'remote', compensation: 'equity', filled: false },
     ],
     team: [
-      { id: 'tm-16', userId: 'user-13', name: 'Nina Williams', avatar: '/avatars/nina.jpg', role: 'CTO', joinedAt: '2024-03-20T10:00:00Z' },
+      { id: 'tm-16', userId: 'user-13', name: 'Nina Williams', avatar: 'https://i.pravatar.cc/150?u=nina', role: 'CTO', joinedAt: '2024-03-20T10:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'Working API with payments and identity modules. 2 fintech partners in pilot. Go microservices on Kubernetes.',
     whatNeeded: 'Backend engineer to build lending and savings modules.',
     location: 'Chicago, IL', remote: true,
-    ownerId: 'user-13', ownerName: 'Nina Williams', ownerAvatar: '/avatars/nina.jpg',
+    ownerId: 'user-13', ownerName: 'Nina Williams', ownerAvatar: 'https://i.pravatar.cc/150?u=nina',
     createdAt: '2024-04-01T10:00:00Z', updatedAt: '2024-09-20T10:00:00Z',
   },
   {
@@ -1630,13 +1630,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-24', role: 'IoT Platform Engineer', count: 1, requiredSkills: ['IoT', 'Python'], preferredSkills: ['MQTT', 'Kafka'], experience: '3+ years', commitment: '20hrs_week', collaboration: 'remote', compensation: 'paid', filled: false },
     ],
     team: [
-      { id: 'tm-17', userId: 'user-23', name: 'Daniel Park', avatar: '/avatars/daniel.jpg', role: 'Project Lead', joinedAt: '2024-06-10T07:00:00Z' },
+      { id: 'tm-17', userId: 'user-23', name: 'Daniel Park', avatar: 'https://i.pravatar.cc/150?u=daniel', role: 'Project Lead', joinedAt: '2024-06-10T07:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'V2I protocol specification. 5 test intersections in Seoul. Real-time data pipeline processing 1M events/day.',
     whatNeeded: 'IoT platform engineer for scaling to 100+ intersections.',
     location: 'Seoul, South Korea', remote: true,
-    ownerId: 'user-23', ownerName: 'Daniel Park', ownerAvatar: '/avatars/daniel.jpg',
+    ownerId: 'user-23', ownerName: 'Daniel Park', ownerAvatar: 'https://i.pravatar.cc/150?u=daniel',
     createdAt: '2024-06-15T10:00:00Z', updatedAt: '2024-09-18T10:00:00Z',
   },
   {
@@ -1657,13 +1657,13 @@ export const SEED_PROJECTS: Project[] = [
       { id: 'need-25', role: 'NLP Researcher', count: 2, requiredSkills: ['NLP', 'Python', 'PyTorch'], preferredSkills: ['Fairness', 'Ethics'], experience: 'Graduate+', commitment: '10hrs_week', collaboration: 'remote', compensation: 'research_collaborator', filled: false },
     ],
     team: [
-      { id: 'tm-18', userId: 'user-16', name: 'Sarah Mitchell', avatar: '/avatars/sarah.jpg', role: 'Lead Researcher', joinedAt: '2024-05-10T09:00:00Z' },
+      { id: 'tm-18', userId: 'user-16', name: 'Sarah Mitchell', avatar: 'https://i.pravatar.cc/150?u=sarah', role: 'Lead Researcher', joinedAt: '2024-05-10T09:00:00Z' },
     ],
     milestones: [], updates: [], links: [],
     whatExists: 'FairLM benchmark suite. 10+ bias metrics implemented. Published at ACL 2024. Open-source with 500+ GitHub stars.',
     whatNeeded: 'NLP researchers to expand language and cultural coverage.',
     location: 'Princeton, NJ', remote: true,
-    ownerId: 'user-16', ownerName: 'Sarah Mitchell', ownerAvatar: '/avatars/sarah.jpg',
+    ownerId: 'user-16', ownerName: 'Sarah Mitchell', ownerAvatar: 'https://i.pravatar.cc/150?u=sarah',
     createdAt: '2024-05-15T10:00:00Z', updatedAt: '2024-09-19T10:00:00Z',
   },
 ];
@@ -1680,7 +1680,7 @@ export const SEED_RESEARCH: ResearchOpportunity[] = [
     skillsNeeded: ['Machine Learning', 'Python', 'PyTorch', 'Energy Systems'],
     commitment: '10hrs_week', location: 'London, UK', remote: true,
     expectedOutput: ['paper', 'prototype', 'dataset'],
-    creatorId: 'user-3', creatorName: 'Aisha Okafor', creatorAvatar: '/avatars/aisha.jpg',
+    creatorId: 'user-3', creatorName: 'Aisha Okafor', creatorAvatar: 'https://i.pravatar.cc/150?u=aisha',
     institution: 'Imperial College London', department: 'Electrical Engineering',
     status: 'open', applicantCount: 3, createdAt: '2024-06-01T10:00:00Z',
   },
@@ -1693,7 +1693,7 @@ export const SEED_RESEARCH: ResearchOpportunity[] = [
     skillsNeeded: ['NLP', 'Python', 'PyTorch', 'Statistical Analysis'],
     commitment: '10hrs_week', location: 'Princeton, NJ', remote: true,
     expectedOutput: ['paper', 'dataset', 'conference'],
-    creatorId: 'user-16', creatorName: 'Sarah Mitchell', creatorAvatar: '/avatars/sarah.jpg',
+    creatorId: 'user-16', creatorName: 'Sarah Mitchell', creatorAvatar: 'https://i.pravatar.cc/150?u=sarah',
     institution: 'Princeton University', department: 'Computer Science',
     status: 'open', applicantCount: 5, createdAt: '2024-07-15T10:00:00Z',
   },
@@ -1706,7 +1706,7 @@ export const SEED_RESEARCH: ResearchOpportunity[] = [
     skillsNeeded: ['Machine Learning', 'Python', 'Agriculture'],
     commitment: '10hrs_week', location: 'Berkeley, CA', remote: true,
     expectedOutput: ['paper', 'prototype'],
-    creatorId: 'user-25', creatorName: 'Prof. Wei Chen', creatorAvatar: '/avatars/prof_chen.jpg',
+    creatorId: 'user-25', creatorName: 'Prof. Wei Chen', creatorAvatar: 'https://i.pravatar.cc/150?u=prof_chen',
     institution: 'UC Berkeley', department: 'Computer Science',
     status: 'open', applicantCount: 8, createdAt: '2024-05-01T10:00:00Z',
   },
@@ -1719,7 +1719,7 @@ export const SEED_RESEARCH: ResearchOpportunity[] = [
     skillsNeeded: ['Python', 'Machine Learning'],
     commitment: '5hrs_week', location: 'Cambridge, UK', remote: true,
     expectedOutput: ['paper', 'experiment'],
-    creatorId: 'user-21', creatorName: 'Robert Foster', creatorAvatar: '/avatars/robert.jpg',
+    creatorId: 'user-21', creatorName: 'Robert Foster', creatorAvatar: 'https://i.pravatar.cc/150?u=robert',
     institution: 'University of Cambridge', department: 'Theoretical Physics',
     status: 'open', applicantCount: 2, createdAt: '2024-08-01T10:00:00Z',
   },
@@ -1732,7 +1732,7 @@ export const SEED_RESEARCH: ResearchOpportunity[] = [
     skillsNeeded: ['Biotechnology', 'Research Methods', 'Statistical Analysis'],
     commitment: '20hrs_week', location: 'Baltimore, MD', remote: false,
     expectedOutput: ['paper', 'prototype', 'thesis'],
-    creatorId: 'user-10', creatorName: 'David Kim', creatorAvatar: '/avatars/david.jpg',
+    creatorId: 'user-10', creatorName: 'David Kim', creatorAvatar: 'https://i.pravatar.cc/150?u=david',
     institution: 'Johns Hopkins University', department: 'Biomedical Engineering',
     status: 'open', applicantCount: 4, createdAt: '2024-06-15T10:00:00Z',
   },
@@ -1742,7 +1742,7 @@ export const SEED_RESEARCH: ResearchOpportunity[] = [
 
 export const SEED_MENTORS: MentorProfile[] = [
   {
-    id: 'mentor-1', userId: 'user-15', name: 'Carlos Rivera', avatar: '/avatars/carlos.jpg',
+    id: 'mentor-1', userId: 'user-15', name: 'Carlos Rivera', avatar: 'https://i.pravatar.cc/150?u=carlos',
     headline: 'Sustainability Consultant & Clean Energy Advocate',
     expertise: ['Clean Energy', 'Sustainability Strategy', 'Carbon Markets', 'Impact Investing'],
     industries: ['Energy', 'Climate Tech', 'Sustainability'],
@@ -1753,7 +1753,7 @@ export const SEED_MENTORS: MentorProfile[] = [
     rating: 4.8, menteeCount: 12,
   },
   {
-    id: 'mentor-2', userId: 'user-7', name: 'Sofia Martinez', avatar: '/avatars/sofia.jpg',
+    id: 'mentor-2', userId: 'user-7', name: 'Sofia Martinez', avatar: 'https://i.pravatar.cc/150?u=sofia',
     headline: 'Climate Tech Investor & Former Energy Engineer',
     expertise: ['Fundraising', 'Investor Relations', 'Energy Engineering', 'Startup Strategy'],
     industries: ['Climate Tech', 'Energy', 'Venture Capital'],
@@ -1764,7 +1764,7 @@ export const SEED_MENTORS: MentorProfile[] = [
     rating: 4.9, menteeCount: 8,
   },
   {
-    id: 'mentor-3', userId: 'user-25', name: 'Prof. Wei Chen', avatar: '/avatars/prof_chen.jpg',
+    id: 'mentor-3', userId: 'user-25', name: 'Prof. Wei Chen', avatar: 'https://i.pravatar.cc/150?u=prof_chen',
     headline: 'Professor of Computer Science & AI Lab Director',
     expertise: ['Machine Learning', 'AI Research', 'Academic Career', 'Research Strategy'],
     industries: ['AI', 'Academia', 'Research'],
@@ -1775,7 +1775,7 @@ export const SEED_MENTORS: MentorProfile[] = [
     rating: 4.7, menteeCount: 25,
   },
   {
-    id: 'mentor-4', userId: 'user-2', name: 'Marcus Chen', avatar: '/avatars/marcus.jpg',
+    id: 'mentor-4', userId: 'user-2', name: 'Marcus Chen', avatar: 'https://i.pravatar.cc/150?u=marcus',
     headline: 'Full-Stack Engineer & AI Startup Builder',
     expertise: ['Full-Stack Development', 'Startup Technical Architecture', 'Product Management', 'AI Integration'],
     industries: ['SaaS', 'FinTech', 'AI'],
@@ -1786,7 +1786,7 @@ export const SEED_MENTORS: MentorProfile[] = [
     rating: 4.6, menteeCount: 6,
   },
   {
-    id: 'mentor-5', userId: 'user-19', name: 'Ben Goldstein', avatar: '/avatars/ben.jpg',
+    id: 'mentor-5', userId: 'user-19', name: 'Ben Goldstein', avatar: 'https://i.pravatar.cc/150?u=ben',
     headline: 'Deep Tech Investor & Former CTO',
     expertise: ['Deep Tech Investing', 'Technical Due Diligence', 'Scaling Engineering Teams', 'AI Strategy'],
     industries: ['AI', 'Robotics', 'Biotech', 'Venture Capital'],
@@ -1802,7 +1802,7 @@ export const SEED_MENTORS: MentorProfile[] = [
 
 export const SEED_INVESTORS: InvestorProfile[] = [
   {
-    id: 'inv-1', userId: 'user-7', name: 'Sofia Martinez', avatar: '/avatars/sofia.jpg',
+    id: 'inv-1', userId: 'user-7', name: 'Sofia Martinez', avatar: 'https://i.pravatar.cc/150?u=sofia',
     type: 'vc', sectors: ['climate', 'renewable_energy', 'agriculture'],
     stages: ['idea', 'validation', 'prototype', 'mvp'],
     geography: ['North America', 'Europe', 'Latin America'],
@@ -1812,7 +1812,7 @@ export const SEED_INVESTORS: InvestorProfile[] = [
     contactPreference: 'platform_only',
   },
   {
-    id: 'inv-2', userId: 'user-19', name: 'Ben Goldstein', avatar: '/avatars/ben.jpg',
+    id: 'inv-2', userId: 'user-19', name: 'Ben Goldstein', avatar: 'https://i.pravatar.cc/150?u=ben',
     type: 'vc', sectors: ['ai', 'robotics', 'biotech', 'healthcare'],
     stages: ['validation', 'prototype', 'mvp', 'early_traction'],
     geography: ['North America', 'Europe'],
@@ -1877,7 +1877,7 @@ export const SEED_OPPORTUNITIES: Opportunity[] = [
 
 export const SEED_POSTS: FeedPost[] = [
   {
-    id: 'post-1', authorId: 'user-1', authorName: 'Elena Vasquez', authorAvatar: '/avatars/elena.jpg',
+    id: 'post-1', authorId: 'user-1', authorName: 'Elena Vasquez', authorAvatar: 'https://i.pravatar.cc/150?u=elena',
     authorHeadline: 'Robotics Engineer & Climate Tech Founder',
     projectId: 'proj-1', projectTitle: 'SolarBot',
     type: 'milestone',
@@ -1887,7 +1887,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 7, createdAt: '2024-09-15T10:00:00Z',
   },
   {
-    id: 'post-2', authorId: 'user-6', authorName: 'James Kowalski', authorAvatar: '/avatars/james.jpg',
+    id: 'post-2', authorId: 'user-6', authorName: 'James Kowalski', authorAvatar: 'https://i.pravatar.cc/150?u=james',
     authorHeadline: 'Agricultural Engineer & IoT Specialist',
     projectId: 'proj-3', projectTitle: 'CropSense',
     type: 'build_log',
@@ -1897,7 +1897,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 4, createdAt: '2024-09-01T10:00:00Z',
   },
   {
-    id: 'post-3', authorId: 'user-5', authorName: 'Aisha Okafor', authorAvatar: '/avatars/aisha.jpg',
+    id: 'post-3', authorId: 'user-5', authorName: 'Aisha Okafor', authorAvatar: 'https://i.pravatar.cc/150?u=aisha',
     authorHeadline: 'Energy Engineer & Battery Research Scientist',
     projectId: 'proj-5', projectTitle: 'BatteryLens',
     type: 'research_update',
@@ -1907,7 +1907,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 11, createdAt: '2024-08-20T10:00:00Z',
   },
   {
-    id: 'post-4', authorId: 'user-13', authorName: 'Priya Sharma', authorAvatar: '/avatars/priya.jpg',
+    id: 'post-4', authorId: 'user-13', authorName: 'Priya Sharma', authorAvatar: 'https://i.pravatar.cc/150?u=priya',
     authorHeadline: 'ML Engineer & Healthcare AI Researcher',
     projectId: 'proj-8', projectTitle: 'NeuralAccess',
     type: 'question',
@@ -1917,7 +1917,7 @@ export const SEED_POSTS: FeedPost[] = [
     commentCount: 15, createdAt: '2024-09-10T10:00:00Z',
   },
   {
-    id: 'post-5', authorId: 'user-2', authorName: 'Alex Petrov', authorAvatar: '/avatars/alex.jpg',
+    id: 'post-5', authorId: 'user-2', authorName: 'Alex Petrov', authorAvatar: 'https://i.pravatar.cc/150?u=alex',
     authorHeadline: 'Serial Entrepreneur & EdTech Builder',
     projectId: 'proj-4', projectTitle: 'LearnLoop',
     type: 'opportunity',
@@ -1944,11 +1944,11 @@ export const SEED_CONVERSATIONS: Conversation[] = [
   {
     id: 'conv-1', type: 'direct', name: null, projectId: 'proj-1', projectTitle: 'SolarBot',
     participants: [
-      { userId: 'user-1', name: 'Elena Vasquez', avatar: '/avatars/elena.jpg', lastReadAt: '2024-09-22T10:30:00Z' },
-      { userId: 'user-14', name: 'Yuki Tanaka', avatar: '/avatars/yuki.jpg', lastReadAt: '2024-09-22T10:15:00Z' },
+      { userId: 'user-1', name: 'Elena Vasquez', avatar: 'https://i.pravatar.cc/150?u=elena', lastReadAt: '2024-09-22T10:30:00Z' },
+      { userId: 'user-14', name: 'Yuki Tanaka', avatar: 'https://i.pravatar.cc/150?u=yuki', lastReadAt: '2024-09-22T10:15:00Z' },
     ],
     lastMessage: {
-      id: 'msg-3', conversationId: 'conv-1', senderId: 'user-14', senderName: 'Yuki Tanaka', senderAvatar: '/avatars/yuki.jpg',
+      id: 'msg-3', conversationId: 'conv-1', senderId: 'user-14', senderName: 'Yuki Tanaka', senderAvatar: 'https://i.pravatar.cc/150?u=yuki',
       content: 'I\'d love to help with the hardware design! I have experience with outdoor-rated embedded systems from my work at Fanuc. When can we chat about the technical requirements?',
       type: 'text', readBy: ['user-14'], createdAt: '2024-09-22T10:15:00Z',
     },
@@ -1957,11 +1957,11 @@ export const SEED_CONVERSATIONS: Conversation[] = [
   {
     id: 'conv-2', type: 'direct', name: null, projectId: null, projectTitle: null,
     participants: [
-      { userId: 'user-1', name: 'Elena Vasquez', avatar: '/avatars/elena.jpg', lastReadAt: '2024-09-21T15:00:00Z' },
-      { userId: 'user-8', name: 'Omar Hassan', avatar: '/avatars/omar.jpg', lastReadAt: '2024-09-21T14:45:00Z' },
+      { userId: 'user-1', name: 'Elena Vasquez', avatar: 'https://i.pravatar.cc/150?u=elena', lastReadAt: '2024-09-21T15:00:00Z' },
+      { userId: 'user-8', name: 'Omar Hassan', avatar: 'https://i.pravatar.cc/150?u=omar', lastReadAt: '2024-09-21T14:45:00Z' },
     ],
     lastMessage: {
-      id: 'msg-5', conversationId: 'conv-2', senderId: 'user-8', senderName: 'Omar Hassan', senderAvatar: '/avatars/omar.jpg',
+      id: 'msg-5', conversationId: 'conv-2', senderId: 'user-8', senderName: 'Omar Hassan', senderAvatar: 'https://i.pravatar.cc/150?u=omar',
       content: 'The sensor fusion approach you mentioned for solar panel inspection is really interesting. I have some ideas about adapting our adverse weather perception for outdoor robot navigation.',
       type: 'text', readBy: ['user-8'], createdAt: '2024-09-21T14:45:00Z',
     },
@@ -1970,10 +1970,10 @@ export const SEED_CONVERSATIONS: Conversation[] = [
   {
     id: 'conv-3', type: 'project', name: 'SolarBot Team', projectId: 'proj-1', projectTitle: 'SolarBot',
     participants: [
-      { userId: 'user-1', name: 'Elena Vasquez', avatar: '/avatars/elena.jpg', lastReadAt: '2024-09-22T11:00:00Z' },
+      { userId: 'user-1', name: 'Elena Vasquez', avatar: 'https://i.pravatar.cc/150?u=elena', lastReadAt: '2024-09-22T11:00:00Z' },
     ],
     lastMessage: {
-      id: 'msg-6', conversationId: 'conv-3', senderId: 'user-1', senderName: 'Elena Vasquez', senderAvatar: '/avatars/elena.jpg',
+      id: 'msg-6', conversationId: 'conv-3', senderId: 'user-1', senderName: 'Elena Vasquez', senderAvatar: 'https://i.pravatar.cc/150?u=elena',
       content: 'Updated the project milestones. Field trial target is December 1st. Let\'s make sure we have the edge ML model ready by November.',
       type: 'text', readBy: ['user-1'], createdAt: '2024-09-22T11:00:00Z',
     },
@@ -1982,11 +1982,11 @@ export const SEED_CONVERSATIONS: Conversation[] = [
 ];
 
 export const SEED_MESSAGES: Message[] = [
-  { id: 'msg-1', conversationId: 'conv-1', senderId: 'user-1', senderName: 'Elena Vasquez', senderAvatar: '/avatars/elena.jpg', content: 'Hi Yuki! I saw your profile and your robotics experience at Fanuc is exactly what SolarBot needs. Would you be interested in collaborating on the hardware side?', type: 'text', readBy: ['user-1', 'user-14'], createdAt: '2024-09-20T08:00:00Z' },
-  { id: 'msg-2', conversationId: 'conv-1', senderId: 'user-14', senderName: 'Yuki Tanaka', senderAvatar: '/avatars/yuki.jpg', content: 'Hi Elena! Thanks for reaching out. I\'ve been looking for a climate-focused hardware project and SolarBot looks really promising. What\'s the current state of the embedded system?', type: 'text', readBy: ['user-1', 'user-14'], createdAt: '2024-09-20T14:00:00Z' },
-  { id: 'msg-3', conversationId: 'conv-1', senderId: 'user-14', senderName: 'Yuki Tanaka', senderAvatar: '/avatars/yuki.jpg', content: 'I\'d love to help with the hardware design! I have experience with outdoor-rated embedded systems from my work at Fanuc. When can we chat about the technical requirements?', type: 'text', readBy: ['user-14'], createdAt: '2024-09-22T10:15:00Z' },
-  { id: 'msg-4', conversationId: 'conv-2', senderId: 'user-1', senderName: 'Elena Vasquez', senderAvatar: '/avatars/elena.jpg', content: 'Omar, I read your CVPR paper on sensor fusion in adverse weather. Amazing work! We\'re facing similar challenges with outdoor robot navigation for solar farms.', type: 'text', readBy: ['user-1', 'user-8'], createdAt: '2024-09-20T09:00:00Z' },
-  { id: 'msg-5', conversationId: 'conv-2', senderId: 'user-8', senderName: 'Omar Hassan', senderAvatar: '/avatars/omar.jpg', content: 'The sensor fusion approach you mentioned for solar panel inspection is really interesting. I have some ideas about adapting our adverse weather perception for outdoor robot navigation.', type: 'text', readBy: ['user-8'], createdAt: '2024-09-21T14:45:00Z' },
+  { id: 'msg-1', conversationId: 'conv-1', senderId: 'user-1', senderName: 'Elena Vasquez', senderAvatar: 'https://i.pravatar.cc/150?u=elena', content: 'Hi Yuki! I saw your profile and your robotics experience at Fanuc is exactly what SolarBot needs. Would you be interested in collaborating on the hardware side?', type: 'text', readBy: ['user-1', 'user-14'], createdAt: '2024-09-20T08:00:00Z' },
+  { id: 'msg-2', conversationId: 'conv-1', senderId: 'user-14', senderName: 'Yuki Tanaka', senderAvatar: 'https://i.pravatar.cc/150?u=yuki', content: 'Hi Elena! Thanks for reaching out. I\'ve been looking for a climate-focused hardware project and SolarBot looks really promising. What\'s the current state of the embedded system?', type: 'text', readBy: ['user-1', 'user-14'], createdAt: '2024-09-20T14:00:00Z' },
+  { id: 'msg-3', conversationId: 'conv-1', senderId: 'user-14', senderName: 'Yuki Tanaka', senderAvatar: 'https://i.pravatar.cc/150?u=yuki', content: 'I\'d love to help with the hardware design! I have experience with outdoor-rated embedded systems from my work at Fanuc. When can we chat about the technical requirements?', type: 'text', readBy: ['user-14'], createdAt: '2024-09-22T10:15:00Z' },
+  { id: 'msg-4', conversationId: 'conv-2', senderId: 'user-1', senderName: 'Elena Vasquez', senderAvatar: 'https://i.pravatar.cc/150?u=elena', content: 'Omar, I read your CVPR paper on sensor fusion in adverse weather. Amazing work! We\'re facing similar challenges with outdoor robot navigation for solar farms.', type: 'text', readBy: ['user-1', 'user-8'], createdAt: '2024-09-20T09:00:00Z' },
+  { id: 'msg-5', conversationId: 'conv-2', senderId: 'user-8', senderName: 'Omar Hassan', senderAvatar: 'https://i.pravatar.cc/150?u=omar', content: 'The sensor fusion approach you mentioned for solar panel inspection is really interesting. I have some ideas about adapting our adverse weather perception for outdoor robot navigation.', type: 'text', readBy: ['user-8'], createdAt: '2024-09-21T14:45:00Z' },
 ];
 
 // ─── Seed Connections ───────────────────────────────────────────────
