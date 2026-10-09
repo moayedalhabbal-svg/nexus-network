@@ -35,6 +35,10 @@ export async function signupAction(formData: FormData) {
     return { success: true };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://nexus-network-chi.vercel.app"));
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email,
@@ -43,6 +47,7 @@ export async function signupAction(formData: FormData) {
       data: {
         full_name: fullName,
       },
+      emailRedirectTo: `${baseUrl}/auth/callback?next=/en/onboarding`,
     },
   });
 
@@ -72,8 +77,14 @@ export async function resetPasswordAction(formData: FormData) {
     return { success: true };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://nexus-network-chi.vercel.app"));
+
   const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${baseUrl}/auth/callback?next=/en/reset-password`,
+  });
 
   if (error) {
     return { success: false, error: error.message };
