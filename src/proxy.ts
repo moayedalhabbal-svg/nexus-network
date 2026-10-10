@@ -74,7 +74,6 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/projects/manage') ||
     request.nextUrl.pathname.startsWith('/projects/new') ||
     request.nextUrl.pathname.startsWith('/feed') ||
-    request.nextUrl.pathname.startsWith('/discover') ||
     request.nextUrl.pathname.startsWith('/network') ||
     request.nextUrl.pathname.startsWith('/opportunities') ||
     request.nextUrl.pathname.startsWith('/bounties') ||
