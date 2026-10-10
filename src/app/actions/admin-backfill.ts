@@ -14,7 +14,8 @@ function getServiceRoleClient() {
 
 export async function backfillEmbeddingsAction(
   ignoredProjectIds: string[] = [],
-  ignoredProfileIds: string[] = []
+  ignoredProfileIds: string[] = [],
+  ignoredNeedIds: string[] = []
 ) {
   try {
     const supabase = await createClient();
@@ -136,13 +137,63 @@ export async function backfillEmbeddingsAction(
       }
     }
 
-    const fetchFailed = !!fetchProjectsErr || !!fetchProfilesErr;
+    // 3. Process Project Needs
+    let needsQuery = adminClient
+      .from("project_needs")
+      .select("id, role_title, commitment, projects(title, pitch)")
+      .is("embedding", null);
+
+    if (ignoredNeedIds.length > 0) {
+      needsQuery = needsQuery.not("id", "in", `(${ignoredNeedIds.join(",")})`);
+    }
+
+    const { data: missingNeeds, error: fetchNeedsErr } = await needsQuery.limit(50);
+
+    if (fetchNeedsErr) {
+      errors.push(`Failed to fetch project needs: ${fetchNeedsErr.message}`);
+    }
+
+    if (missingNeeds && missingNeeds.length > 0) {
+      for (const need of missingNeeds) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const proj = need.projects as any;
+          const projectPart = proj ? `Project: ${proj.title}. ${proj.pitch}` : '';
+          const textToEmbed = `Role: ${need.role_title}. Commitment: ${need.commitment}. ${projectPart}`;
+          
+          const embedding = await generateTextEmbedding(textToEmbed);
+          const timestamp = new Date().toISOString();
+          
+          if (embedding && embedding.length === 768) {
+            const { error: updateErr } = await adminClient
+              .from("project_needs")
+              .update({ embedding, embedding_generated_at: timestamp })
+              .eq("id", need.id);
+              
+            if (updateErr) {
+              errors.push(`Need ${need.id} update failed: ${updateErr.message}`);
+              ignoredNeedIds.push(need.id);
+            } else {
+              updatedCount++;
+            }
+          } else {
+            errors.push(`Need ${need.id} embedding generation failed or bad dimensionality.`);
+            ignoredNeedIds.push(need.id);
+          }
+        } catch (err) {
+          errors.push(`Need ${need.id} failed: ${err}`);
+          ignoredNeedIds.push(need.id);
+        }
+      }
+    }
+
+    const fetchFailed = !!fetchProjectsErr || !!fetchProfilesErr || !!fetchNeedsErr;
     let hasMoreStatus: boolean | "unknown" = false;
     
     if (fetchFailed) {
       hasMoreStatus = "unknown";
     } else {
-      hasMoreStatus = (missingProjects?.length === 50 || missingProfiles?.length === 50);
+      hasMoreStatus = (missingProjects?.length === 50 || missingProfiles?.length === 50 || missingNeeds?.length === 50);
     }
 
     revalidatePath("/admin");
@@ -153,7 +204,8 @@ export async function backfillEmbeddingsAction(
       fetchFailed,
       errors,
       failedProjectIds: ignoredProjectIds,
-      failedProfileIds: ignoredProfileIds
+      failedProfileIds: ignoredProfileIds,
+      failedNeedIds: ignoredNeedIds
     };
 
   } catch (error: unknown) {

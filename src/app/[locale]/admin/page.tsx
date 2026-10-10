@@ -28,6 +28,7 @@ export default function AdminDashboardPage() {
   const [backfillStats, setBackfillStats] = useState<{ updated: number, failed: number, hasMore: boolean | "unknown", fetchFailed?: boolean } | null>(null);
   const [failedProjects, setFailedProjects] = useState<string[]>([]);
   const [failedProfiles, setFailedProfiles] = useState<string[]>([]);
+  const [failedNeeds, setFailedNeeds] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,7 +96,7 @@ export default function AdminDashboardPage() {
     setBackfilling(true);
     try {
       const { backfillEmbeddingsAction } = await import("@/app/actions/admin-backfill");
-      const res = await backfillEmbeddingsAction(failedProjects, failedProfiles);
+      const res = await backfillEmbeddingsAction(failedProjects, failedProfiles, failedNeeds);
       if (res.success) {
         setBackfillStats({
           updated: (backfillStats?.updated || 0) + (res.updated || 0),
@@ -105,6 +106,7 @@ export default function AdminDashboardPage() {
         });
         setFailedProjects(res.failedProjectIds || []);
         setFailedProfiles(res.failedProfileIds || []);
+        setFailedNeeds(res.failedNeedIds || []);
       } else {
         alert("Backfill failed: " + res.error);
       }
