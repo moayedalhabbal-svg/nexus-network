@@ -111,15 +111,30 @@ export async function computeMatchesAction(demoUserId?: string) {
     match_count: 50
   });
 
+  // Call match_project_needs to find matching open roles
+  const { data: needVectorMatches } = await supabase.rpc('match_project_needs', {
+    query_embedding: `[${userEmbedding.join(',')}]`,
+    match_threshold: 0.2,
+    match_count: 50
+  });
+
   if (profileVectorMatches && profileVectorMatches.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await supabase.from('profiles').select('*').in('id', profileVectorMatches.map((p: any) => p.id));
     if (data) candidateProfiles = data;
   }
 
-  if (projectVectorMatches && projectVectorMatches.length > 0) {
+  // Merge unique project IDs from project matching and role matching
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const allProjectIds = new Set<string>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  projectVectorMatches?.forEach((p: any) => allProjectIds.add(p.id));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  needVectorMatches?.forEach((n: any) => allProjectIds.add(n.project_id));
+
+  if (allProjectIds.size > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await supabase.from('projects').select('*, project_needs(*)').in('id', projectVectorMatches.map((p: any) => p.id));
+    const { data } = await supabase.from('projects').select('*, project_needs(*)').in('id', Array.from(allProjectIds));
     if (data) candidateProjects = data;
   }
 
@@ -137,6 +152,22 @@ export async function computeMatchesAction(demoUserId?: string) {
   const projectMatches = [];
   for (const p of candidateProjects) {
     if (p.owner_id === currentUser.id) continue;
+    
+    // Extract semantic similarity if found via PGVector
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const projMatch = projectVectorMatches?.find((v: any) => v.id === p.id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const needMatchesForProj = needVectorMatches?.filter((n: any) => n.project_id === p.id) || [];
+    
+    let maxNeedSimilarity = 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    needMatchesForProj.forEach((n: any) => {
+      if (n.similarity > maxNeedSimilarity) maxNeedSimilarity = n.similarity;
+    });
+
+    const projectSimilarity = projMatch ? projMatch.similarity : 0;
+    const maxSimilarity = Math.max(projectSimilarity, maxNeedSimilarity);
+    const semanticSimilarity = maxSimilarity > 0 ? maxSimilarity : undefined;
     
     // Map project
     const projectObj: Project = {
@@ -179,15 +210,21 @@ export async function computeMatchesAction(demoUserId?: string) {
       updatedAt: p.created_at,
     };
 
-    const match = matchUserToProject(currentUser, projectObj);
+    const match = matchUserToProject(currentUser, projectObj, semanticSimilarity);
     projectMatches.push({ project: projectObj, match });
   }
 
   const peopleMatches = [];
   for (const target of candidateProfiles) {
     if (target.id === currentUser.id) continue;
+    
+    // Extract semantic similarity if found via PGVector
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const vectorMatch = profileVectorMatches?.find((v: any) => v.id === target.id);
+    const semanticSimilarity = vectorMatch ? vectorMatch.similarity : undefined;
+    
     const targetUser = mapDbProfileToUser(target);
-    const match = matchUserToUser(currentUser, targetUser);
+    const match = matchUserToUser(currentUser, targetUser, semanticSimilarity);
     peopleMatches.push({ user: targetUser, match });
   }
 

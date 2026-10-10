@@ -253,7 +253,7 @@ function buildMatchGaps(missingSkills: string[]): MatchGap[] {
 
 // ─── User → Project Matching ────────────────────────────────────────
 
-export function matchUserToProject(user: UserProfile, project: Project): MatchResult {
+export function matchUserToProject(user: UserProfile, project: Project, semanticSimilarity?: number): MatchResult {
   const userSkillNames = user.skills.map(s => s.name);
   const userInterestNames = user.interests.map(i => i.name);
 
@@ -286,7 +286,16 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
   const skillScore = calculateSkillOverlap(userSkillNames, uniqueProjectSkills);
   const interestScore = calculateInterestOverlap(userInterestNames, projectInterests);
   const intentScore = calculateIntentAlignment(user.intents, 'project');
-  const domainScore = Math.max(skillScore, interestScore) * 0.8;
+  
+  // Blend semantic similarity if available. 
+  // We use it to replace the basic domain score, but we keep keyword skill score 
+  // as a fallback if semantic search is completely unavailable.
+  let domainScore = Math.max(skillScore, interestScore) * 0.8;
+  if (semanticSimilarity !== undefined) {
+    // Normalize semantic similarity (assuming 0 to 1 range from PGVector cosine distance 1 - (A <=> B))
+    // A high semantic similarity means deep relevance.
+    domainScore = Math.min(Math.max(semanticSimilarity, 0), 1);
+  }
 
   const projectCommitment = project.needs[0]?.commitment || '10hrs_week';
   const availScore = calculateAvailabilityMatch(user.availability, projectCommitment);
@@ -360,6 +369,10 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
     });
   }
 
+  if (semanticSimilarity !== undefined && semanticSimilarity > 0.7) {
+    reasons.push({ type: 'interest', label: `High semantic relevance to your profile`, strength: 'strong' });
+  }
+
   if (commitmentCompatibility > 0.5) {
     reasons.push({ type: 'availability', label: `Aligned on time commitment`, strength: 'moderate' });
   }
@@ -399,7 +412,7 @@ export function matchUserToProject(user: UserProfile, project: Project): MatchRe
 
 // ─── User → User Matching ───────────────────────────────────────────
 
-export function matchUserToUser(user: UserProfile, target: UserProfile): MatchResult {
+export function matchUserToUser(user: UserProfile, target: UserProfile, semanticSimilarity?: number): MatchResult {
   const userSkillNames = user.skills.map(s => s.name);
   const targetSkillNames = target.skills.map(s => s.name);
   const userInterestNames = user.interests.map(i => i.name);
@@ -480,11 +493,23 @@ export function matchUserToUser(user: UserProfile, target: UserProfile): MatchRe
     availScore * 0.10 +
     0.1; // base
     
+  if (semanticSimilarity !== undefined) {
+    // If semantic similarity is provided, blend it significantly into the base ranking.
+    // It replaces the deterministic interest/skill baseline to avoid double counting relevance,
+    // but we retain the specific complementarity factors.
+    const normalizedSemantic = Math.min(Math.max(semanticSimilarity, 0), 1);
+    rawScore = (normalizedSemantic * 0.55) + (intentScore * 0.25) + (availScore * 0.10) + 0.1;
+  }
+    
   rawScore += evidenceBonus + collabBonus + avgTrustBonus;
 
   const score = Math.min(Math.round(rawScore * 100), 99);
 
   const reasons: MatchReason[] = [];
+
+  if (semanticSimilarity !== undefined && semanticSimilarity > 0.7) {
+    reasons.push({ type: 'interest', label: `High semantic alignment between profiles`, strength: 'strong' });
+  }
 
   sharedInterests.forEach(interest => {
     reasons.push({ type: 'interest', label: interest, strength: 'strong' });

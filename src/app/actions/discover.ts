@@ -60,20 +60,56 @@ export async function semanticSearchAction(
         match_count: 5
       });
       
-      if (!projErr && projectMatches && projectMatches.length > 0) {
+      const { data: needMatches, error: needErr } = await supabase.rpc('match_project_needs', {
+        query_embedding: queryEmbedding,
+        match_threshold: 0.5,
+        match_count: 5
+      });
+      
+      const hasProjMatches = !projErr && projectMatches && projectMatches.length > 0;
+      const hasNeedMatches = !needErr && needMatches && needMatches.length > 0;
+      
+      if (hasProjMatches || hasNeedMatches) {
         vectorResultsFound = true;
+        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: fullProjects } = await supabase.from('projects').select('*').in('id', projectMatches.map((p: any) => p.id));
+        const allProjectIds = new Set<string>();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (hasProjMatches) projectMatches.forEach((p: any) => allProjectIds.add(p.id));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (hasNeedMatches) needMatches.forEach((n: any) => allProjectIds.add(n.project_id));
+        
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: fullProjects } = await supabase.from('projects').select('*').in('id', Array.from(allProjectIds));
         if (fullProjects) {
-          for (const match of projectMatches) {
-            const p = fullProjects.find(fp => fp.id === match.id);
+          for (const projectId of allProjectIds) {
+            const p = fullProjects.find(fp => fp.id === projectId);
             if (p) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const projMatch = projectMatches?.find((m: any) => m.id === projectId);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const needMatchesForProj = needMatches?.filter((m: any) => m.project_id === projectId) || [];
+              
+              let maxNeedSimilarity = 0;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              needMatchesForProj.forEach((n: any) => {
+                if (n.similarity > maxNeedSimilarity) maxNeedSimilarity = n.similarity;
+              });
+              
+              const projSim = projMatch ? projMatch.similarity : 0;
+              const maxSim = Math.max(projSim, maxNeedSimilarity);
+              
+              let reason = "Matched semantically via vector similarity.";
+              if (maxNeedSimilarity > projSim) {
+                 reason = "Matched an open role on this project.";
+              }
+              
               results.push({
                 id: p.id,
                 type: 'projects',
                 data: p,
-                score: Math.round(match.similarity * 100),
-                reason: "Matched semantically via vector similarity."
+                score: Math.round(maxSim * 100),
+                reason: reason
               });
             }
           }
