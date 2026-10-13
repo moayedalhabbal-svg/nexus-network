@@ -64,46 +64,46 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Route Protection Logic
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register') || request.nextUrl.pathname.startsWith('/signup');
-  const isVerificationRoute = request.nextUrl.pathname.startsWith('/verify-email');
+  const pathname = request.nextUrl.pathname;
+  const cleanPath = pathname.replace(/^\/(en|fr|ar)(\/|$)/, '/') || '/';
+  const localeMatch = pathname.match(/^\/(en|fr|ar)/);
+  const currentLocale = localeMatch ? localeMatch[1] : (request.cookies.get('NEXT_LOCALE')?.value || 'en');
+
+  const isAuthRoute = cleanPath.startsWith('/login') || cleanPath.startsWith('/register') || cleanPath.startsWith('/signup');
+  const isVerificationRoute = cleanPath.startsWith('/verify-email');
   
   const isProtectedRoute = 
-    request.nextUrl.pathname.startsWith('/settings') ||
-    request.nextUrl.pathname.startsWith('/messages') ||
-    request.nextUrl.pathname.startsWith('/admin') ||
-    request.nextUrl.pathname.startsWith('/projects/manage') ||
-    request.nextUrl.pathname.startsWith('/projects/new') ||
-    request.nextUrl.pathname.startsWith('/feed') ||
-    request.nextUrl.pathname.startsWith('/network') ||
-    request.nextUrl.pathname.startsWith('/opportunities') ||
-    request.nextUrl.pathname.startsWith('/bounties') ||
-    request.nextUrl.pathname.startsWith('/onboarding') ||
-    request.nextUrl.pathname.startsWith('/profile');
+    cleanPath.startsWith('/settings') ||
+    cleanPath.startsWith('/messages') ||
+    cleanPath.startsWith('/admin') ||
+    cleanPath.startsWith('/projects/manage') ||
+    cleanPath.startsWith('/projects/new') ||
+    cleanPath.startsWith('/profile');
   
   if (!user && isProtectedRoute) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
   }
 
   // Handle unverified users (email not confirmed)
   const isUnverified = user && !user.email_confirmed_at;
   
   if (isUnverified && isProtectedRoute) {
-    return NextResponse.redirect(new URL('/verify-email', request.url));
+    return NextResponse.redirect(new URL(`/${currentLocale}/verify-email`, request.url));
   }
 
   if (user && isAuthRoute) {
     if (isUnverified) {
-      return NextResponse.redirect(new URL('/verify-email', request.url));
+      return NextResponse.redirect(new URL(`/${currentLocale}/verify-email`, request.url));
     }
-    return NextResponse.redirect(new URL('/feed', request.url));
+    return NextResponse.redirect(new URL(`/${currentLocale}/feed`, request.url));
   }
 
   if (user && !isUnverified && isVerificationRoute) {
-    return NextResponse.redirect(new URL('/feed', request.url));
+    return NextResponse.redirect(new URL(`/${currentLocale}/feed`, request.url));
   }
 
   // Admin Route Authorization
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  if (cleanPath.startsWith('/admin')) {
     // Check if user is admin by querying the profiles table
     // (We do this server-side so it cannot be spoofed)
     if (user) {
@@ -114,7 +114,7 @@ export async function proxy(request: NextRequest) {
         .single();
         
       if (!profile?.is_admin) {
-        return NextResponse.redirect(new URL('/feed', request.url));
+        return NextResponse.redirect(new URL(`/${currentLocale}/feed`, request.url));
       }
     }
   }

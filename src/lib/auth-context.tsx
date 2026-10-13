@@ -70,44 +70,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
 
           if (profile) {
+            const userName =
+              profile.full_name?.trim() ||
+              authUser.user_metadata?.full_name?.trim() ||
+              (authUser.email ? authUser.email.split('@')[0] : '') ||
+              'NEXUS Member';
+
             setUser({
               id: authUser.id,
               email: authUser.email || '',
-              name: profile.full_name,
+              name: userName,
               headline: profile.headline || '',
               bio: profile.bio || '',
               avatar: profile.avatar_url || '',
               location: profile.location || 'Remote',
               timezone: profile.timezone || '',
-              roles: [],
-              skills: [],
-              interests: [],
-              intents: [],
-              availability: 'flexible',
-              collaborationPreferences: [],
-              preferredTeamSize: '',
-              experience: [],
-              education: [],
+              roles: Array.isArray(profile.roles) ? profile.roles : [],
+              skills: Array.isArray(profile.skills) ? profile.skills : [],
+              interests: Array.isArray(profile.interests) ? profile.interests : [],
+              intents: Array.isArray(profile.intents) ? profile.intents : [],
+              availability: profile.availability || 'flexible',
+              collaborationPreferences: Array.isArray(profile.collaboration_preferences) ? profile.collaboration_preferences : [],
+              preferredTeamSize: profile.preferred_team_size || '',
+              experience: Array.isArray(profile.experience) ? profile.experience : [],
+              education: Array.isArray(profile.education) ? profile.education : [],
               proofOfWork: powData ? powData.map((p: any) => ({
                 id: p.id,
                 userId: p.user_id,
-                type: p.type,
-                title: p.title,
-                url: p.url,
-                description: p.description,
-                source: p.source,
-                skills: p.skills || [],
-                verificationStatus: p.verification_status,
-                createdAt: p.created_at,
-                updatedAt: p.updated_at
+                type: p.type || 'project',
+                title: p.title || 'Untitled',
+                url: p.url || '',
+                description: p.description || '',
+                source: p.source || '',
+                skills: Array.isArray(p.skills) ? p.skills : [],
+                verificationStatus: p.verification_status || 'unverified',
+                createdAt: p.created_at || new Date().toISOString(),
+                updatedAt: p.updated_at || new Date().toISOString()
               })) : [],
               verifications: [],
-              profileVisibility: 'public',
-              searchVisibility: profile.search_visibility,
+              profileVisibility: profile.profile_visibility || 'public',
+              searchVisibility: typeof profile.search_visibility === 'boolean' ? profile.search_visibility : true,
               onlineStatus: 'online',
-              completionPercentage: 100,
-              joinedAt: profile.created_at,
-              updatedAt: profile.updated_at
+              completionPercentage: profile.completion_percentage || 100,
+              joinedAt: profile.created_at || new Date().toISOString(),
+              updatedAt: profile.updated_at || new Date().toISOString()
             });
             setIsDemoMode(false);
             setLoading(false);

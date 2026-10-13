@@ -70,12 +70,12 @@ export default function ProfilePage() {
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background border-b">
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row gap-8 items-start">
-            <Avatar size="xl" alt={user.name} className="h-24 w-24 text-2xl border-4 border-background shadow-xl" />
+            <Avatar size="xl" alt={user.name || "User"} className="h-24 w-24 text-2xl border-4 border-background shadow-xl" />
 
             <div className="flex-1">
               <div className="flex items-start justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight">{user.name}</h1>
+                  <h1 className="text-3xl font-bold tracking-tight">{user.name || "NEXUS Member"}</h1>
 
                   {editingHeadline ? (
                     <div className="flex items-center gap-2 mt-2">
@@ -90,9 +90,9 @@ export default function ProfilePage() {
                     </div>
                   ) : (
                     <p className="text-lg text-muted-foreground mt-1 flex items-center gap-2">
-                      {user.headline}
+                      {user.headline || "No headline set yet"}
                       <button
-                        onClick={() => { setEditHeadlineValue(user.headline); setEditingHeadline(true); }}
+                        onClick={() => { setEditHeadlineValue(user.headline || ""); setEditingHeadline(true); }}
                         className="text-muted-foreground/50 hover:text-primary transition-colors"
                       >
                         <Edit3 className="h-3.5 w-3.5" />

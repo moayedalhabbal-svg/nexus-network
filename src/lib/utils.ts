@@ -47,9 +47,12 @@ export function truncate(text: string, length: number): string {
   return text.slice(0, length).trimEnd() + '…';
 }
 
-export function getInitials(name: string): string {
+export function getInitials(name?: string | null): string {
+  if (!name || typeof name !== 'string') return '';
   return name
-    .split(' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
     .map((n) => n[0])
     .join('')
     .toUpperCase()

@@ -288,13 +288,13 @@ export default function FeedPage() {
               <div className="h-20 bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-purple-900/40" />
               <CardContent className="p-5 pt-0 relative">
                 <Link href={`/${locale}/profile`} className="block absolute -top-10 left-5 z-10 cursor-pointer">
-                  <Avatar src={user.avatar} size="lg" alt={user.name} className="h-20 w-20 border-4 border-zinc-900 shadow-2xl hover:border-zinc-700 transition-colors" />
+                  <Avatar src={user.avatar} size="lg" alt={user.name || "User"} className="h-20 w-20 border-4 border-zinc-900 shadow-2xl hover:border-zinc-700 transition-colors" />
                 </Link>
                 <div className="pt-14">
                   <h3 className="font-bold text-lg text-zinc-100">
-                    <Link href={`/${locale}/profile`} className="hover:underline">{user.name}</Link>
+                    <Link href={`/${locale}/profile`} className="hover:underline">{user.name || "NEXUS Member"}</Link>
                   </h3>
-                  <p className="text-xs text-zinc-400 line-clamp-2 mt-1 font-medium">{user.headline}</p>
+                  <p className="text-xs text-zinc-400 line-clamp-2 mt-1 font-medium">{user.headline || ""}</p>
                 </div>
                 <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-4">
                   <Link href={`/${locale}/profile`} className="flex justify-between text-sm group cursor-pointer">
@@ -350,7 +350,7 @@ export default function FeedPage() {
             <Card className="border-zinc-800 bg-zinc-900/50 shadow-sm overflow-hidden">
               <CardContent className="p-0">
                 <div className="p-4 flex gap-4">
-                  <Avatar alt={user.name} className="h-10 w-10 mt-1 ring-2 ring-zinc-800" />
+                  <Avatar alt={user.name || "User"} className="h-10 w-10 mt-1 ring-2 ring-zinc-800" />
                   <div className="flex-1">
                     <textarea 
                       value={newPost}
@@ -461,7 +461,7 @@ export default function FeedPage() {
                     {/* Repost Header (Mock visual) */}
                     {post.parent_post_id && (
                       <div className="px-5 pt-3 pb-0 flex items-center gap-2 text-xs text-zinc-500 font-medium">
-                        <Repeat2 className="h-3 w-3" /> {user?.name} reposted
+                        <Repeat2 className="h-3 w-3" /> {user?.name || "Member"} reposted
                       </div>
                     )}
 
@@ -535,7 +535,7 @@ export default function FeedPage() {
                       ) : (
                         <div className="text-[15px] whitespace-pre-wrap leading-relaxed text-zinc-200 mb-4">
                           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                          {post.content.split(' ').map((word: any, i: number) => word.startsWith('#') ? <span key={i} className="text-blue-400 hover:text-blue-300 font-medium cursor-pointer">{word} </span> : `${word} `)}
+                          {(post.content || '').split(' ').map((word: any, i: number) => word.startsWith('#') ? <span key={i} className="text-blue-400 hover:text-blue-300 font-medium cursor-pointer">{word} </span> : `${word} `)}
                         </div>
                       )}
 

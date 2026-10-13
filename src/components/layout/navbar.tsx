@@ -16,7 +16,7 @@ import { ThemeToggle } from "../theme-toggle";
 import { useTranslations, useLocale } from "next-intl";
 
 export function Navbar() {
-  const { user, isAuthenticated, loginAsDemo, logout } = useAuth();
+  const { user, isAuthenticated, isDemoMode, loginAsDemo, logout } = useAuth();
   const pathname = usePathname();
   const locale = useLocale();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -90,8 +90,10 @@ export function Navbar() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 rounded-full p-1 pe-3 hover:bg-accent transition-colors"
                 >
-                  <Avatar size="sm" alt={user.name} />
-                  <span className="text-sm font-medium hidden sm:inline">{user.name.split(' ')[0]}</span>
+                  <Avatar size="sm" alt={user.name || "User"} />
+                  <span className="text-sm font-medium hidden sm:inline">
+                    {user.name ? user.name.split(' ')[0] : 'Member'}
+                  </span>
                   <ChevronDown className="h-3 w-3 text-muted-foreground" />
                 </button>
 
@@ -100,9 +102,11 @@ export function Navbar() {
                     <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
                     <div className="absolute right-0 top-full mt-2 w-full sm:w-64 rounded-xl border bg-background shadow-xl z-50 p-2 animate-fade-in max-w-[calc(100vw-32px)]">
                       <div className="px-3 py-3 border-b mb-2">
-                        <p className="font-semibold text-sm">{user.name}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{user.headline}</p>
-                        <Badge variant="secondary" className="mt-2 text-[10px]">Demo Mode</Badge>
+                        <p className="font-semibold text-sm">{user.name || "NEXUS Member"}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{user.headline || ""}</p>
+                        <Badge variant="secondary" className="mt-2 text-[10px]">
+                          {isDemoMode ? "Demo Mode" : "Member"}
+                        </Badge>
                       </div>
                       <Link href={`/${locale}/profile`} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
                         <User className="h-4 w-4" /> My Profile
