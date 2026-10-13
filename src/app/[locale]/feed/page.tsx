@@ -751,7 +751,9 @@ export default function FeedPage() {
                         <div key={m.project.id} className="flex flex-col gap-1 p-2 -mx-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
                           <Link href={`/${locale}/projects/${m.project.id}`} className="font-semibold text-[13px] text-zinc-200 hover:text-blue-400 truncate">{m.project.title}</Link>
                           <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-zinc-400 line-clamp-1">{m.match.reasons[0]}</span>
+                            <span className="text-zinc-400 line-clamp-1">
+                              {m.match.reasons?.[0]?.label || (typeof m.match.reasons?.[0] === "string" ? m.match.reasons[0] : "High match")}
+                            </span>
                             <span className="text-blue-400 font-medium ml-2">{m.match.score}%</span>
                           </div>
                         </div>

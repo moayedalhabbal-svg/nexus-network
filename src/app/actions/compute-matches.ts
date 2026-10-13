@@ -11,7 +11,7 @@ function mapDbProfileToUser(dbProfile: any): UserProfile {
   return {
     id: dbProfile.id,
     email: '',
-    name: dbProfile.full_name,
+    name: dbProfile.full_name || 'NEXUS Member',
     headline: dbProfile.headline || '',
     bio: dbProfile.bio || '',
     avatar: dbProfile.avatar_url || '',
