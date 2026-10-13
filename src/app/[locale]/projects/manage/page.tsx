@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { Navbar } from "@/components/layout/navbar";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ const MOCK_APPLICATIONS = [
 
 export default function ManageProjectsPage() {
   const { user, isAuthenticated, loginAsDemo } = useAuth();
+  const locale = useLocale();
   const [apps, setApps] = useState(MOCK_APPLICATIONS);
   const [showReminder, setShowReminder] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,7 +90,7 @@ export default function ManageProjectsPage() {
               <h1 className="text-3xl font-bold tracking-tight mb-2">Manage Projects</h1>
               <p className="text-muted-foreground">Review applications and manage your team.</p>
             </div>
-            <Link href="/projects/new">
+            <Link href={`/${locale}/projects/new`}>
               <Button>Create New Project</Button>
             </Link>
           </div>
@@ -98,7 +100,7 @@ export default function ManageProjectsPage() {
             <div className="lg:col-span-1 space-y-4">
               <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground mb-4">Your Projects</h3>
               {displayProjects.map(project => (
-                <Link key={project.id} href={`/projects/${project.id}/workspace`}>
+                <Link key={project.id} href={`/${locale}/projects/${project.id}/workspace`}>
                   <Card className="border-primary bg-primary/5 shadow-sm hover:bg-primary/10 transition-colors cursor-pointer">
                     <CardContent className="p-4">
                       <h4 className="font-semibold text-sm mb-1 group-hover:text-primary transition-colors">{project.title}</h4>

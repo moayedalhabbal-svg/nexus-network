@@ -78,12 +78,12 @@ export function HomeClient() {
           </motion.p>
           
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-            <Link href="/onboarding" className="w-full sm:w-auto">
+            <Link href={`/${locale}/onboarding`} className="w-full sm:w-auto">
               <Button size="lg" className="w-full h-12 px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow">
                 Join the Network <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
               </Button>
             </Link>
-            <Link href="/discover" className="w-full sm:w-auto">
+            <Link href={`/${locale}/discover`} className="w-full sm:w-auto">
               <Button size="lg" variant="outline" className="w-full h-12 px-8 text-base">
                 Explore Projects
               </Button>
@@ -301,7 +301,7 @@ export function HomeClient() {
               <h2 className="text-3xl font-bold tracking-tight mb-2">Live Projects</h2>
               <p className="text-muted-foreground">Teams actively looking for collaborators.</p>
             </div>
-            <Link href="/discover">
+            <Link href={`/${locale}/discover`}>
               <Button variant="ghost" className="hidden md:flex gap-2">View all <ArrowRight className="h-4 w-4" /></Button>
             </Link>
           </div>
@@ -334,7 +334,7 @@ export function HomeClient() {
               </motion.div>
             ))}
           </div>
-          <Link href="/discover" className="md:hidden mt-8 block">
+          <Link href={`/${locale}/discover`} className="md:hidden mt-8 block">
             <Button variant="outline" className="w-full gap-2">View all projects <ArrowRight className="h-4 w-4" /></Button>
           </Link>
         </div>
@@ -410,7 +410,7 @@ export function HomeClient() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/onboarding">
+              <Link href={`/${locale}/onboarding`}>
                 <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base shadow-lg shadow-primary/25">
                   Join the Network
                 </Button>

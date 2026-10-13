@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { Navbar } from "@/components/layout/navbar";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ const STAGES = ["all", "idea", "prototype", "mvp", "beta", "launched", "scaling"
 
 export default function ProjectsPage() {
   const { user } = useAuth();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStage, setSelectedStage] = useState("all");
@@ -128,7 +130,7 @@ export default function ProjectsPage() {
               <Button variant="outline" size="icon" onClick={() => setShowFilters(!showFilters)}>
                 <SlidersHorizontal className="h-4 w-4" />
               </Button>
-              <Link href="/projects/new">
+              <Link href={`/${locale}/projects/new`}>
                 <Button className="gap-2 hidden sm:flex">
                   <Plus className="h-4 w-4" /> Create Project
                 </Button>
@@ -181,7 +183,7 @@ export default function ProjectsPage() {
           {/* Project Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {projectsWithMatch.map(project => (
-              <Link key={project.id} href={`/projects/${project.id}`}>
+              <Link key={project.id} href={`/${locale}/projects/${project.id}`}>
                 <Card className="flex flex-col h-full hover:border-primary/50 transition-all cursor-pointer group hover:shadow-lg">
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start mb-3">

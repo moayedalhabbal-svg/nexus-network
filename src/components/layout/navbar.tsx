@@ -13,30 +13,31 @@ import {
 } from "lucide-react";
 import { LanguageSelector } from "./language-selector";
 import { ThemeToggle } from "../theme-toggle";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function Navbar() {
   const { user, isAuthenticated, loginAsDemo, logout } = useAuth();
   const pathname = usePathname();
+  const locale = useLocale();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const t = useTranslations("navigation");
 
   const navLinks = isAuthenticated
     ? [
-        { href: "/feed", label: t("feed"), icon: Sparkles },
-        { href: "/discover", label: t("discover"), icon: Search },
-        { href: "/bounties", label: "Bounties", icon: Trophy },
-        { href: "/projects", label: t("create_project"), icon: FolderKanban },
-        { href: "/network", label: t("network"), icon: Users },
-        { href: "/messages", label: "Messages", icon: MessageSquare },
-        { href: "/opportunities", label: t("opportunities"), icon: Sparkles },
+        { href: `/${locale}/feed`, label: t("feed"), icon: Sparkles },
+        { href: `/${locale}/discover`, label: t("discover"), icon: Search },
+        { href: `/${locale}/bounties`, label: "Bounties", icon: Trophy },
+        { href: `/${locale}/projects`, label: t("create_project"), icon: FolderKanban },
+        { href: `/${locale}/network`, label: t("network"), icon: Users },
+        { href: `/${locale}/messages`, label: "Messages", icon: MessageSquare },
+        { href: `/${locale}/opportunities`, label: t("opportunities"), icon: Sparkles },
       ]
     : [
-        { href: "/discover", label: t("discover"), icon: Search },
-        { href: "/bounties", label: "Bounties", icon: Trophy },
-        { href: "/projects", label: t("create_project"), icon: FolderKanban },
-        { href: "/network", label: t("network"), icon: Users },
+        { href: `/${locale}/discover`, label: t("discover"), icon: Search },
+        { href: `/${locale}/bounties`, label: "Bounties", icon: Trophy },
+        { href: `/${locale}/projects`, label: t("create_project"), icon: FolderKanban },
+        { href: `/${locale}/network`, label: t("network"), icon: Users },
       ];
 
   const isActive = (href: string) => pathname === href;
@@ -46,7 +47,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Left: Logo + Nav */}
         <div className="flex items-center gap-6">
-          <Link href={isAuthenticated ? "/discover" : "/"} className="flex items-center space-x-2">
+          <Link href={isAuthenticated ? `/${locale}/discover` : `/${locale}`} className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="font-extrabold text-sm text-primary-foreground">N</span>
             </div>
@@ -103,16 +104,16 @@ export function Navbar() {
                         <p className="text-xs text-muted-foreground mt-0.5">{user.headline}</p>
                         <Badge variant="secondary" className="mt-2 text-[10px]">Demo Mode</Badge>
                       </div>
-                      <Link href="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
+                      <Link href={`/${locale}/profile`} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
                         <User className="h-4 w-4" /> My Profile
                       </Link>
-                      <Link href="/projects/manage" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
+                      <Link href={`/${locale}/projects/manage`} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
                         <FolderKanban className="h-4 w-4" /> Manage Projects
                       </Link>
-                      <Link href="/admin" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors text-primary font-medium">
+                      <Link href={`/${locale}/admin`} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors text-primary font-medium">
                         <ShieldAlert className="h-4 w-4" /> Admin Panel
                       </Link>
-                      <Link href="/settings" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
+                      <Link href={`/${locale}/settings`} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent text-sm transition-colors">
                         <Settings className="h-4 w-4" /> Settings
                       </Link>
                       <div className="border-t mt-2 pt-2">
@@ -133,10 +134,10 @@ export function Navbar() {
               <Button variant="ghost" size="sm" onClick={() => loginAsDemo()}>
                 Demo Login
               </Button>
-              <Link href="/login">
+              <Link href={`/${locale}/login`}>
                 <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Log In</Button>
               </Link>
-              <Link href="/onboarding">
+              <Link href={`/${locale}/onboarding`}>
                 <Button size="sm">{t("signup")}</Button>
               </Link>
             </>

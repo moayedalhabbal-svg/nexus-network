@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:32px_32px] [mask-image:linear-gradient(to_bottom,white,transparent)]" />
       
       <div className="w-full max-w-md relative z-10">
-        <Link href="/" className="flex items-center justify-center gap-2 mb-8">
+        <Link href={`/${locale}`} className="flex items-center justify-center gap-2 mb-8">
           <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
             <span className="font-extrabold text-lg text-primary-foreground">N</span>
           </div>

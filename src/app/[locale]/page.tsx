@@ -23,9 +23,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <span className="text-sm text-muted-foreground ms-2">© 2026. All rights reserved.</span>
           </div>
           <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link href="/about" className="hover:text-foreground">About</Link>
-            <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
-            <Link href="/terms" className="hover:text-foreground">Terms</Link>
+            <Link href={`/${locale}/about`} className="hover:text-foreground">About</Link>
+            <Link href={`/${locale}/privacy`} className="hover:text-foreground">Privacy</Link>
+            <Link href={`/${locale}/terms`} className="hover:text-foreground">Terms</Link>
           </div>
         </div>
       </footer>

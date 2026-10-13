@@ -1,6 +1,6 @@
 import BountyDetailsClient from "./client";
 
-export const instant = false;
+export const dynamic = "force-dynamic";
 
 export default async function BountyDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;

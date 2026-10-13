@@ -15,6 +15,7 @@ import { formatDate, formatRelativeTime } from "@/lib/utils";
 import { fetchFeedAction, createPostAction, likePostAction, savePostAction, fetchCommentsAction, createCommentAction, likeCommentAction, uploadMediaAction, fetchMyProjectsAction, deletePostAction, editPostAction } from "@/app/actions/feed";
 import { computeMatchesAction } from "@/app/actions/compute-matches";
 import Image from "next/image";
+import { useLocale } from "next-intl";
 
 const DEMO_POSTS = [
   {
@@ -64,6 +65,7 @@ const DEMO_POSTS = [
 
 export default function FeedPage() {
   const { user } = useAuth();
+  const locale = useLocale();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [posts, setPosts] = useState<any[]>([]);
   const [newPost, setNewPost] = useState("");
@@ -285,21 +287,21 @@ export default function FeedPage() {
             <Card className="overflow-hidden border-zinc-800 bg-zinc-900/50 backdrop-blur-sm shadow-xl">
               <div className="h-20 bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-purple-900/40" />
               <CardContent className="p-5 pt-0 relative">
-                <Link href="/profile" className="block absolute -top-10 left-5 z-10 cursor-pointer">
+                <Link href={`/${locale}/profile`} className="block absolute -top-10 left-5 z-10 cursor-pointer">
                   <Avatar src={user.avatar} size="lg" alt={user.name} className="h-20 w-20 border-4 border-zinc-900 shadow-2xl hover:border-zinc-700 transition-colors" />
                 </Link>
                 <div className="pt-14">
                   <h3 className="font-bold text-lg text-zinc-100">
-                    <Link href="/profile" className="hover:underline">{user.name}</Link>
+                    <Link href={`/${locale}/profile`} className="hover:underline">{user.name}</Link>
                   </h3>
                   <p className="text-xs text-zinc-400 line-clamp-2 mt-1 font-medium">{user.headline}</p>
                 </div>
                 <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-4">
-                  <Link href="/profile" className="flex justify-between text-sm group cursor-pointer">
+                  <Link href={`/${locale}/profile`} className="flex justify-between text-sm group cursor-pointer">
                     <span className="text-zinc-400 group-hover:text-zinc-300 transition-colors">Profile views</span>
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">142</span>
                   </Link>
-                  <Link href="/network" className="flex justify-between text-sm group cursor-pointer">
+                  <Link href={`/${locale}/network`} className="flex justify-between text-sm group cursor-pointer">
                     <span className="text-zinc-400 group-hover:text-zinc-300 transition-colors">Connections</span>
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">89</span>
                   </Link>
@@ -309,7 +311,7 @@ export default function FeedPage() {
                   
                   {myProjects.length > 0 ? (
                     myProjects.slice(0,3).map(proj => (
-                      <Link key={proj.id} href={`/projects/${proj.id}/workspace`} className="flex flex-col gap-1 text-sm group cursor-pointer border-l-2 border-transparent hover:border-blue-500 pl-2 -ml-2 transition-all">
+                      <Link key={proj.id} href={`/${locale}/projects/${proj.id}/workspace`} className="flex flex-col gap-1 text-sm group cursor-pointer border-l-2 border-transparent hover:border-blue-500 pl-2 -ml-2 transition-all">
                         <span className="font-medium text-zinc-300 group-hover:text-zinc-100">{proj.title}</span>
                         <span className="text-xs text-zinc-500">Active Workspace</span>
                       </Link>
@@ -319,10 +321,10 @@ export default function FeedPage() {
                   )}
                   
                   <div className="pt-2 space-y-2">
-                    <Link href="/projects/manage" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1 mt-2">
+                    <Link href={`/${locale}/projects/manage`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1 mt-2">
                       <Bookmark className="h-4 w-4" /> Saved Items
                     </Link>
-                    <Link href="/network" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1">
+                    <Link href={`/${locale}/network`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1">
                       <Users className="h-4 w-4" /> 2 Pending Requests
                     </Link>
                   </div>
@@ -334,7 +336,7 @@ export default function FeedPage() {
               <CardContent className="p-6 text-center">
                 <h3 className="font-bold mb-2">Join NEXUS</h3>
                 <p className="text-sm text-zinc-400 mb-4">Sign in to connect with builders and researchers.</p>
-                <Link href="/login"><Button className="w-full bg-zinc-100 text-zinc-900 hover:bg-zinc-200">Sign In</Button></Link>
+                <Link href={`/${locale}/login`}><Button className="w-full bg-zinc-100 text-zinc-900 hover:bg-zinc-200">Sign In</Button></Link>
               </CardContent>
             </Card>
           )}
@@ -466,9 +468,9 @@ export default function FeedPage() {
                     <div className="p-5">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex gap-3">
-                          <Link href={`/profile/${author.id}`}><Avatar alt={author.full_name || author.name} className="ring-1 ring-zinc-800" /></Link>
+                          <Link href={`/${locale}/profile/${author.id}`}><Avatar alt={author.full_name || author.name} className="ring-1 ring-zinc-800" /></Link>
                           <div>
-                            <Link href={`/profile/${author.id}`} className="font-semibold text-[15px] text-zinc-100 hover:text-blue-400 transition-colors">{author.full_name || author.name}</Link>
+                            <Link href={`/${locale}/profile/${author.id}`} className="font-semibold text-[15px] text-zinc-100 hover:text-blue-400 transition-colors">{author.full_name || author.name}</Link>
                             <p className="text-xs text-zinc-400 line-clamp-1 mt-0.5">{author.headline}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <p className="text-[11px] text-zinc-500">{mounted ? formatRelativeTime(post.created_at) : formatDate(post.created_at)}</p>
@@ -566,8 +568,8 @@ export default function FeedPage() {
                             )}
                           </div>
                           <div className="bg-zinc-900/80 px-4 py-3 flex gap-3 border-t border-zinc-800">
-                            <Link href={`/projects/${project.id}`} className="flex-1"><Button variant="outline" className="w-full h-8 text-xs bg-transparent border-zinc-700 hover:bg-zinc-800 text-zinc-300">View Project</Button></Link>
-                            <Link href={`/projects/${project.id}?intent=join`} className="flex-1"><Button className="w-full h-8 text-xs bg-zinc-100 text-zinc-900 hover:bg-white">Join Project</Button></Link>
+                            <Link href={`/${locale}/projects/${project.id}`} className="flex-1"><Button variant="outline" className="w-full h-8 text-xs bg-transparent border-zinc-700 hover:bg-zinc-800 text-zinc-300">View Project</Button></Link>
+                            <Link href={`/${locale}/projects/${project.id}?intent=join`} className="flex-1"><Button className="w-full h-8 text-xs bg-zinc-100 text-zinc-900 hover:bg-white">Join Project</Button></Link>
                           </div>
                         </div>
                       )}
@@ -599,7 +601,7 @@ export default function FeedPage() {
                             </div>
                           </div>
                           <div className="bg-zinc-900/80 px-4 py-3 flex gap-3 border-t border-zinc-800">
-                            <Link href={`/opportunities/${opportunity.id}`} className="flex-1">
+                            <Link href={`/${locale}/opportunities`} className="flex-1">
                               <Button className="w-full h-8 text-xs bg-zinc-100 text-zinc-900 hover:bg-white">View Details</Button>
                             </Link>
                           </div>
@@ -747,7 +749,7 @@ export default function FeedPage() {
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {aiMatches.projectMatches.map((m: any) => (
                         <div key={m.project.id} className="flex flex-col gap-1 p-2 -mx-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
-                          <Link href={`/projects/${m.project.id}`} className="font-semibold text-[13px] text-zinc-200 hover:text-blue-400 truncate">{m.project.title}</Link>
+                          <Link href={`/${locale}/projects/${m.project.id}`} className="font-semibold text-[13px] text-zinc-200 hover:text-blue-400 truncate">{m.project.title}</Link>
                           <div className="flex items-center justify-between text-[11px]">
                             <span className="text-zinc-400 line-clamp-1">{m.match.reasons[0]}</span>
                             <span className="text-blue-400 font-medium ml-2">{m.match.score}%</span>
@@ -781,7 +783,7 @@ export default function FeedPage() {
                   <span className="text-xs text-zinc-500">{topic.posts.toLocaleString()} posts</span>
                 </div>
               ))}
-              <Link href="/discover" className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 mt-2">
+              <Link href={`/${locale}/discover`} className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 mt-2">
                 Explore more <ChevronRight className="h-3 w-3" />
               </Link>
             </CardContent>

@@ -114,7 +114,7 @@ export default function ProjectClient({ projectId }: { projectId: string }) {
         {/* Header Hero */}
         <div className="bg-muted/30 border-b">
           <div className="container mx-auto px-4 py-12">
-            <Link href="/discover" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
+            <Link href={`/${locale}/discover`} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
               <ArrowLeft className="me-2 h-4 w-4" /> Back to Discover
             </Link>
             
