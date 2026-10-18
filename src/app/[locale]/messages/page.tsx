@@ -2,7 +2,7 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, startTransition } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -312,7 +312,13 @@ export default function MessagesPage() {
   const [isTyping, setIsTyping] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const supabase = createClient();
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
+  function getSupabase() {
+    if (!supabaseRef.current) {
+      supabaseRef.current = createClient();
+    }
+    return supabaseRef.current;
+  }
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -323,14 +329,14 @@ export default function MessagesPage() {
 
     async function loadConversations() {
       try {
-        const { data: convMembers } = await supabase
+        const { data: convMembers } = await getSupabase()
           .from("conversation_members")
           .select("conversation_id")
           .eq("user_id", user!.id);
 
         if (convMembers && convMembers.length > 0) {
           const convoIds = convMembers.map((m: any) => m.conversation_id);
-          const { data: convos } = await supabase
+          const { data: convos } = await getSupabase()
             .from("conversations")
             .select(`
               id, is_group, project_id, context_message, updated_at,
@@ -391,14 +397,16 @@ export default function MessagesPage() {
 
     if (selectedConvo.id.startsWith("demo-")) {
       const demoMsgs = messagesMap[selectedConvo.id] || [];
-      setMessages(demoMsgs);
-      // Mark conversation as read locally
-      setConversations(prev =>
-        prev.map(c => (c.id === selectedConvo.id ? { ...c, unread_count: 0 } : c))
-      );
+      startTransition(() => {
+        setMessages(demoMsgs);
+        // Mark conversation as read locally
+        setConversations(prev =>
+          prev.map(c => (c.id === selectedConvo.id ? { ...c, unread_count: 0 } : c))
+        );
+      });
     } else {
       async function loadRealMessages() {
-        const { data } = await supabase
+        const { data } = await getSupabase()
           .from("messages")
           .select("*, profiles(full_name, avatar_url)")
           .eq("conversation_id", selectedConvo.id)
@@ -500,12 +508,12 @@ export default function MessagesPage() {
       }
     } else {
       // Real Supabase conversation
-      await supabase.from("messages").insert({
+      await getSupabase().from("messages").insert({
         conversation_id: selectedConvo.id,
         sender_id: user.id,
         content: text,
       });
-      await supabase
+      await getSupabase()
         .from("conversations")
         .update({ updated_at: new Date().toISOString() })
         .eq("id", selectedConvo.id);

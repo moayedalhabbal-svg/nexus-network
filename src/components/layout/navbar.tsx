@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import {
   Sparkles, Search, FolderKanban, Users, MessageSquare,
-  Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert, Trophy
+  Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert, Trophy, ShoppingBag
 } from "lucide-react";
 import { LanguageSelector } from "./language-selector";
 import { ThemeToggle } from "../theme-toggle";
@@ -27,6 +27,7 @@ export function Navbar() {
     ? [
         { href: `/${locale}/feed`, label: t("feed"), icon: Sparkles },
         { href: `/${locale}/discover`, label: t("discover"), icon: Search },
+        { href: `/${locale}/marketplace`, label: t("marketplace"), icon: ShoppingBag },
         { href: `/${locale}/bounties`, label: "Bounties", icon: Trophy },
         { href: `/${locale}/projects`, label: t("create_project"), icon: FolderKanban },
         { href: `/${locale}/network`, label: t("network"), icon: Users },
@@ -35,6 +36,7 @@ export function Navbar() {
       ]
     : [
         { href: `/${locale}/discover`, label: t("discover"), icon: Search },
+        { href: `/${locale}/marketplace`, label: t("marketplace"), icon: ShoppingBag },
         { href: `/${locale}/bounties`, label: "Bounties", icon: Trophy },
         { href: `/${locale}/projects`, label: t("create_project"), icon: FolderKanban },
         { href: `/${locale}/network`, label: t("network"), icon: Users },

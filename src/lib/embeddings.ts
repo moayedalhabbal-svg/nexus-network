@@ -28,7 +28,7 @@ export async function generateTextEmbedding(text: string): Promise<number[]> {
 // Format profile into a structured string for semantic retrieval
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatProfileForEmbedding(profile: any): string {
-  const parts = [];
+  const parts: string[] = [];
   if (profile.full_name) parts.push(`Name: ${profile.full_name}`);
   if (profile.headline) parts.push(`Headline: ${profile.headline}`);
   if (profile.bio) parts.push(`Bio: ${profile.bio}`);
@@ -56,7 +56,7 @@ export function formatProfileForEmbedding(profile: any): string {
 // Format project into a structured string
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatProjectForEmbedding(project: any): string {
-  const parts = [];
+  const parts: string[] = [];
   if (project.title) parts.push(`Title: ${project.title}`);
   if (project.category) parts.push(`Category: ${project.category}`);
   if (project.pitch) parts.push(`Pitch: ${project.pitch}`);

@@ -165,7 +165,7 @@ export async function addGithubEvidenceAction(repositories: any[]) {
     const isVerifiedConnection = !!providerData?.access_token;
     const verificationStatus = isVerifiedConnection ? 'verified' : 'unverified_lookup';
     
-    const proofs = [];
+    const proofs: any[] = [];
     
     for (const repo of repositories) {
       // Use existing skill extraction combining language, topics, and description

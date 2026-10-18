@@ -168,7 +168,7 @@ function calculateTrustBonus(trust?: import('./types').TrustSummary): { bonus: n
     bonus -= Math.min(trust.abandonedProjects * 0.02, 0.05);
   }
   
-  let reason = null;
+  let reason: string | null = null;
   if (bonus > 0.07) {
     reason = `Strong collaboration fit with a consistent response pattern and ${trust.completedProjects} completed projects`;
   } else if (bonus > 0.04) {

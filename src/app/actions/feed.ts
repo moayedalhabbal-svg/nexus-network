@@ -2,8 +2,14 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { postSchema } from "@/lib/validations";
 
 export async function createPostAction(content: string, postType: string = 'general', projectRef: string | null = null, opportunityRef: string | null = null, mediaUrls: string[] = []) {
+  // Validate content before touching the database
+  const validation = postSchema.safeParse({ content, project_ref: projectRef ?? undefined });
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0]?.message ?? "Invalid post" };
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: "Unauthorized" };

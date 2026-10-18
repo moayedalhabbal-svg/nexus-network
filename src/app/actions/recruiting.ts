@@ -11,7 +11,7 @@ export async function extractRequirementsAction(description: string) {
   
   const lowerDesc = description.toLowerCase();
   
-  const required_skills = [];
+  const required_skills: string[] = [];
   if (lowerDesc.includes('python')) required_skills.push('Python');
   if (lowerDesc.includes('computer vision') || lowerDesc.includes('cv')) required_skills.push('Computer Vision');
   if (lowerDesc.includes('react')) required_skills.push('React');
@@ -19,11 +19,11 @@ export async function extractRequirementsAction(description: string) {
   if (lowerDesc.includes('design')) required_skills.push('UI/UX Design');
   if (required_skills.length === 0) required_skills.push('Machine Learning'); // Fallback
 
-  const work_styles = [];
+  const work_styles: string[] = [];
   if (lowerDesc.includes('async')) work_styles.push('Async');
   if (lowerDesc.includes('sync')) work_styles.push('Sync');
 
-  const collaboration_types = [];
+  const collaboration_types: string[] = [];
   if (lowerDesc.includes('research')) collaboration_types.push('Research');
   if (lowerDesc.includes('paid')) collaboration_types.push('Paid');
   if (lowerDesc.includes('equity')) collaboration_types.push('Equity');

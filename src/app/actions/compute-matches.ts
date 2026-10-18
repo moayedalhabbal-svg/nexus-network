@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { matchUserToProject, matchUserToUser } from "@/lib/matching-engine";
-import { UserProfile, Project } from "@/lib/types";
+import { UserProfile, Project, MatchResult } from "@/lib/types";
 import { generateTextEmbedding, formatProfileForEmbedding } from "@/lib/embeddings";
 
 // Helper to map DB row to UserProfile
@@ -37,15 +37,11 @@ function mapDbProfileToUser(dbProfile: any): UserProfile {
   };
 }
 
-export async function computeMatchesAction(demoUserId?: string) {
+export async function computeMatchesAction() {
   const supabase = await createClient();
-  let authUserId = demoUserId;
-  
-  if (!authUserId) {
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) return { success: false, error: "Unauthorized" };
-    authUserId = authUser.id;
-  }
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { success: false, error: "Unauthorized" };
+  const authUserId = authUser.id;
 
   // 1. Fetch current user profile
   const { data: fetchedUser, error: currentUserErr } = await supabase
@@ -149,7 +145,7 @@ export async function computeMatchesAction(demoUserId?: string) {
     if (data) candidateProjects = data;
   }
 
-  const projectMatches = [];
+  const projectMatches: Array<{ project: Project; match: MatchResult }> = [];
   for (const p of candidateProjects) {
     if (p.owner_id === currentUser.id) continue;
     
@@ -214,7 +210,7 @@ export async function computeMatchesAction(demoUserId?: string) {
     projectMatches.push({ project: projectObj, match });
   }
 
-  const peopleMatches = [];
+  const peopleMatches: Array<{ user: UserProfile; match: MatchResult }> = [];
   for (const target of candidateProfiles) {
     if (target.id === currentUser.id) continue;
     
