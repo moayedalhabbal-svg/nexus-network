@@ -10,10 +10,11 @@ export function MobileNav() {
   const locale = useLocale();
 
   const navItems = [
-    { href: `/${locale}/feed`, icon: Home, label: "Home" },
+    { href: `/${locale}/feed`, icon: Home, label: "Feed" },
     { href: `/${locale}/discover`, icon: Compass, label: "Discover" },
-    { href: `/${locale}/projects`, icon: Briefcase, label: "Projects" },
+    { href: `/${locale}/workshops`, icon: Briefcase, label: "Workshops" },
     { href: `/${locale}/matches`, icon: Sparkles, label: "Matches" },
+    { href: `/${locale}/projects`, icon: Briefcase, label: "Projects" },
     { href: `/${locale}/messages`, icon: MessageSquare, label: "Messages" },
   ];
 

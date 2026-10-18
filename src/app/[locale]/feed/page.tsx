@@ -277,54 +277,54 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-zinc-100 selection:bg-primary/30">
+    <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8 flex gap-8 justify-center">
         
         {/* Left Sidebar */}
         <div className="hidden lg:block w-72 space-y-6">
           {user ? (
-            <Card className="overflow-hidden border-zinc-800 bg-zinc-900/50 backdrop-blur-sm shadow-xl">
-              <div className="h-20 bg-gradient-to-r from-blue-900/40 via-indigo-900/40 to-purple-900/40" />
+            <Card className="overflow-hidden border-border bg-card/80 backdrop-blur-sm shadow-xl">
+              <div className="h-20 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-purple-500/15" />
               <CardContent className="p-5 pt-0 relative">
                 <Link href={`/${locale}/profile`} className="block absolute -top-10 left-5 z-10 cursor-pointer">
-                  <Avatar src={user.avatar} size="lg" alt={user.name || "User"} className="h-20 w-20 border-4 border-zinc-900 shadow-2xl hover:border-zinc-700 transition-colors" />
+                  <Avatar src={user.avatar} size="lg" alt={user.name || "User"} className="h-20 w-20 border-4 border-background shadow-2xl hover:border-primary/20 transition-colors" />
                 </Link>
                 <div className="pt-14">
-                  <h3 className="font-bold text-lg text-zinc-100">
+                  <h3 className="font-bold text-lg text-foreground">
                     <Link href={`/${locale}/profile`} className="hover:underline">{user.name || "NEXUS Member"}</Link>
                   </h3>
-                  <p className="text-xs text-zinc-400 line-clamp-2 mt-1 font-medium">{user.headline || ""}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mt-1 font-medium">{user.headline || ""}</p>
                 </div>
-                <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-4">
+                <div className="mt-6 pt-5 border-t border-border/60 space-y-4">
                   <Link href={`/${locale}/profile`} className="flex justify-between text-sm group cursor-pointer">
-                    <span className="text-zinc-400 group-hover:text-zinc-300 transition-colors">Profile views</span>
-                    <span className="font-medium text-blue-400 group-hover:text-blue-300">142</span>
+                    <span className="text-muted-foreground group-hover:text-foreground transition-colors">Profile views</span>
+                    <span className="font-medium text-primary group-hover:text-primary/80">142</span>
                   </Link>
                   <Link href={`/${locale}/network`} className="flex justify-between text-sm group cursor-pointer">
-                    <span className="text-zinc-400 group-hover:text-zinc-300 transition-colors">Connections</span>
-                    <span className="font-medium text-blue-400 group-hover:text-blue-300">89</span>
+                    <span className="text-muted-foreground group-hover:text-foreground transition-colors">Connections</span>
+                    <span className="font-medium text-primary group-hover:text-primary/80">89</span>
                   </Link>
                 </div>
-                <div className="mt-6 pt-5 border-t border-zinc-800/50 space-y-4">
-                  <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">My Activity</div>
+                <div className="mt-6 pt-5 border-t border-border/60 space-y-4">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">My Activity</div>
                   
                   {myProjects.length > 0 ? (
                     myProjects.slice(0,3).map(proj => (
-                      <Link key={proj.id} href={`/${locale}/projects/${proj.id}/workspace`} className="flex flex-col gap-1 text-sm group cursor-pointer border-l-2 border-transparent hover:border-blue-500 pl-2 -ml-2 transition-all">
-                        <span className="font-medium text-zinc-300 group-hover:text-zinc-100">{proj.title}</span>
-                        <span className="text-xs text-zinc-500">Active Workspace</span>
+                      <Link key={proj.id} href={`/${locale}/projects/${proj.id}/workspace`} className="flex flex-col gap-1 text-sm group cursor-pointer border-l-2 border-transparent hover:border-primary pl-2 -ml-2 transition-all">
+                        <span className="font-medium text-foreground group-hover:text-primary">{proj.title}</span>
+                        <span className="text-xs text-muted-foreground">Active Workspace</span>
                       </Link>
                     ))
                   ) : (
-                    <span className="text-xs text-zinc-500">No active projects yet.</span>
+                    <span className="text-xs text-muted-foreground">No active projects yet.</span>
                   )}
                   
                   <div className="pt-2 space-y-2">
-                    <Link href={`/${locale}/projects/manage`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1 mt-2">
+                    <Link href={`/${locale}/projects/manage`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors py-1 mt-2">
                       <Bookmark className="h-4 w-4" /> Saved Items
                     </Link>
-                    <Link href={`/${locale}/network`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-zinc-200 transition-colors py-1">
+                    <Link href={`/${locale}/network`} className="flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors py-1">
                       <Users className="h-4 w-4" /> 2 Pending Requests
                     </Link>
                   </div>
@@ -332,11 +332,11 @@ export default function FeedPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-zinc-800 bg-zinc-900/50">
+            <Card className="border-border bg-card/80">
               <CardContent className="p-6 text-center">
                 <h3 className="font-bold mb-2">Join NEXUS</h3>
-                <p className="text-sm text-zinc-400 mb-4">Sign in to connect with builders and researchers.</p>
-                <Link href={`/${locale}/login`}><Button className="w-full bg-zinc-100 text-zinc-900 hover:bg-zinc-200">Sign In</Button></Link>
+                <p className="text-sm text-muted-foreground mb-4">Sign in to connect with builders and researchers.</p>
+                <Link href={`/${locale}/login`}><Button className="w-full">Sign In</Button></Link>
               </CardContent>
             </Card>
           )}
@@ -347,16 +347,16 @@ export default function FeedPage() {
           
           {/* Create Post */}
           {user && (
-            <Card className="border-zinc-800 bg-zinc-900/50 shadow-sm overflow-hidden">
+            <Card className="border-border bg-card/80 shadow-sm overflow-hidden">
               <CardContent className="p-0">
                 <div className="p-4 flex gap-4">
-                  <Avatar alt={user.name || "User"} className="h-10 w-10 mt-1 ring-2 ring-zinc-800" />
+                  <Avatar alt={user.name || "User"} className="h-10 w-10 mt-1 ring-2 ring-border" />
                   <div className="flex-1">
                     <textarea 
                       value={newPost}
                       onChange={e => setNewPost(e.target.value)}
                       placeholder="Share an update, project milestone, or ask for feedback..."
-                      className="w-full resize-none bg-transparent outline-none pt-2 text-[15px] placeholder:text-zinc-500 text-zinc-100"
+                      className="w-full resize-none bg-transparent outline-none pt-2 text-[15px] placeholder:text-muted-foreground text-foreground"
                       rows={newPost.length > 50 || mediaUrls.length > 0 ? 4 : 2}
                     />
                     
@@ -364,7 +364,7 @@ export default function FeedPage() {
                     {mediaUrls.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
                         {mediaUrls.map((url, i) => (
-                          <div key={i} className="relative w-24 h-24 rounded-md overflow-hidden border border-zinc-700">
+                          <div key={i} className="relative w-24 h-24 rounded-md overflow-hidden border border-border">
                             <Image src={url} alt="upload" fill className="object-cover" />
                             <button onClick={() => setMediaUrls(urls => urls.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 bg-black/60 p-1 rounded-full text-white hover:bg-black">
                               <X className="h-3 w-3" />
@@ -379,7 +379,7 @@ export default function FeedPage() {
                 {newPost.length > 0 && (
                   <div className="px-16 pb-3 flex gap-2 flex-wrap">
                     <select 
-                      className="text-xs border border-zinc-700 rounded-md px-3 py-1.5 bg-zinc-800 text-zinc-200 outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer"
+                      className="text-xs border border-border rounded-md px-3 py-1.5 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/50 transition-all cursor-pointer"
                       value={postType}
                       onChange={e => setPostType(e.target.value)}
                     >
@@ -393,7 +393,7 @@ export default function FeedPage() {
 
                     {myProjects.length > 0 && (
                       <select 
-                        className="text-xs border border-zinc-700 rounded-md px-3 py-1.5 bg-zinc-800 text-zinc-200 outline-none focus:ring-1 focus:ring-blue-500/50 transition-all cursor-pointer max-w-[200px]"
+                        className="text-xs border border-border rounded-md px-3 py-1.5 bg-background text-foreground outline-none focus:ring-1 focus:ring-primary/50 transition-all cursor-pointer max-w-[200px]"
                         value={linkedProject}
                         onChange={e => setLinkedProject(e.target.value)}
                       >
@@ -406,14 +406,14 @@ export default function FeedPage() {
                   </div>
                 )}
                 
-                <div className="flex justify-between items-center px-4 py-3 bg-zinc-900/80 border-t border-zinc-800">
+                <div className="flex justify-between items-center px-4 py-3 bg-card/90 border-t border-border">
                   <div className="flex gap-2">
                     <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
-                    <Button variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isUploading || mediaUrls.length >= 4} className="h-9 w-9 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-full">
-                      {isUploading ? <div className="h-4 w-4 rounded-full border-2 border-zinc-500 border-t-transparent animate-spin" /> : <ImageIcon className="h-4 w-4" />}
+                    <Button variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()} disabled={isUploading || mediaUrls.length >= 4} className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-accent rounded-full">
+                      {isUploading ? <div className="h-4 w-4 rounded-full border-2 border-muted-foreground border-t-transparent animate-spin" /> : <ImageIcon className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <Button onClick={handlePost} disabled={!newPost.trim() || isPosting || isUploading} className="h-9 px-5 rounded-full font-medium bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-50 disabled:bg-zinc-800 disabled:text-zinc-500">
+                  <Button onClick={handlePost} disabled={!newPost.trim() || isPosting || isUploading} className="h-9 px-5 rounded-full font-medium disabled:opacity-50">
                     {isPosting ? "Posting..." : "Post"}
                   </Button>
                 </div>
@@ -422,16 +422,16 @@ export default function FeedPage() {
           )}
 
           {/* Feed Navigation */}
-          <div className="flex items-center gap-1 border-b border-zinc-800 pb-px mb-4 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-1 border-b border-border pb-px mb-4 overflow-x-auto scrollbar-hide">
             {["For You", "Following", "Projects", "Research", "Opportunities"].map(cat => (
               <button
                 key={cat}
                 onClick={() => setFeedCategory(cat)}
-                className={`px-4 py-3 text-sm font-medium transition-colors relative whitespace-nowrap ${feedCategory === cat ? "text-zinc-100" : "text-zinc-500 hover:text-zinc-300"}`}
+                className={`px-4 py-3 text-sm font-medium transition-colors relative whitespace-nowrap ${feedCategory === cat ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {cat}
                 {feedCategory === cat && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500 rounded-t-full" />
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full" />
                 )}
               </button>
             ))}
@@ -455,12 +455,12 @@ export default function FeedPage() {
               const parentComments = commentsData.filter(c => !c.parent_id);
 
               return (
-                <Card key={post.id} className="border-zinc-800 bg-zinc-900/40 transition-colors overflow-hidden">
+                <Card key={post.id} className="border-border bg-card/80 transition-colors overflow-hidden">
                   <CardContent className="p-0">
                     
                     {/* Repost Header (Mock visual) */}
                     {post.parent_post_id && (
-                      <div className="px-5 pt-3 pb-0 flex items-center gap-2 text-xs text-zinc-500 font-medium">
+                      <div className="px-5 pt-3 pb-0 flex items-center gap-2 text-xs text-muted-foreground font-medium">
                         <Repeat2 className="h-3 w-3" /> {user?.name || "Member"} reposted
                       </div>
                     )}
@@ -468,19 +468,19 @@ export default function FeedPage() {
                     <div className="p-5">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex gap-3">
-                          <Link href={`/${locale}/profile/${author.id}`}><Avatar alt={author.full_name || author.name} className="ring-1 ring-zinc-800" /></Link>
+                          <Link href={`/${locale}/profile/${author.id}`}><Avatar alt={author.full_name || author.name} className="ring-1 ring-border" /></Link>
                           <div>
-                            <Link href={`/${locale}/profile/${author.id}`} className="font-semibold text-[15px] text-zinc-100 hover:text-blue-400 transition-colors">{author.full_name || author.name}</Link>
-                            <p className="text-xs text-zinc-400 line-clamp-1 mt-0.5">{author.headline}</p>
+                            <Link href={`/${locale}/profile/${author.id}`} className="font-semibold text-[15px] text-foreground hover:text-primary transition-colors">{author.full_name || author.name}</Link>
+                            <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{author.headline}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <p className="text-[11px] text-zinc-500">{mounted ? formatRelativeTime(post.created_at) : formatDate(post.created_at)}</p>
-                              {isDemo && <span className="text-[10px] text-zinc-600 bg-zinc-800/50 px-1.5 py-0.5 rounded border border-zinc-700/50">Demo Data</span>}
+                              <p className="text-[11px] text-muted-foreground">{mounted ? formatRelativeTime(post.created_at) : formatDate(post.created_at)}</p>
+                              {isDemo && <span className="text-[10px] text-muted-foreground bg-secondary/80 px-1.5 py-0.5 rounded border border-border">Demo Data</span>}
                             </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 relative">
                           {post.post_type && post.post_type !== 'general' && (
-                            <Badge variant="outline" className="text-[10px] uppercase font-semibold border-zinc-700 text-zinc-400 tracking-wider bg-transparent">
+                            <Badge variant="outline" className="text-[10px] uppercase font-semibold border-border text-muted-foreground tracking-wider bg-transparent">
                               {post.post_type.replace(/_/g, ' ')}
                             </Badge>
                           )}
@@ -489,16 +489,16 @@ export default function FeedPage() {
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="h-8 w-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent"
                                 onClick={() => setMenuOpenForId(menuOpenForId === post.id ? null : post.id)}
                               >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                               
                               {menuOpenForId === post.id && (
-                                <div className="absolute right-0 top-10 w-32 bg-zinc-800 border border-zinc-700 rounded-md shadow-xl py-1 z-10 overflow-hidden">
+                                <div className="absolute right-0 top-10 w-32 bg-popover border border-border rounded-md shadow-xl py-1 z-10 overflow-hidden">
                                   <button 
-                                    className="w-full text-left px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+                                    className="w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent"
                                     onClick={() => {
                                       setEditingPostId(post.id);
                                       setEditContent(post.content);
@@ -508,7 +508,7 @@ export default function FeedPage() {
                                     Edit Post
                                   </button>
                                   <button 
-                                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                                    className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-destructive/10"
                                     onClick={() => handleDeletePost(post.id)}
                                   >
                                     Delete
@@ -525,15 +525,15 @@ export default function FeedPage() {
                           <textarea 
                             value={editContent}
                             onChange={e => setEditContent(e.target.value)}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-md p-3 text-[15px] text-zinc-100 outline-none focus:ring-1 focus:ring-blue-500/50 resize-none min-h-[100px]"
+                            className="w-full bg-background border border-border rounded-md p-3 text-[15px] text-foreground outline-none focus:ring-1 focus:ring-primary/50 resize-none min-h-[100px]"
                           />
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="sm" onClick={() => setEditingPostId(null)} className="text-zinc-400 hover:text-zinc-300">Cancel</Button>
-                            <Button size="sm" onClick={() => handleEditPost(post.id)} className="bg-blue-600 hover:bg-blue-500 text-white">Save Changes</Button>
+                            <Button variant="ghost" size="sm" onClick={() => setEditingPostId(null)} className="text-muted-foreground hover:text-foreground">Cancel</Button>
+                            <Button size="sm" onClick={() => handleEditPost(post.id)} className="bg-primary hover:bg-primary/90 text-primary-foreground">Save Changes</Button>
                           </div>
                         </div>
                       ) : (
-                        <div className="text-[15px] whitespace-pre-wrap leading-relaxed text-zinc-200 mb-4">
+                        <div className="text-[15px] whitespace-pre-wrap leading-relaxed text-foreground/90 mb-4">
                           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                           {(post.content || '').split(' ').map((word: any, i: number) => word.startsWith('#') ? <span key={i} className="text-blue-400 hover:text-blue-300 font-medium cursor-pointer">{word} </span> : `${word} `)}
                         </div>
@@ -541,9 +541,9 @@ export default function FeedPage() {
 
                       {/* Image Gallery */}
                       {mediaList.length > 0 && (
-                        <div className={`mt-3 grid gap-1 rounded-xl overflow-hidden border border-zinc-800 ${mediaList.length === 1 ? 'grid-cols-1' : mediaList.length === 2 ? 'grid-cols-2' : mediaList.length === 3 ? 'grid-cols-2' : 'grid-cols-2'}`}>
+                        <div className={`mt-3 grid gap-1 rounded-xl overflow-hidden border border-border ${mediaList.length === 1 ? 'grid-cols-1' : mediaList.length === 2 ? 'grid-cols-2' : mediaList.length === 3 ? 'grid-cols-2' : 'grid-cols-2'}`}>
                           {mediaList.map((url, i) => (
-                            <div key={i} className={`relative bg-zinc-900 ${mediaList.length === 1 ? 'aspect-video' : mediaList.length === 3 && i === 0 ? 'col-span-2 aspect-[2/1]' : 'aspect-square'}`}>
+                            <div key={i} className={`relative bg-muted ${mediaList.length === 1 ? 'aspect-video' : mediaList.length === 3 && i === 0 ? 'col-span-2 aspect-[2/1]' : 'aspect-square'}`}>
                               <Image src={url} alt="Post media" fill className="object-cover" />
                             </div>
                           ))}
@@ -552,24 +552,24 @@ export default function FeedPage() {
 
                       {/* Project Embed */}
                       {project && (
-                        <div className="mt-5 rounded-xl border border-zinc-700/50 overflow-hidden bg-zinc-950/50 hover:bg-zinc-900 transition-colors">
+                        <div className="mt-5 rounded-xl border border-border/80 overflow-hidden bg-muted/20 hover:bg-muted/30 transition-colors">
                           <div className="p-4">
-                            <Badge className="bg-zinc-800 text-zinc-300 mb-3 hover:bg-zinc-700 text-xs font-medium border-0">{project.category?.replace('_', ' ') || 'Project'}</Badge>
-                            <h4 className="font-bold text-lg text-zinc-100">{project.title}</h4>
-                            <p className="text-[14px] text-zinc-400 mt-1.5 leading-relaxed">{project.pitch}</p>
+                            <Badge className="bg-secondary text-foreground mb-3 hover:bg-secondary/80 text-xs font-medium border-0">{project.category?.replace('_', ' ') || 'Project'}</Badge>
+                            <h4 className="font-bold text-lg text-foreground">{project.title}</h4>
+                            <p className="text-[14px] text-muted-foreground mt-1.5 leading-relaxed">{project.pitch}</p>
                             {project.project_needs?.length > 0 && (
-                              <div className="mt-4 pt-4 border-t border-zinc-800/50">
-                                <p className="text-xs font-semibold text-zinc-500 uppercase mb-2">Looking for:</p>
+                              <div className="mt-4 pt-4 border-t border-border/60">
+                                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Looking for:</p>
                                 <div className="flex flex-wrap gap-2">
                                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                  {project.project_needs.slice(0,3).map((need: any) => <Badge key={need.id} variant="outline" className="text-[11px] border-zinc-700 text-zinc-300 bg-zinc-800/50">{need.role_title}</Badge>)}
+                                  {project.project_needs.slice(0,3).map((need: any) => <Badge key={need.id} variant="outline" className="text-[11px] border-border text-foreground bg-background/80">{need.role_title}</Badge>)}
                                 </div>
                               </div>
                             )}
                           </div>
-                          <div className="bg-zinc-900/80 px-4 py-3 flex gap-3 border-t border-zinc-800">
-                            <Link href={`/${locale}/projects/${project.id}`} className="flex-1"><Button variant="outline" className="w-full h-8 text-xs bg-transparent border-zinc-700 hover:bg-zinc-800 text-zinc-300">View Project</Button></Link>
-                            <Link href={`/${locale}/projects/${project.id}?intent=join`} className="flex-1"><Button className="w-full h-8 text-xs bg-zinc-100 text-zinc-900 hover:bg-white">Join Project</Button></Link>
+                          <div className="bg-card/80 px-4 py-3 flex gap-3 border-t border-border">
+                            <Link href={`/${locale}/projects/${project.id}`} className="flex-1"><Button variant="outline" className="w-full h-8 text-xs">View Project</Button></Link>
+                            <Link href={`/${locale}/projects/${project.id}?intent=join`} className="flex-1"><Button className="w-full h-8 text-xs">Join Project</Button></Link>
                           </div>
                         </div>
                       )}
@@ -590,38 +590,38 @@ export default function FeedPage() {
 
                       {/* Opportunity Embed */}
                       {opportunity && (
-                        <div className="mt-5 rounded-xl border border-zinc-700/50 overflow-hidden bg-zinc-950/50 hover:bg-zinc-900 transition-colors">
+                        <div className="mt-5 rounded-xl border border-border/80 overflow-hidden bg-muted/20 hover:bg-muted/30 transition-colors">
                           <div className="p-4">
-                            <Badge className="bg-purple-900/40 text-purple-300 mb-3 hover:bg-purple-900/60 text-xs font-medium border-purple-800/50">Opportunity</Badge>
-                            <h4 className="font-bold text-lg text-zinc-100">{opportunity.title}</h4>
-                            <p className="text-[14px] text-zinc-400 mt-1.5 leading-relaxed line-clamp-2">{opportunity.description}</p>
+                            <Badge className="bg-purple-500/10 text-purple-600 dark:text-purple-300 mb-3 hover:bg-purple-500/20 text-xs font-medium border-purple-500/20">Opportunity</Badge>
+                            <h4 className="font-bold text-lg text-foreground">{opportunity.title}</h4>
+                            <p className="text-[14px] text-muted-foreground mt-1.5 leading-relaxed line-clamp-2">{opportunity.description}</p>
                             <div className="flex gap-2 mt-4">
-                              {opportunity.location && <Badge variant="outline" className="text-[10px] bg-zinc-800/50 border-zinc-700 text-zinc-300">{opportunity.location}</Badge>}
-                              {opportunity.type && <Badge variant="outline" className="text-[10px] bg-zinc-800/50 border-zinc-700 text-zinc-300">{opportunity.type.replace('_', ' ')}</Badge>}
+                              {opportunity.location && <Badge variant="outline" className="text-[10px] bg-background border-border text-foreground">{opportunity.location}</Badge>}
+                              {opportunity.type && <Badge variant="outline" className="text-[10px] bg-background border-border text-foreground">{opportunity.type.replace('_', ' ')}</Badge>}
                             </div>
                           </div>
-                          <div className="bg-zinc-900/80 px-4 py-3 flex gap-3 border-t border-zinc-800">
+                          <div className="bg-card/80 px-4 py-3 flex gap-3 border-t border-border">
                             <Link href={`/${locale}/opportunities`} className="flex-1">
-                              <Button className="w-full h-8 text-xs bg-zinc-100 text-zinc-900 hover:bg-white">View Details</Button>
+                              <Button className="w-full h-8 text-xs">View Details</Button>
                             </Link>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    <div className="px-5 py-3 border-t border-zinc-800/50 flex items-center justify-between">
+                    <div className="px-5 py-3 border-t border-border/60 flex items-center justify-between">
                       <div className="flex gap-1">
-                        <Button variant="ghost" onClick={() => handleLike(post.id)} className={`h-9 px-3 rounded-md flex items-center gap-2 text-sm font-medium transition-colors ${post.is_liked_by_me ? 'text-pink-500 hover:text-pink-400 hover:bg-pink-500/10' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'}`}>
+                        <Button variant="ghost" onClick={() => handleLike(post.id)} className={`h-9 px-3 rounded-md flex items-center gap-2 text-sm font-medium transition-colors ${post.is_liked_by_me ? 'text-pink-500 hover:text-pink-400 hover:bg-pink-500/10' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}`}>
                           <Heart className={`h-4 w-4 ${post.is_liked_by_me ? 'fill-current' : ''}`} /> {post.likes_count || 0}
                         </Button>
-                        <Button variant="ghost" onClick={() => toggleComments(post.id)} className="h-9 px-3 rounded-md flex items-center gap-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 text-sm font-medium">
+                        <Button variant="ghost" onClick={() => toggleComments(post.id)} className="h-9 px-3 rounded-md flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-accent text-sm font-medium">
                           <MessageSquare className="h-4 w-4" /> {post.comments_count || 0}
                         </Button>
-                        <Button variant="ghost" className="h-9 px-3 rounded-md flex items-center gap-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 text-sm font-medium hidden sm:flex">
+                        <Button variant="ghost" className="h-9 px-3 rounded-md flex items-center gap-2 text-muted-foreground hover:text-foreground hover:bg-accent text-sm font-medium hidden sm:flex">
                           <Repeat2 className="h-4 w-4" /> Repost
                         </Button>
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => handleSave(post.id)} className={`h-9 w-9 rounded-md transition-colors ${post.is_saved_by_me ? 'text-blue-400' : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800'}`}>
+                      <Button variant="ghost" size="icon" onClick={() => handleSave(post.id)} className={`h-9 w-9 rounded-md transition-colors ${post.is_saved_by_me ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}`}>
                         <Bookmark className={`h-4 w-4 ${post.is_saved_by_me ? 'fill-current' : ''}`} />
                       </Button>
                     </div>

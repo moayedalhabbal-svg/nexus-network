@@ -9,97 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Navbar } from "@/components/layout/navbar";
-
-type Product = {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  seller: string;
-  rating: number;
-  reviews: number;
-  description: string;
-  badge?: string;
-  accent: string;
-  features: string[];
-};
-
-const products: Product[] = [
-  {
-    id: "focusflow-os",
-    name: "FocusFlow OS",
-    category: "Focus",
-    price: 49,
-    seller: "Maya Chen",
-    rating: 4.9,
-    reviews: 132,
-    description: "A workflow system for planning deep work, batching tasks, and reducing context switching.",
-    badge: "Best seller",
-    accent: "from-violet-500 via-purple-500 to-indigo-500",
-    features: ["AI planning", "Daily focus blocks", "Habit tracker"],
-  },
-  {
-    id: "signal-club",
-    name: "Signal Club",
-    category: "AI",
-    price: 29,
-    seller: "Nora Patel",
-    rating: 4.8,
-    reviews: 96,
-    description: "A lightweight AI prompt library for research, meeting notes, and faster decision making.",
-    accent: "from-cyan-500 via-sky-500 to-blue-600",
-    features: ["Prompt pack", "Meeting summaries", "Research workflows"],
-  },
-  {
-    id: "velocity-suite",
-    name: "Velocity Suite",
-    category: "Automation",
-    price: 79,
-    seller: "Andre Moss",
-    rating: 5.0,
-    reviews: 44,
-    description: "Automation templates that turn repetitive work into systems your team can scale without friction.",
-    badge: "New",
-    accent: "from-emerald-500 via-teal-500 to-cyan-500",
-    features: ["Zapier flows", "CRM automations", "Team SOPs"],
-  },
-  {
-    id: "calm-edge",
-    name: "CalmEdge Journal",
-    category: "Wellbeing",
-    price: 19,
-    seller: "Leah Brooks",
-    rating: 4.7,
-    reviews: 210,
-    description: "A productivity journal built to improve clarity, recovery, and effective execution over time.",
-    accent: "from-amber-500 via-orange-500 to-rose-500",
-    features: ["Weekly review", "Energy mapping", "Recovery prompts"],
-  },
-  {
-    id: "ops-lattice",
-    name: "Ops Lattice",
-    category: "Operations",
-    price: 59,
-    seller: "Theo Grant",
-    rating: 4.9,
-    reviews: 68,
-    description: "A lean operating system for founders and small teams who want stronger throughput and fewer bottlenecks.",
-    accent: "from-fuchsia-500 via-pink-500 to-rose-500",
-    features: ["OKR dashboard", "Weekly planning", "Team rituals"],
-  },
-  {
-    id: "done-stack",
-    name: "DoneStack",
-    category: "Execution",
-    price: 35,
-    seller: "Sofia Rami",
-    rating: 4.8,
-    reviews: 118,
-    description: "A simple execution framework for turning priorities into weekly momentum and measurable wins.",
-    accent: "from-slate-700 via-slate-800 to-zinc-900",
-    features: ["Priority matrix", "Scorecards", "Weekly cadence"],
-  },
-];
+import { marketplaceProducts } from "@/lib/marketplace-data";
 
 const categories = ["all", "AI", "Focus", "Automation", "Wellbeing", "Operations", "Execution"];
 
@@ -109,7 +19,7 @@ export default function MarketplacePage() {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    return marketplaceProducts.filter((product) => {
       const matchesCategory = activeCategory === "all" || product.category === activeCategory;
       const matchesSearch =
         product.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -206,55 +116,57 @@ export default function MarketplacePage() {
           {filteredProducts.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {filteredProducts.map((product) => (
-                <Card key={product.id} className="group overflow-hidden border bg-card shadow-sm transition-transform hover:-translate-y-1">
-                  <div className={`h-28 bg-gradient-to-br ${product.accent} p-4`}>
-                    <div className="flex items-center justify-between">
-                      {product.badge ? (
-                        <Badge variant="secondary" className="bg-white/15 text-white ring-1 ring-white/20 backdrop-blur-sm">
-                          {product.badge}
-                        </Badge>
-                      ) : (
-                        <span className="invisible">.</span>
-                      )}
-                      <Sparkles className="h-5 w-5 text-white/90" />
-                    </div>
-                  </div>
-
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <Badge variant="outline">{product.category}</Badge>
-                      <span className="text-lg font-bold">${product.price}</span>
-                    </div>
-                    <CardTitle className="mt-2 text-xl">{product.name}</CardTitle>
-                    <CardDescription className="mt-1">{product.description}</CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="pb-4">
-                    <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      <span className="font-medium text-foreground">{product.rating}</span>
-                      <span>({product.reviews} reviews)</span>
+                <Link key={product.id} href={`/${locale}/marketplace/${product.id}`} className="group block">
+                  <Card className="h-full overflow-hidden border bg-card shadow-sm transition-transform hover:-translate-y-1">
+                    <div className={`h-28 bg-gradient-to-br ${product.accent} p-4`}>
+                      <div className="flex items-center justify-between">
+                        {product.badge ? (
+                          <Badge variant="secondary" className="bg-white/15 text-white ring-1 ring-white/20 backdrop-blur-sm">
+                            {product.badge}
+                          </Badge>
+                        ) : (
+                          <span className="invisible">.</span>
+                        )}
+                        <Sparkles className="h-5 w-5 text-white/90" />
+                      </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      {product.features.map((feature) => (
-                        <Badge key={feature} variant="secondary" className="text-[11px] font-normal">
-                          {feature}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <Badge variant="outline">{product.category}</Badge>
+                        <span className="text-lg font-bold">${product.price}</span>
+                      </div>
+                      <CardTitle className="mt-2 text-xl">{product.name}</CardTitle>
+                      <CardDescription className="mt-1">{product.description}</CardDescription>
+                    </CardHeader>
 
-                  <CardFooter className="flex items-center justify-between border-t pt-4">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Sold by</p>
-                      <p className="font-medium">{product.seller}</p>
-                    </div>
-                    <Button size="sm">
-                      Buy now
-                    </Button>
-                  </CardFooter>
-                </Card>
+                    <CardContent className="pb-4">
+                      <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        <span className="font-medium text-foreground">{product.rating}</span>
+                        <span>({product.reviews} reviews)</span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {product.features.map((feature) => (
+                          <Badge key={feature} variant="secondary" className="text-[11px] font-normal">
+                            {feature}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+
+                    <CardFooter className="flex items-center justify-between border-t pt-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Sold by</p>
+                        <p className="font-medium">{product.seller}</p>
+                      </div>
+                      <Button size="sm" asChild>
+                        <span>View product</span>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </Link>
               ))}
             </div>
           ) : (

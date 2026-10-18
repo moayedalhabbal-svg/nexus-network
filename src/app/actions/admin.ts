@@ -3,17 +3,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 // Helper to check if current user is admin
-async function checkIsAdmin() {
+async function checkIsAdmin(userId?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
+  const demoUserId = (await cookies()).get("nexus-demo-user-id")?.value;
+  const resolvedUserId = userId || user?.id || demoUserId;
+
+  if (!resolvedUserId) return false;
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('is_admin')
-    .eq('id', user.id)
+    .eq('id', resolvedUserId)
     .single();
 
   return profile?.is_admin === true;

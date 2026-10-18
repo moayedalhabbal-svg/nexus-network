@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import createIntlMiddleware from 'next-intl/middleware';
+import { SEED_USERS } from '@/lib/seed-data';
+import { isDemoModeEnabled } from '@/lib/runtime-mode';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['en', 'fr', 'ar'],
@@ -17,9 +19,50 @@ export async function proxy(request: NextRequest) {
 
   // 1. Run Internationalization Middleware
   const response = intlMiddleware(request);
+  const demoUserId = request.cookies.get('nexus-demo-user-id')?.value;
+  const demoUser = demoUserId ? SEED_USERS.find((user) => user.id === demoUserId) ?? null : null;
+  const isDemoMode = isDemoModeEnabled();
 
-  // If in demo mode, skip Supabase auth middleware
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'demo' || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (isDemoMode) {
+    const pathname = request.nextUrl.pathname;
+    const cleanPath = pathname.replace(/^\/(en|fr|ar)(\/|$)/, '/') || '/';
+    const localeMatch = pathname.match(/^\/(en|fr|ar)/);
+    const currentLocale = localeMatch ? localeMatch[1] : (request.cookies.get('NEXT_LOCALE')?.value || 'en');
+    const isAuthRoute = cleanPath.startsWith('/login') || cleanPath.startsWith('/register') || cleanPath.startsWith('/signup');
+    const isVerificationRoute = cleanPath.startsWith('/verify-email');
+    const isProtectedRoute =
+      cleanPath.startsWith('/settings') ||
+      cleanPath.startsWith('/messages') ||
+      cleanPath.startsWith('/admin') ||
+      cleanPath.startsWith('/projects/manage') ||
+      cleanPath.startsWith('/projects/new') ||
+      cleanPath.startsWith('/profile');
+
+    if (!demoUser && isProtectedRoute) {
+      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
+    }
+
+    if (demoUser && isAuthRoute) {
+      return NextResponse.redirect(new URL(`/${currentLocale}/feed`, request.url));
+    }
+
+    if (demoUser && isVerificationRoute) {
+      return NextResponse.redirect(new URL(`/${currentLocale}/feed`, request.url));
+    }
+
+    if (demoUser && cleanPath.startsWith('/admin')) {
+      const demoRoles = (demoUser as { roles?: string[] }).roles ?? [];
+      const isDemoAdmin = Boolean(
+        demoRoles.includes('admin') ||
+        demoUser.name?.toLowerCase().includes('admin') ||
+        demoUser.email?.toLowerCase().includes('admin')
+      );
+
+      if (!isDemoAdmin) {
+        return NextResponse.redirect(new URL(`/${currentLocale}/feed`, request.url));
+      }
+    }
+
     return response;
   }
 

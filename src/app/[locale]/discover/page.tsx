@@ -52,7 +52,7 @@ export default function DiscoverPage() {
     if (type === "projects" || type === "startups") {
       return (
         <Link key={`${type}-${data.id}`} href={`/${locale}/projects/${data.id}`}>
-          <Card className="h-full flex flex-col hover:border-primary/50 transition-colors cursor-pointer group shadow-sm">
+          <Card className="h-full flex flex-col cursor-pointer group rounded-2xl border border-white/10 bg-zinc-900/70 shadow-[0_18px_45px_-20px_rgba(59,130,246,0.45)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-400/40 hover:shadow-[0_22px_60px_-24px_rgba(96,165,250,0.65)]">
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start mb-2">
                 <Badge variant="outline" className="capitalize">{data.category?.replace('_', ' ') || 'Technology'}</Badge>
@@ -97,7 +97,7 @@ export default function DiscoverPage() {
 
     if (type === "people") {
       return (
-        <Card key={`${type}-${data.id}`} className="h-full flex flex-col hover:border-primary/50 transition-colors cursor-pointer group shadow-sm">
+        <Card key={`${type}-${data.id}`} className="h-full flex flex-col cursor-pointer group rounded-2xl border border-white/10 bg-zinc-900/70 shadow-[0_18px_45px_-20px_rgba(59,130,246,0.45)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-400/40 hover:shadow-[0_22px_60px_-24px_rgba(96,165,250,0.65)]">
           <CardHeader className="pb-4 flex flex-row items-start gap-4">
             <Avatar size="lg" src={data.avatar} alt={data.name} />
             <div className="flex-1">
@@ -138,7 +138,7 @@ export default function DiscoverPage() {
 
     // Generic fallback for Research, Mentors, Opportunities
     return (
-      <Card key={`${type}-${data.id}`} className="h-full flex flex-col hover:border-primary/50 transition-colors shadow-sm">
+      <Card key={`${type}-${data.id}`} className="h-full flex flex-col cursor-pointer rounded-2xl border border-white/10 bg-zinc-900/70 shadow-[0_18px_45px_-20px_rgba(59,130,246,0.45)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-400/40 hover:shadow-[0_22px_60px_-24px_rgba(96,165,250,0.65)]">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-start mb-2">
             <Badge variant="outline" className="capitalize">{type}</Badge>
@@ -177,24 +177,24 @@ export default function DiscoverPage() {
             </div>
             
             <div className="flex w-full md:w-auto items-center gap-2">
-              <div className="relative w-full md:w-96 shadow-sm">
+              <div className="relative w-full md:w-96 shadow-[0_10px_35px_-18px_rgba(96,165,250,0.7)]">
                 <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input 
                   placeholder="e.g. 'Find climate tech startups looking for engineers'" 
-                  className="ps-9 pe-4 h-11 w-full border-primary/20 focus-visible:ring-primary"
+                  className="ps-9 pe-4 h-11 w-full border-primary/20 bg-zinc-900/70 text-zinc-50 shadow-inner shadow-zinc-950/30 focus-visible:ring-primary/60"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                 />
               </div>
-              <Button variant="outline" size="icon" className="h-11 w-11 shrink-0">
+              <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 border-white/10 bg-zinc-900/70 text-zinc-100 hover:bg-zinc-800">
                 <SlidersHorizontal className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex overflow-x-auto pb-4 mb-6 border-b no-scrollbar">
-            <div className="flex gap-2">
+          <div className="flex overflow-x-auto pb-4 mb-6 border-b border-white/10 no-scrollbar">
+            <div className="flex gap-2 rounded-full border border-white/5 bg-zinc-950/50 p-1.5 backdrop-blur-sm">
               {[
                 { id: "all", label: "All Results", icon: Search },
                 { id: "people", label: "People", icon: User },
@@ -207,10 +207,10 @@ export default function DiscoverPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full transition-all duration-200 ${
                     activeTab === tab.id
-                      ? "bg-foreground text-background"
-                      : "bg-background border text-muted-foreground hover:bg-muted"
+                      ? "bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-[0_8px_24px_-12px_rgba(59,130,246,0.9)]"
+                      : "bg-transparent text-zinc-300 hover:bg-white/5 hover:text-white"
                   }`}
                 >
                   <tab.icon className="h-4 w-4" />

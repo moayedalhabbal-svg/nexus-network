@@ -46,6 +46,35 @@ interface DemoConversation {
   participants?: any[];
 }
 
+const DEMO_STORAGE_KEYS = {
+  conversations: "nexus-demo-conversations",
+  messages: "nexus-demo-messages",
+};
+
+function readStoredConversations(): DemoConversation[] {
+  if (typeof window === "undefined") return DEMO_CONVERSATIONS;
+  try {
+    const stored = window.localStorage.getItem(DEMO_STORAGE_KEYS.conversations);
+    if (!stored) return DEMO_CONVERSATIONS;
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : DEMO_CONVERSATIONS;
+  } catch {
+    return DEMO_CONVERSATIONS;
+  }
+}
+
+function readStoredMessagesMap(): Record<string, DemoMessage[]> {
+  if (typeof window === "undefined") return INITIAL_DEMO_MESSAGES;
+  try {
+    const stored = window.localStorage.getItem(DEMO_STORAGE_KEYS.messages);
+    if (!stored) return INITIAL_DEMO_MESSAGES;
+    const parsed = JSON.parse(stored);
+    return parsed && typeof parsed === "object" ? { ...INITIAL_DEMO_MESSAGES, ...parsed } : INITIAL_DEMO_MESSAGES;
+  } catch {
+    return INITIAL_DEMO_MESSAGES;
+  }
+}
+
 const DEMO_CONVERSATIONS: DemoConversation[] = [
   {
     id: "demo-convo-1",
@@ -301,10 +330,17 @@ export default function MessagesPage() {
   const router = useRouter();
   const locale = useLocale();
 
-  const [conversations, setConversations] = useState<DemoConversation[]>(DEMO_CONVERSATIONS);
-  const [selectedConvo, setSelectedConvo] = useState<DemoConversation | null>(DEMO_CONVERSATIONS[0]);
-  const [messagesMap, setMessagesMap] = useState<Record<string, DemoMessage[]>>(INITIAL_DEMO_MESSAGES);
-  const [messages, setMessages] = useState<DemoMessage[]>(INITIAL_DEMO_MESSAGES["demo-convo-1"] || []);
+  const [conversations, setConversations] = useState<DemoConversation[]>(() => readStoredConversations());
+  const [selectedConvo, setSelectedConvo] = useState<DemoConversation | null>(() => {
+    const stored = readStoredConversations();
+    return stored[0] ?? DEMO_CONVERSATIONS[0] ?? null;
+  });
+  const [messagesMap, setMessagesMap] = useState<Record<string, DemoMessage[]>>(() => readStoredMessagesMap());
+  const [messages, setMessages] = useState<DemoMessage[]>(() => {
+    const storedMap = readStoredMessagesMap();
+    const firstId = readStoredConversations()[0]?.id ?? "demo-convo-1";
+    return storedMap[firstId] || INITIAL_DEMO_MESSAGES["demo-convo-1"] || [];
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -399,10 +435,11 @@ export default function MessagesPage() {
       const demoMsgs = messagesMap[selectedConvo.id] || [];
       startTransition(() => {
         setMessages(demoMsgs);
-        // Mark conversation as read locally
-        setConversations(prev =>
-          prev.map(c => (c.id === selectedConvo.id ? { ...c, unread_count: 0 } : c))
-        );
+        setConversations(prev => {
+          const next = prev.map(c => (c.id === selectedConvo.id ? { ...c, unread_count: 0 } : c));
+          localStorage.setItem(DEMO_STORAGE_KEYS.conversations, JSON.stringify(next));
+          return next;
+        });
       });
     } else {
       async function loadRealMessages() {
@@ -455,10 +492,12 @@ export default function MessagesPage() {
     );
 
     if (selectedConvo.id.startsWith("demo-")) {
-      setMessagesMap(prev => ({
-        ...prev,
+      const nextMessagesMap = {
+        ...messagesMap,
         [selectedConvo.id]: updatedList,
-      }));
+      };
+      setMessagesMap(nextMessagesMap);
+      localStorage.setItem(DEMO_STORAGE_KEYS.messages, JSON.stringify(nextMessagesMap));
 
       // Simulate a smart AI/User reply after 1.4 seconds
       if (!selectedConvo.is_group) {
@@ -489,12 +528,16 @@ export default function MessagesPage() {
 
           setMessages(current => {
             const withReply = [...current, replyMsg];
-            setMessagesMap(m => ({ ...m, [selectedConvo.id]: withReply }));
+            setMessagesMap(m => {
+              const next = { ...m, [selectedConvo.id]: withReply };
+              localStorage.setItem(DEMO_STORAGE_KEYS.messages, JSON.stringify(next));
+              return next;
+            });
             return withReply;
           });
 
-          setConversations(prev =>
-            prev.map(c =>
+          setConversations(prev => {
+            const next = prev.map(c =>
               c.id === selectedConvo.id
                 ? {
                     ...c,
@@ -502,8 +545,10 @@ export default function MessagesPage() {
                     last_message_time: "Just now",
                   }
                 : c
-            )
-          );
+            );
+            localStorage.setItem(DEMO_STORAGE_KEYS.conversations, JSON.stringify(next));
+            return next;
+          });
         }, 1800);
       }
     } else {

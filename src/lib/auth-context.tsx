@@ -19,6 +19,40 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const DEMO_SESSION_COOKIE = "nexus-demo-user-id";
+const DEMO_AUTH_KEY = "nexus-auth";
+
+function persistDemoSession(userId: string) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${DEMO_SESSION_COOKIE}=${userId}; path=/; max-age=2592000; SameSite=Lax`;
+}
+
+function clearDemoSession() {
+  if (typeof document === "undefined") return;
+  document.cookie = `${DEMO_SESSION_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
+}
+
+function writeDemoUser(user: UserProfile | null) {
+  if (typeof document === "undefined") return;
+  if (!user) {
+    localStorage.removeItem(DEMO_AUTH_KEY);
+    return;
+  }
+  localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(user));
+}
+
+function readDemoUser(): UserProfile | null {
+  if (typeof document === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(DEMO_AUTH_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed?.id) return parsed as UserProfile;
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -134,16 +168,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (!hasSupabase && mounted) {
         // 2. Fallback to localStorage demo data
-        const stored = localStorage.getItem("nexus-auth");
+        const stored = localStorage.getItem(DEMO_AUTH_KEY);
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
-            if (parsed.userId) {
-              const found = SEED_USERS.find(u => u.id === parsed.userId);
-              if (found) {
-                setUser(found);
-                setIsDemoMode(true);
-              }
+            const seedUser = parsed?.userId ? SEED_USERS.find(u => u.id === parsed.userId) : null;
+            const persistedUser = parsed?.id ? (parsed as UserProfile) : seedUser;
+            if (persistedUser) {
+              setUser(persistedUser);
+              setIsDemoMode(true);
+              persistDemoSession(persistedUser.id);
             }
           } catch { /* ignore */ }
         }
@@ -181,7 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (found) {
       setUser(found);
       setIsDemoMode(true);
-      localStorage.setItem("nexus-auth", JSON.stringify({ userId: found.id }));
+      writeDemoUser(found);
       return true;
     }
     return false;
@@ -192,7 +226,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (target) {
       setUser(target);
       setIsDemoMode(true);
-      localStorage.setItem("nexus-auth", JSON.stringify({ userId: target.id }));
+      writeDemoUser(target);
+      persistDemoSession(target.id);
     }
   }, []);
 
@@ -201,11 +236,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setIsDemoMode(false);
-    localStorage.removeItem("nexus-auth");
+    writeDemoUser(null);
+    clearDemoSession();
   }, []);
 
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
-    setUser(prev => prev ? { ...prev, ...updates } : null);
+    setUser(prev => {
+      if (!prev) return null;
+      const nextUser = { ...prev, ...updates, updatedAt: new Date().toISOString() };
+      writeDemoUser(nextUser);
+      return nextUser;
+    });
   }, []);
 
   const refreshUser = useCallback(async () => {

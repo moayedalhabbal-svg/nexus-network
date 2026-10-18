@@ -1,13 +1,14 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getAppBaseUrl, isDemoModeEnabled } from "@/lib/runtime-mode";
 import { revalidatePath } from "next/cache";
 
 export async function loginAction(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL === "demo" || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (isDemoModeEnabled()) {
     // Demo mode handles login entirely client side
     return { success: true };
   }
@@ -31,13 +32,11 @@ export async function signupAction(formData: FormData) {
   const password = formData.get("password") as string;
   const fullName = formData.get("fullName") as string;
 
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL === "demo" || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (isDemoModeEnabled()) {
     return { success: true };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://nexus-network-chi.vercel.app"));
+  const baseUrl = getAppBaseUrl();
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
@@ -59,7 +58,7 @@ export async function signupAction(formData: FormData) {
 }
 
 export async function logoutAction() {
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL === "demo" || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (isDemoModeEnabled()) {
     return { success: true };
   }
 
@@ -73,13 +72,11 @@ export async function logoutAction() {
 export async function resetPasswordAction(formData: FormData) {
   const email = formData.get("email") as string;
   
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL === "demo" || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (isDemoModeEnabled()) {
     return { success: true };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://nexus-network-chi.vercel.app"));
+  const baseUrl = getAppBaseUrl();
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
