@@ -18,6 +18,11 @@ export default function MarketplaceCheckoutPage() {
   const product = useMemo(() => getMarketplaceProductById(params?.id ?? "") ?? null, [params?.id]);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [submitted, setSubmitted] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+  const isSubscription = product?.purchaseType === "subscription";
+  const amount = isSubscription
+    ? billingPeriod === "annual" ? product?.annualPrice : product?.monthlyPrice
+    : product?.price;
 
   if (!product) {
     return (
@@ -53,9 +58,28 @@ export default function MarketplaceCheckoutPage() {
           <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
             <form onSubmit={handleSubmit} className="rounded-3xl border bg-card p-6 shadow-sm md:p-7">
               <h1 className="text-2xl font-black tracking-tight">Checkout</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Complete your purchase securely and get instant access.</p>
+              <p className="mt-2 text-sm text-muted-foreground">{isSubscription ? "Choose a billing plan to start your software subscription." : "Complete your purchase securely and get instant access."}</p>
+
+              {isSubscription && (
+                <div className="mt-5 rounded-xl border border-sky-500/25 bg-sky-500/5 p-3 text-sm text-muted-foreground">
+                  Demo checkout only. No payment will be collected and no real subscription will be created.
+                </div>
+              )}
 
               <div className="mt-6 space-y-4">
+                {isSubscription && (
+                  <fieldset className="space-y-2">
+                    <legend className="text-sm font-medium">Billing period</legend>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button type="button" onClick={() => setBillingPeriod("monthly")} aria-pressed={billingPeriod === "monthly"} className={`rounded-xl border px-3 py-3 text-left text-sm ${billingPeriod === "monthly" ? "border-primary bg-primary/8 text-primary" : "bg-background text-muted-foreground"}`}>
+                        <span className="block font-semibold">Monthly</span><span>${product.monthlyPrice} / month</span>
+                      </button>
+                      <button type="button" onClick={() => setBillingPeriod("annual")} aria-pressed={billingPeriod === "annual"} className={`rounded-xl border px-3 py-3 text-left text-sm ${billingPeriod === "annual" ? "border-primary bg-primary/8 text-primary" : "bg-background text-muted-foreground"}`}>
+                        <span className="block font-semibold">Annual</span><span>${product.annualPrice} / year</span>
+                      </button>
+                    </div>
+                  </fieldset>
+                )}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Full name</label>
                   <input className="w-full rounded-xl border bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" defaultValue="Aisha Ibrahim" />
@@ -84,7 +108,7 @@ export default function MarketplaceCheckoutPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="mt-6 w-full">Pay ${product.price}</Button>
+              <Button type="submit" className="mt-6 w-full">{isSubscription ? `Start demo subscription · $${amount}/${billingPeriod === "annual" ? "year" : "month"}` : `Pay $${product.price}`}</Button>
             </form>
 
             <aside className="rounded-3xl border bg-card p-6 shadow-sm md:p-7">
@@ -103,7 +127,7 @@ export default function MarketplaceCheckoutPage() {
                 </div>
                 <div className="mt-2 flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Amount</span>
-                  <span className="font-medium">${product.price}</span>
+                  <span className="font-medium">${amount}{isSubscription ? ` / ${billingPeriod === "annual" ? "year" : "month"}` : ""}</span>
                 </div>
               </div>
 
@@ -122,11 +146,11 @@ export default function MarketplaceCheckoutPage() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
               <CheckCircle2 className="h-7 w-7" />
             </div>
-            <h2 className="text-2xl font-black">Purchase complete</h2>
-            <p className="mt-2 text-sm text-muted-foreground">You bought {product.name}. Your access is ready and a receipt has been sent to your email.</p>
+            <h2 className="text-2xl font-black">{isSubscription ? "Demo subscription started" : "Purchase complete"}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{isSubscription ? `${product.name} is ready to explore in this demo. No payment was collected.` : `You bought ${product.name}. Your access is ready and a receipt has been sent to your email.`}</p>
             <div className="mt-6 flex justify-center gap-3">
-              <Link href={`/${locale}/marketplace`}>
-                <Button variant="outline">Back to marketplace</Button>
+              <Link href={`/${locale}/${isSubscription ? "software" : "marketplace"}`}>
+                <Button variant="outline">Back to {isSubscription ? "software" : "marketplace"}</Button>
               </Link>
               <Button onClick={() => router.push(`/${locale}/feed`)}>Go to feed</Button>
             </div>

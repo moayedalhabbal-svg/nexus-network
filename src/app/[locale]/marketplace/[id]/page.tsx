@@ -57,7 +57,7 @@ export default function MarketplaceProductPage() {
             <div className="p-6 md:p-7">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <Badge variant="outline">{product.category}</Badge>
-                <span className="text-2xl font-black">${product.price}</span>
+                <span className="text-2xl font-black">${product.purchaseType === "subscription" ? product.monthlyPrice : product.price}{product.purchaseType === "subscription" && <span className="text-sm font-medium text-muted-foreground"> / month</span>}</span>
               </div>
 
               <h1 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">{product.name}</h1>
@@ -99,8 +99,8 @@ export default function MarketplaceProductPage() {
                 <span className="font-semibold">${product.price}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Delivery</span>
-                <span className="font-semibold">Instant download</span>
+                <span className="text-muted-foreground">Access</span>
+                <span className="font-semibold">{product.purchaseType === "subscription" ? "Online software" : "Instant download"}</span>
               </div>
               <div className="mt-2 flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Support</span>
@@ -118,7 +118,7 @@ export default function MarketplaceProductPage() {
             </div>
 
             <Link href={`/${locale}/marketplace/${product.id}/checkout`} className="mt-6 block">
-              <Button className="w-full">Buy now for ${product.price}</Button>
+              <Button className="w-full">{product.purchaseType === "subscription" ? `Choose plan · from $${product.monthlyPrice}/mo` : `Buy now for $${product.price}`}</Button>
             </Link>
 
             <Button variant="outline" className="mt-3 w-full">Add to wishlist</Button>

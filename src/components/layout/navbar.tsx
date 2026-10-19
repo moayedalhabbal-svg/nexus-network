@@ -10,7 +10,7 @@ import { useState } from "react";
 import {
   Sparkles, Search, FolderKanban, Users, MessageSquare,
   Bell, ChevronDown, LogOut, User, Settings, Menu, X, ShieldAlert, Trophy, ShoppingBag,
-  BookOpenText, BriefcaseBusiness, MoreHorizontal
+  BookOpenText, BriefcaseBusiness, MoreHorizontal, Cpu
 } from "lucide-react";
 import { LanguageSelector } from "./language-selector";
 import { ThemeToggle } from "../theme-toggle";
@@ -40,6 +40,7 @@ export function Navbar() {
         { href: `/${locale}/matches`, label: "Matches", icon: Sparkles },
         { href: `/${locale}/projects`, label: "Projects", icon: FolderKanban },
         { href: `/${locale}/marketplace`, label: "Marketplace", icon: ShoppingBag },
+        { href: `/${locale}/software`, label: "Software", icon: Cpu },
         { href: `/${locale}/bounties`, label: "Bounties", icon: Trophy },
         { href: `/${locale}/projects/manage`, label: "Workspace", icon: FolderKanban },
         { href: `/${locale}/network`, label: "Network", icon: Users },
@@ -54,6 +55,7 @@ export function Navbar() {
         { href: `/${locale}/matches`, label: "Matches", icon: Sparkles },
         { href: `/${locale}/projects`, label: "Projects", icon: FolderKanban },
         { href: `/${locale}/marketplace`, label: "Marketplace", icon: ShoppingBag },
+        { href: `/${locale}/software`, label: "Software", icon: Cpu },
         { href: `/${locale}/bounties`, label: "Bounties", icon: Trophy },
         { href: `/${locale}/projects/manage`, label: "Workspace", icon: FolderKanban },
         { href: `/${locale}/professionals`, label: "Professionals", icon: BriefcaseBusiness },

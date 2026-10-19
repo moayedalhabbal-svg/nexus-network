@@ -12,6 +12,9 @@ export type MarketplaceProduct = {
   features: string[];
   longDescription: string;
   includes: string[];
+  purchaseType?: "one-time" | "subscription";
+  monthlyPrice?: number;
+  annualPrice?: number;
 };
 
 export const marketplaceProducts: MarketplaceProduct[] = [
@@ -106,6 +109,60 @@ export const marketplaceProducts: MarketplaceProduct[] = [
     longDescription:
       "DoneStack helps teams choose the next important move, track meaningful progress, and keep momentum without turning execution into a reporting ritual.",
     includes: ["Priority matrix", "Delivery scorecards", "Weekly review templates", "Momentum tracker"],
+  },
+  {
+    id: "signaldesk-crm",
+    name: "SignalDesk CRM",
+    category: "Operations",
+    price: 24,
+    seller: "NEXUS Demo Studio",
+    rating: 4.8,
+    reviews: 38,
+    description: "A lightweight relationship workspace for founders managing customers, partners, and pipeline.",
+    badge: "SaaS · Demo listing",
+    accent: "from-sky-600 via-cyan-600 to-teal-500",
+    features: ["Contact workspace", "Pipeline views", "Team notes"],
+    longDescription: "SignalDesk CRM keeps customer conversations, partner follow-ups, and pipeline work in one clear workspace. This listing demonstrates how software subscriptions will appear in the NEXUS directory.",
+    includes: ["Unlimited contacts", "Pipeline and follow-up boards", "Shared team notes", "Demo subscription access"],
+    purchaseType: "subscription",
+    monthlyPrice: 24,
+    annualPrice: 240,
+  },
+  {
+    id: "sprintroom",
+    name: "Sprintroom",
+    category: "Execution",
+    price: 18,
+    seller: "NEXUS Demo Studio",
+    rating: 4.9,
+    reviews: 24,
+    description: "A focused planning and delivery space for small product teams and independent builders.",
+    badge: "SaaS · Demo listing",
+    accent: "from-emerald-600 via-teal-600 to-cyan-600",
+    features: ["Sprint planning", "Task boards", "Progress reports"],
+    longDescription: "Sprintroom gives small teams a practical home for planning work, tracking delivery, and sharing progress without the overhead of a complex project suite.",
+    includes: ["Unlimited active boards", "Sprint planning templates", "Team progress reports", "Demo subscription access"],
+    purchaseType: "subscription",
+    monthlyPrice: 18,
+    annualPrice: 180,
+  },
+  {
+    id: "metricline",
+    name: "Metricline",
+    category: "Analytics",
+    price: 32,
+    seller: "NEXUS Demo Studio",
+    rating: 4.7,
+    reviews: 19,
+    description: "A simple metrics hub that helps early teams understand activation, retention, and growth.",
+    badge: "SaaS · Demo listing",
+    accent: "from-amber-500 via-orange-500 to-rose-500",
+    features: ["Metric dashboards", "Weekly snapshots", "Team sharing"],
+    longDescription: "Metricline brings a small set of meaningful product and business metrics into one shareable view, helping early teams spot changes and make better weekly decisions.",
+    includes: ["Core metrics dashboards", "Weekly snapshots", "Shared team reports", "Demo subscription access"],
+    purchaseType: "subscription",
+    monthlyPrice: 32,
+    annualPrice: 320,
   },
 ];
 
